@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="ventana.css">
+  <title>Samjoko Nav</title>
+</head>
+<body>
+  <div id="contenedor">
+    <h1>Samjoko Nav</h1>
+    <button id="botonCapturar">Capturar página como Markdown</button>
+    <div id="areaResultado" class="oculto">
+      <textarea id="textoMarkdown" readonly></textarea>
+      <div id="acciones">
+        <button id="botonCopiar">Copiar al portapapeles</button>
+        <button id="botonDescargar">Descargar .md</button>
+        <button id="botonGuardar" class="botonGuardar">Guardar en carpeta</button>
+      </div>
+    </div>
+    <p id="mensajeEstado"></p>
+    <p id="enlaceOpciones">
+      <a href="#" id="abrirOpciones">Configurar carpeta de destino...</a>
+    </p>
+  </div>
+  <script src="../base-datos.js"></script>
+  <script src="ventana.js"></script>
+</body>
+</html>
