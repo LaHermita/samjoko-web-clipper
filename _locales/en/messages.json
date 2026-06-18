@@ -157,5 +157,32 @@
   },
   "fallbackTituloArchivo": {
     "message": "untitled-page"
+  },
+
+  "botonCapturaRapidaTitulo": {
+    "message": "Quick capture"
+  },
+  "botonCapturaRevisionTitulo": {
+    "message": "Capture and review"
+  },
+  "botonConfiguracionTitulo": {
+    "message": "Settings"
+  },
+
+  "comandoCapturaRapidaDescripcion": {
+    "message": "Quick capture: save directly to vault"
+  },
+
+  "notificacionGuardadoExitoso": {
+    "message": "Saved as $archivo$",
+    "placeholders": {
+      "archivo": {
+        "content": "$1",
+        "example": "SAM - article.md"
+      }
+    }
+  },
+  "notificacionErrorGuardado": {
+    "message": "Error saving the page"
   }
 }

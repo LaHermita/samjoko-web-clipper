@@ -160,5 +160,32 @@
   },
   "fallbackTituloArchivo": {
     "message": "pagina-sin-titulo"
+  },
+
+  "botonCapturaRapidaTitulo": {
+    "message": "Captura rápida"
+  },
+  "botonCapturaRevisionTitulo": {
+    "message": "Capturar y revisar"
+  },
+  "botonConfiguracionTitulo": {
+    "message": "Configuración"
+  },
+
+  "comandoCapturaRapidaDescripcion": {
+    "message": "Captura rápida: guarda directamente en la bóveda"
+  },
+
+  "notificacionGuardadoExitoso": {
+    "message": "Guardado como $archivo$",
+    "placeholders": {
+      "archivo": {
+        "content": "$1",
+        "example": "SAM - articulo.md"
+      }
+    }
+  },
+  "notificacionErrorGuardado": {
+    "message": "Error al guardar la página"
   }
 }

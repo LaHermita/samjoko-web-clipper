@@ -1,7 +1,7 @@
 ---
 version: 0.5
 estado: en-progreso
-fase: 0-completada
+fase: 1-completada
 ---
 
 > [!summary] Resumen
@@ -27,12 +27,12 @@ Fundamentos técnicos antes de seguir construyendo. Sin esto, cada feature nueva
 
 Rediseño del popup con 3 botones-icono SVG inline (Heroicons outline, `currentColor`).
 
-- [ ] Layout de 3 iconos: Captura rápida, Captura con revisión, Configuración
-- [ ] Captura rápida: extrae → barra de progreso → guarda directo a la bóveda
-- [ ] Notificación toast de éxito/error (reemplaza `mensajeEstado`)
-- [ ] Tooltips en cada icono
-- [ ] Barra de progreso con texto descriptivo durante guardado
-- [ ] Atajo de teclado (`commands` en manifest)
+- [x] Layout de 3 iconos: Captura rápida, Captura con revisión, Configuración
+- [x] Captura rápida: extrae → barra de progreso → guarda directo a la bóveda
+- [x] Notificación toast de éxito/error (reemplaza `mensajeEstado`)
+- [x] Tooltips en cada icono
+- [x] Barra de progreso con texto descriptivo durante guardado
+- [x] Atajo de teclado (`commands` en manifest)
 
 ---
 

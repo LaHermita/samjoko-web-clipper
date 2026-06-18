@@ -93,4 +93,74 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
   }
 });
 
+chrome.commands.onCommand.addListener(async (comando) => {
+  if (comando !== 'captura-rapida') return;
+
+  try {
+    const [pestania] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!pestania || !pestania.id) return;
+
+    let extraido;
+    try {
+      extraido = await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
+    } catch (errorIgnorado) {
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: pestania.id },
+          files: ['extractor-contenido.js']
+        });
+        extraido = await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
+      } catch (errorInyeccion) {
+        chrome.notifications.create('captura-rapida-error', {
+          type: 'basic',
+          iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+          title: 'Samjoko Nav',
+          message: chrome.i18n.getMessage('errorSinContenido')
+        });
+        return;
+      }
+    }
+
+    if (!extraido || !extraido.markdown) {
+      chrome.notifications.create('captura-rapida-error', {
+        type: 'basic',
+        iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+        title: 'Samjoko Nav',
+        message: chrome.i18n.getMessage('errorSinContenido')
+      });
+      return;
+    }
+
+    await promesaInicializacion;
+
+    if (!manejadorDirectorio) {
+      chrome.notifications.create('captura-rapida-error', {
+        type: 'basic',
+        iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+        title: 'Samjoko Nav',
+        message: chrome.i18n.getMessage('errorSWCarpetaNoConfigurada')
+      });
+      return;
+    }
+
+    const tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
+    const nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
+    const nombreGuardado = await guardarArchivoEnCarpeta(extraido.markdown, nombreBase);
+
+    chrome.notifications.create('captura-rapida-exito', {
+      type: 'basic',
+      iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+      title: 'Samjoko Nav',
+      message: chrome.i18n.getMessage('notificacionGuardadoExitoso', nombreGuardado)
+    });
+  } catch (errorIgnorado) {
+    chrome.notifications.create('captura-rapida-error', {
+      type: 'basic',
+      iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+      title: 'Samjoko Nav',
+      message: chrome.i18n.getMessage('notificacionErrorGuardado')
+    });
+  }
+});
+
 inicializar();

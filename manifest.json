@@ -7,8 +7,22 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "storage"
+    "storage",
+    "notifications"
   ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K"
+      }
+    },
+    "captura-rapida": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      },
+      "description": "__MSG_comandoCapturaRapidaDescripcion__"
+    }
+  },
   "options_ui": {
     "page": "opciones/opciones.html",
     "open_in_tab": true
