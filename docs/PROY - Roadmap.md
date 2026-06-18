@@ -1,6 +1,7 @@
 ---
-version: 0.4
+version: 0.5
 estado: en-progreso
+fase: 0-completada
 ---
 
 > [!summary] Resumen
@@ -15,10 +16,10 @@ Fundamentos técnicos antes de seguir construyendo. Sin esto, cada feature nueva
 - [x] **i18n foundation**: `default_locale` en manifest, carpeta `_locales/`, `chrome.i18n.getMessage()` en todos los JS
 - [x] **Service Worker robusto**: corrección de race condition (top-level await → promesa de inicialización)
 - [x] **Bug título de archivo**: ahora usa el título real de la página web, no el del popup
-- [ ] **CSS unificado**: extraer `assets/comun.css` con estilos compartidos (body, button, mensajes)
-- [ ] **Variable `--texto-boton`** en `themes.css` — los botones usan `color: #fff` hardcodeado
-- [ ] **Refactor content script**: `extraerMarkdown()` devuelve `{bloques, metadata}` en vez de string plano
-- [ ] **`BarraProgreso` portable**: su CSS se mueve a `componentes/barra-progreso.css`
+- [x] **CSS unificado**: extraer `assets/comun.css` con estilos compartidos (body, button, mensajes)
+- [x] **Variable `--texto-boton`** en `themes.css` — los botones usan `color: #fff` hardcodeado
+- [x] **Refactor content script**: `extraerMarkdown()` devuelve `{bloques, metadata}` en vez de string plano
+- [x] **`BarraProgreso` portable**: su CSS se mueve a `componentes/barra-progreso.css`
 
 ---
 

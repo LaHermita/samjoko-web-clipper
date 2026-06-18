@@ -1,86 +1,13 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
   padding: 16px;
   width: 400px;
-  background: var(--fondo-principal);
-  color: var(--texto-primario);
+  min-height: auto;
 }
 
 h1 {
   font-size: 18px;
   margin: 0 0 16px 0;
   color: var(--color-acento);
-}
-
-button {
-  background: var(--color-acento);
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  width: 100%;
-  transition: background 0.2s;
-}
-
-button:hover {
-  filter: brightness(0.85);
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.oculto {
-  display: none;
-}
-
-.barra-progreso {
-  margin-top: 10px;
-}
-
-.barra-progreso-pista {
-  width: 100%;
-  height: 4px;
-  background: var(--fondo-activo);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.barra-progreso-relleno {
-  height: 100%;
-  background: var(--color-acento);
-  border-radius: 2px;
-  transition: width 0.3s ease;
-}
-
-.barra-progreso:not(.barra-progreso--determinado) .barra-progreso-relleno {
-  width: 30%;
-  animation: barra-indeterminada 1.5s ease-in-out infinite;
-}
-
-.barra-progreso--determinado .barra-progreso-relleno {
-  animation: none;
-}
-
-@keyframes barra-indeterminada {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(433%);
-  }
-}
-
-.barra-progreso-texto {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--texto-inactivo);
-  text-align: center;
 }
 
 #areaResultado {
@@ -154,19 +81,5 @@ button:disabled {
 }
 
 #mensajeEstado {
-  margin-top: 12px;
-  font-size: 13px;
   text-align: center;
-}
-
-.mensaje-error {
-  color: var(--estado-error);
-}
-
-.mensaje-exito {
-  color: var(--estado-exito);
-}
-
-.mensaje-info {
-  color: var(--texto-inactivo);
 }

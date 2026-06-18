@@ -51,6 +51,37 @@ function obtenerGrupo(etiqueta) {
   return 'other';
 }
 
+function extraerMetadata(documento) {
+  function obtenerMeta(nombres) {
+    for (const nombre of nombres) {
+      const elemento = documento.querySelector(`meta[name="${nombre}"], meta[property="${nombre}"]`);
+      if (elemento?.content) return elemento.content.trim();
+    }
+    return null;
+  }
+
+  function obtenerMetaMultiple(nombre) {
+    const elementos = documento.querySelectorAll(`meta[name="${nombre}"], meta[property="${nombre}"]`);
+    return Array.from(elementos)
+      .map(el => el.content?.trim())
+      .filter(Boolean);
+  }
+
+  const titulo = documento.title
+    ? documento.title.replace(/\s*[-–|]\s*.*$/, '').trim()
+    : chrome.i18n.getMessage('textoSinTitulo');
+
+  return {
+    titulo: titulo,
+    url: documento.URL,
+    autor: obtenerMeta(['autor', 'article:author', 'twitter:creator']),
+    fecha: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
+    etiquetas: obtenerMetaMultiple('keywords').flatMap(k =>
+      k.split(',').map(t => t.trim()).filter(Boolean)
+    )
+  };
+}
+
 function extraerMarkdown(documento) {
   const elementos = Array.from(documento.querySelectorAll(
     'h1, h2, h3, h4, h5, h6, p, ul, ol, pre, code, blockquote, table'
@@ -60,6 +91,8 @@ function extraerMarkdown(documento) {
     !elemento.closest('script, style, nav, footer, header, aside')
   );
 
+  const metadata = extraerMetadata(documento);
+  const bloques = [];
   let resultado = '';
   let grupoAnterior = '';
 
@@ -72,29 +105,49 @@ function extraerMarkdown(documento) {
     }
 
     const md = convertirElementoAmarkdown(elemento);
-    if (md) {
-      resultado += md + '\n\n';
-      grupoAnterior = grupoActual;
+    if (!md) continue;
+
+    resultado += md + '\n\n';
+    grupoAnterior = grupoActual;
+
+    const bloque = { tipo: grupoActual, texto: md };
+    const textoPlano = elemento.textContent.trim();
+
+    if (etiqueta.startsWith('h') && etiqueta.length === 2) {
+      bloque.contenido = textoPlano;
+      bloque.nivel = parseInt(etiqueta[1]);
+    } else if (etiqueta === 'ul' || etiqueta === 'ol') {
+      const items = Array.from(elemento.children).filter(li => li.tagName === 'LI');
+      bloque.contenido = items.map(li => li.textContent.trim());
+      bloque.ordenada = etiqueta === 'ol';
+    } else {
+      bloque.contenido = textoPlano;
     }
+
+    bloques.push(bloque);
   }
 
-  const titulo = documento.title
-    ? documento.title.replace(/\s*[-–|]\s*.*$/, '').trim()
-    : chrome.i18n.getMessage('textoSinTitulo');
-
-  const encabezado = `# ${titulo}\n\n`;
+  const encabezado = `# ${metadata.titulo}\n\n`;
   const enlaces = extraerEnlaces(documento);
   const seccionEnlaces = enlaces
     ? `\n\n## ${chrome.i18n.getMessage('seccionEnlaces')}\n\n${enlaces}`
     : '';
-  const fuente = `\n\n---\n*${chrome.i18n.getMessage('seccionFuente')}: ${documento.URL}*`;
+  const fuente = `\n\n---\n*${chrome.i18n.getMessage('seccionFuente')}: ${metadata.url}*`;
 
-  return encabezado + resultado.trim() + seccionEnlaces + fuente;
+  return {
+    bloques: bloques,
+    metadata: metadata,
+    markdown: encabezado + resultado.trim() + seccionEnlaces + fuente
+  };
 }
 
 chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
   if (mensaje.accion === 'extraerMarkdown') {
-    const contenido = extraerMarkdown(document);
-    responder({ markdown: contenido });
+    const resultado = extraerMarkdown(document);
+    responder({
+      markdown: resultado.markdown,
+      bloques: resultado.bloques,
+      metadata: resultado.metadata
+    });
   }
 });

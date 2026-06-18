@@ -55,6 +55,9 @@
   /* --- Iconos --- */
   --color-icono: #3a463a;            /* verde oscuro suave */
 
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #7a9b5f;       /* verde hoja madura */
   --grafo-nodo-borde: #5a7c47;       /* verde más oscuro */
@@ -114,6 +117,9 @@
   /* --- Iconos --- */
   --color-icono: #4a3f3a;
 
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #c45b55;       /* coral rojizo */
   --grafo-nodo-borde: #a74944;       /* coral más oscuro */
@@ -172,6 +178,9 @@
   /* --- Iconos --- */
   --color-icono: #d8c8ff;            /* lila claro */
 
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #b45cff;       /* morado neón suave */
   --grafo-nodo-borde: #9945dd;       /* morado más oscuro */
@@ -229,6 +238,9 @@
 
   /* --- Iconos --- */
   --color-icono: #dcd9d4;            /* gris hueso claro */
+
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
 
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #d47a2c;       /* naranja pata de cuervo */

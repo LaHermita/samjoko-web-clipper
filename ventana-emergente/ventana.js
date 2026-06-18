@@ -57,7 +57,7 @@ async function capturarPagina() {
 
     if (resultado?.markdown) {
       textoMarkdown.value = resultado.markdown;
-      tituloPagina = resultado.titulo || pestania.title || '';
+      tituloPagina = resultado.metadata?.titulo || pestania.title || '';
       areaResultado.classList.remove('oculto');
       mostrarMensaje(chrome.i18n.getMessage('mensajeCapturaExitosa'));
     } else {
