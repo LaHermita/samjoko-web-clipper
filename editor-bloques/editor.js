@@ -67,6 +67,7 @@ function obtenerEtiquetaTipo(tipo) {
     list: '·',
     code: '<>',
     table: '⊞',
+    links: '🔗',
     other: '?'
   };
   return etiquetas[tipo] || '?';
@@ -97,13 +98,6 @@ function regenerarMarkdown() {
     if (bloquesExtraidos[i].incluido) {
       partes.push(bloquesExtraidos[i].texto);
     }
-  }
-
-  if (enlacesPagina) {
-    partes.push('');
-    partes.push('## ' + chrome.i18n.getMessage('seccionEnlaces'));
-    partes.push('');
-    partes.push(enlacesPagina);
   }
 
   if (metadataPagina && metadataPagina.url) {

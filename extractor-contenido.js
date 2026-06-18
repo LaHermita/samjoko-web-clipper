@@ -2,6 +2,72 @@ function colapsarEspacios(texto) {
   return texto.replace(/\s+/g, ' ').trim();
 }
 
+// ── Pipeline de extracción (Nivel 1) ────────────────────────
+// Etapas parametrizables. Añadir nuevas aquí para escalar a niveles 2 y 3.
+
+var CONFIG_EXTRACCION = {
+  activo: true,
+  filtrarBoilerplate: true,
+  patronesBoilerplate: /nav|menu|footer|sidebar|comment|ad-|ads|widget|social|share|breadcrumb|pagination|related|recommended|newsletter|subscribe|cookie|popup|modal|banner|promo|sponsor/i,
+  maxDensidadEnlaces: 0.5,
+  filtrarCalidad: false,
+  longitudMinimaParrafo: 8,
+  detectarHeadingsVisuales: true
+};
+
+function tieneAltaDensidadEnlaces(elemento) {
+  if (elemento.tagName !== 'P') return false;
+  var textoTotal = elemento.textContent.trim().length;
+  if (textoTotal === 0) return false;
+  var enlaces = elemento.querySelectorAll('a');
+  var textoEnlaces = 0;
+  for (var i = 0; i < enlaces.length; i++) {
+    textoEnlaces += enlaces[i].textContent.trim().length;
+  }
+  return (textoEnlaces / textoTotal) > CONFIG_EXTRACCION.maxDensidadEnlaces;
+}
+
+function tienePatronBoilerplate(elemento) {
+  var textoClases = (elemento.className || '') + ' ' + (elemento.id || '');
+  var ancestro = elemento.parentElement;
+  var profundidad = 0;
+  while (ancestro && profundidad < 4) {
+    var etiquetaAncestro = ancestro.tagName;
+    if (etiquetaAncestro === 'BODY' || etiquetaAncestro === 'HTML') break;
+    textoClases += ' ' + (ancestro.className || '') + ' ' + (ancestro.id || '');
+    ancestro = ancestro.parentElement;
+    profundidad++;
+  }
+  return CONFIG_EXTRACCION.patronesBoilerplate.test(textoClases.toLowerCase());
+}
+
+function esParrafoCorto(etiqueta, grupo, textoPlano) {
+  if (grupo !== 'text') return false;
+  var normalizado = textoPlano.replace(/\s+/g, ' ').trim();
+  return normalizado.length < CONFIG_EXTRACCION.longitudMinimaParrafo;
+}
+
+function esHeadingVisual(elemento) {
+  var etiqueta = elemento.tagName;
+  if (etiqueta === 'STRONG' || etiqueta === 'B') return true;
+  var textoClases = ((elemento.className || '') + ' ' + (elemento.id || '')).toLowerCase();
+  return /title|heading|subtitle|headline|caption/i.test(textoClases);
+}
+
+function esBloqueValido(elemento, etiqueta, grupo, textoPlano) {
+  if (!CONFIG_EXTRACCION.activo) return true;
+  if (CONFIG_EXTRACCION.filtrarBoilerplate) {
+    if (tienePatronBoilerplate(elemento)) return false;
+    if (tieneAltaDensidadEnlaces(elemento)) return false;
+  }
+  if (CONFIG_EXTRACCION.filtrarCalidad) {
+    if (esParrafoCorto(etiqueta, grupo, textoPlano)) return false;
+  }
+  return true;
+}
+
+// ── Conversión a Markdown ────────────────────────────────────
+
 function convertirElementoAmarkdown(elemento) {
   const etiqueta = elemento.tagName.toLowerCase();
 
@@ -33,15 +99,6 @@ function convertirElementoAmarkdown(elemento) {
   }
 
   return colapsarEspacios(elemento.textContent);
-}
-
-function extraerEnlaces(documento) {
-  const enlaces = Array.from(documento.querySelectorAll('a[href]'));
-  const enlacesUtiles = enlaces.filter(a => {
-    const href = a.getAttribute('href');
-    return href && !href.startsWith('javascript:') && !href.startsWith('#');
-  });
-  return enlacesUtiles.map(a => `- [${a.textContent.trim()}](${a.href})`).join('\n');
 }
 
 function esTextoVacio(textoPlano) {
@@ -91,7 +148,10 @@ function extraerMetadata(documento) {
 }
 
 function extraerMarkdown(documento) {
-  const elementos = Array.from(documento.querySelectorAll(
+  var articulo = documento.querySelector('article');
+  var raiz = articulo || documento;
+
+  const elementos = Array.from(raiz.querySelectorAll(
     'h1, h2, h3, h4, h5, h6, p, ul, ol, pre, code, blockquote, table'
   ));
 
@@ -101,27 +161,50 @@ function extraerMarkdown(documento) {
 
   const metadata = extraerMetadata(documento);
   const bloques = [];
+  var linksAcumulados = [];
   let resultado = '';
 
   for (const elemento of elementosFiltrados) {
     const etiqueta = elemento.tagName.toLowerCase();
-    const grupoActual = obtenerGrupo(etiqueta);
+    var grupoActual = obtenerGrupo(etiqueta);
 
-    const md = convertirElementoAmarkdown(elemento);
+    var md = convertirElementoAmarkdown(elemento);
     if (!md) continue;
 
     const textoPlano = elemento.textContent;
+
     if (esTextoVacio(textoPlano)) continue;
+
+    if (!esBloqueValido(elemento, elemento.tagName, grupoActual, textoPlano)) continue;
+
+    var enlacesElemento = elemento.querySelectorAll('a[href]');
+    for (var j = 0; j < enlacesElemento.length; j++) {
+      var a = enlacesElemento[j];
+      var href = a.getAttribute('href');
+      if (href && href.indexOf('javascript:') !== 0 && href.indexOf('#') !== 0) {
+        linksAcumulados.push({ texto: colapsarEspacios(a.textContent), url: href });
+      }
+    }
+
+    if (CONFIG_EXTRACCION.activo && CONFIG_EXTRACCION.detectarHeadingsVisuales) {
+      if (esHeadingVisual(elemento) && grupoActual === 'text') {
+        md = '## ' + colapsarEspacios(textoPlano);
+        grupoActual = 'heading';
+      }
+    }
 
     resultado += md + '\n\n';
 
-    const bloque = { tipo: grupoActual, texto: md };
+    var bloque = { tipo: grupoActual, texto: md };
 
-    if (etiqueta.startsWith('h') && etiqueta.length === 2) {
+    if (grupoActual === 'heading' && !etiqueta.startsWith('h')) {
+      bloque.contenido = colapsarEspacios(textoPlano);
+      bloque.nivel = 2;
+    } else if (etiqueta.startsWith('h') && etiqueta.length === 2) {
       bloque.contenido = colapsarEspacios(textoPlano);
       bloque.nivel = parseInt(etiqueta[1]);
     } else if (etiqueta === 'ul' || etiqueta === 'ol') {
-      const items = Array.from(elemento.children).filter(function (li) { return li.tagName === 'LI'; });
+      var items = Array.from(elemento.children).filter(function (li) { return li.tagName === 'LI'; });
       bloque.contenido = items.map(function (li) { return colapsarEspacios(li.textContent); });
       bloque.ordenada = etiqueta === 'ol';
     } else {
@@ -131,8 +214,28 @@ function extraerMarkdown(documento) {
     bloques.push(bloque);
   }
 
+  var urlsVistas = {};
+  var enlacesFormateados = '';
+  for (var k = 0; k < linksAcumulados.length; k++) {
+    var link = linksAcumulados[k];
+    if (link.texto && link.url && !urlsVistas[link.url]) {
+      urlsVistas[link.url] = true;
+      enlacesFormateados += '- [' + link.texto + '](' + link.url + ')\n';
+    }
+  }
+  enlacesFormateados = enlacesFormateados.trim();
+
+  if (enlacesFormateados) {
+    bloques.push({
+      tipo: 'links',
+      texto: '## ' + chrome.i18n.getMessage('seccionEnlaces') + '\n\n' + enlacesFormateados,
+      contenido: enlacesFormateados,
+      incluido: false
+    });
+  }
+
   const encabezado = `# ${metadata.titulo}\n\n`;
-  const enlaces = extraerEnlaces(documento);
+  const enlaces = enlacesFormateados;
   const seccionEnlaces = enlaces
     ? `\n\n## ${chrome.i18n.getMessage('seccionEnlaces')}\n\n${enlaces}`
     : '';

@@ -23,6 +23,7 @@ Este proyecto sigue convenciones estrictas. Todo el código y documentación gen
 | Booleanos | prefijo `es`, `tiene`, `debe` | `esValido` |
 
 - **Todo identificador en castellano**, claro y sin abreviaturas.
+- **El español debe ser de España** (tuteo: «tú», «selecciona», «abre», «quieres»). No usar voseo argentino («seleccioná», «abrí», «querés»).
 - **Nombres de archivo y carpeta** en castellano descriptivo (`kebab-case`). Se exceptúan los nombres estándar exigidos por el navegador (`manifest.json`, `README.md`, `AGENTS.md`).
 
 ---

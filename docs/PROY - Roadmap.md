@@ -47,6 +47,12 @@ Panel lateral de Chrome que muestra los bloques extraídos para revisar antes de
 - [x] Metadatos detectados: autor, fecha (de meta tags), título limpio
 - [x] Botones: Guardar en bóveda, Descargar, Copiar, Cancelar
 - [x] Barra de progreso durante guardado
+- [x] **Refinamiento extractor**: colapso de espacios redundantes y filtro de bloques vacíos/puntuación
+- [x] **Botón re-escaneo** (⟳) en side panel para recapturar al cambiar de página
+- [x] **host_permissions** (`<all_urls>`) para que el side panel funcione al navegar entre pestañas
+- [x] **Corrección i18n**: voseo argentino → español de España en todos los strings
+- [x] **Enlaces solo de bloques filtrados**: recolectados de contenido válido + toggleables en side panel (desmarcados por defecto)
+- [x] **Scoping a `<article>`**: extracción limitada al contenido semántico si existe la etiqueta
 
 ---
 
@@ -55,7 +61,7 @@ Panel lateral de Chrome que muestra los bloques extraídos para revisar antes de
 Página de opciones expandida con todas las preferencias del usuario.
 
 - [ ] **Idioma**: selector ES / EN (extensible a más)
-- [ ] **Apariencia**: selector de tema visual (samjoko, vivero, nautilus, akkoro)
+- [ ] **Apariencia**: selector de tema visual (pausado — solo Samjoko por ahora)
 - [ ] **Bóveda**: selector de carpeta (ya existe) + subcarpetas configurables
 - [ ] **Formato de nota**: template de frontmatter YAML configurable
 - [ ] **Extracción**: elementos HTML a incluir/excluir, selectores CSS custom

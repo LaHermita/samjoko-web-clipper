@@ -26,26 +26,29 @@
 
 ## Acerca del proyecto / About
 
-**Samjoko Web Clipper** es el companion de navegador de Samjoko, la mascota del ecosistema Vivero. Sam te permite capturar el contenido de cualquier página web, convertirlo en Markdown limpio y guardarlo directamente en tu bóveda de conocimiento. Como un cuervo recolector, Samjoko selecciona y transporta lo valioso de la web hasta tu espacio de conocimiento personal, ayudándote a conservar ideas, artículos y referencias de forma sencilla.
+**Samjoko Web Clipper** es el companion de navegador de Samjoko, la mascota del ecosistema Vivero. Sam te permite capturar el contenido de cualquier página web, convertirlo en Markdown limpio mediante un pipeline inteligente de extracción, y guardarlo directamente en tu bóveda de conocimiento. Como un cuervo recolector, Samjoko selecciona y transporta lo valioso de la web hasta tu espacio de conocimiento personal, ayudándote a conservar ideas, artículos y referencias de forma sencilla.
 
-> Samjoko Web Clipper is the browser companion of Samjoko, the mascot of the Vivero ecosystem. Sam allows you to capture the content of any web page, convert it into clean Markdown, and save it directly to your knowledge vault. Like a gathering raven, Samjoko collects and carries valuable knowledge from the web to your personal space, helping you preserve ideas, articles, and references with ease.
+> Samjoko Web Clipper is the browser companion of Samjoko, the mascot of the Vivero ecosystem. Sam allows you to capture the content of any web page, convert it into clean Markdown through an intelligent extraction pipeline, and save it directly to your knowledge vault. Like a gathering raven, Samjoko collects and carries valuable knowledge from the web to your personal space, helping you preserve ideas, articles, and references with ease.
 
 ---
 
 ## Características / Features
 
-| Característica                                                    | Feature                                                  |
-| ----------------------------------------------------------------- | -------------------------------------------------------- |
-| Extrae el contenido principal de la página como Markdown            | Extracts main page content as Markdown                   |
-| Editor de bloques en panel lateral para revisar antes de guardar     | Side panel block editor to review before saving          |
-| Copia al portapapeles con un clic                                   | One-click copy to clipboard                              |
-| Descarga como archivo `.md`                                         | Download as `.md` file                                   |
-| Guarda directamente en una carpeta local (File System Access API)   | Save directly to a local folder (File System Access API) |
-| Captura rápida con atajo de teclado `Ctrl+Shift+S`                  | Quick capture with `Ctrl+Shift+S` keyboard shortcut      |
-| 4 temas visuales intercambiables                                    | 4 interchangeable visual themes                          |
-| Persistencia con IndexedDB                                          | IndexedDB persistence                                    |
-| Página de opciones integrada                                        | Built-in options page                                    |
-| Sin dependencias externas                                           | No external dependencies                                 |
+| Característica                                                      | Feature                                                     |
+| ------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Extrae el contenido principal de la página como Markdown             | Extracts main page content as Markdown                      |
+| Pipeline inteligente de limpieza (filtro boilerplate, enlaces, etc.) | Smart cleaning pipeline (boilerplate filter, link density)  |
+| Editor de bloques en panel lateral para revisar antes de guardar     | Side panel block editor to review before saving             |
+| Enlaces recolectados solo del contenido válido, toggleables          | Links collected only from valid content, toggleable         |
+| Scoping automático a `<article>` si la página lo usa                 | Auto-scoping to `<article>` when the page uses it           |
+| Copia al portapapeles con un clic                                    | One-click copy to clipboard                                 |
+| Descarga como archivo `.md`                                          | Download as `.md` file                                      |
+| Guarda directamente en una carpeta local (File System Access API)    | Save directly to a local folder (File System Access API)    |
+| Captura rápida con atajo de teclado `Ctrl+Shift+S`                   | Quick capture with `Ctrl+Shift+S` keyboard shortcut         |
+| 4 temas visuales intercambiables                                     | 4 interchangeable visual themes                             |
+| Persistencia con IndexedDB                                           | IndexedDB persistence                                       |
+| Página de opciones integrada                                         | Built-in options page                                       |
+| Sin dependencias externas                                            | No external dependencies                                    |
 
 ---
 
@@ -66,9 +69,9 @@ El tema por defecto es **Samjoko**. Para cambiar de tema, modifica el atributo `
 
 ### Para usuarios / For users
 
-1. Descargá la extensión desde la [Chrome Web Store](#) _(próximamente)_.
-2. Hacé clic en el icono de Samjoko en la barra de herramientas.
-3. Navegá a cualquier página y capturala.
+1. Descarga la extensión desde la [Chrome Web Store](#) _(próximamente)_.
+2. Haz clic en el icono de Samjoko en la barra de herramientas.
+3. Navega a cualquier página y captúrala.
 
 ### Para desarrollo / For development
 
