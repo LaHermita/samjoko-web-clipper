@@ -36,14 +36,16 @@
 
 | Característica                                                    | Feature                                                  |
 | ----------------------------------------------------------------- | -------------------------------------------------------- |
-| Extrae el contenido principal de la página como Markdown          | Extracts main page content as Markdown                   |
-| Copia al portapapeles con un clic                                 | One-click copy to clipboard                              |
-| Descarga como archivo `.md`                                       | Download as `.md` file                                   |
-| Guarda directamente en una carpeta local (File System Access API) | Save directly to a local folder (File System Access API) |
-| 4 temas visuales intercambiables                                  | 4 interchangeable visual themes                          |
-| Persistencia con IndexedDB                                        | IndexedDB persistence                                    |
-| Página de opciones integrada                                      | Built-in options page                                    |
-| Sin dependencias externas                                         | No external dependencies                                 |
+| Extrae el contenido principal de la página como Markdown            | Extracts main page content as Markdown                   |
+| Editor de bloques en panel lateral para revisar antes de guardar     | Side panel block editor to review before saving          |
+| Copia al portapapeles con un clic                                   | One-click copy to clipboard                              |
+| Descarga como archivo `.md`                                         | Download as `.md` file                                   |
+| Guarda directamente en una carpeta local (File System Access API)   | Save directly to a local folder (File System Access API) |
+| Captura rápida con atajo de teclado `Ctrl+Shift+S`                  | Quick capture with `Ctrl+Shift+S` keyboard shortcut      |
+| 4 temas visuales intercambiables                                    | 4 interchangeable visual themes                          |
+| Persistencia con IndexedDB                                          | IndexedDB persistence                                    |
+| Página de opciones integrada                                        | Built-in options page                                    |
+| Sin dependencias externas                                           | No external dependencies                                 |
 
 ---
 
@@ -104,7 +106,11 @@ samjoko-nav-extension/
 │   ├── ventana.html
 │   ├── ventana.css
 │   └── ventana.js
-├── opciones/                  # Página de opciones
+├── editor-bloques/             # Side panel (block editor)
+│   ├── editor.html
+│   ├── editor.css
+│   └── editor.js
+├── opciones/                   # Página de opciones
 │   ├── opciones.html
 │   ├── opciones.css
 │   └── opciones.js
@@ -117,11 +123,14 @@ samjoko-nav-extension/
 
 ## Permisos / Permissions
 
-| Permiso     | Motivo                                                  |
-| ----------- | ------------------------------------------------------- |
-| `activeTab` | Acceder al contenido de la pestaña activa al hacer clic |
-| `scripting` | Inyectar el extractor de contenido en la página         |
-| `storage`   | Guardar preferencias de usuario                         |
+| Permiso          | Motivo                                                     |
+| ---------------- | ---------------------------------------------------------- |
+| `activeTab`      | Acceder al contenido de la pestaña activa al hacer clic    |
+| `scripting`      | Inyectar el extractor de contenido en la página            |
+| `storage`        | Guardar preferencias de usuario                            |
+| `notifications`  | Mostrar notificaciones del sistema al usar atajo de teclado |
+| `sidePanel`      | Abrir el editor de bloques en el panel lateral             |
+| `host: <all_urls>`| Permitir al panel lateral re-escanear al cambiar de página  |
 
 La extensión **no recolecta, almacena ni transmite datos personales**. Todo el procesamiento ocurre localmente en tu navegador.
 

@@ -1,17 +1,23 @@
+function colapsarEspacios(texto) {
+  return texto.replace(/\s+/g, ' ').trim();
+}
+
 function convertirElementoAmarkdown(elemento) {
   const etiqueta = elemento.tagName.toLowerCase();
 
   if (etiqueta.startsWith('h') && etiqueta.length === 2) {
     const nivel = '#'.repeat(parseInt(etiqueta[1]));
-    return `${nivel} ${elemento.textContent.trim()}`;
+    return nivel + ' ' + colapsarEspacios(elemento.textContent);
   }
 
   if (etiqueta === 'p') {
-    return elemento.textContent.trim();
+    return colapsarEspacios(elemento.textContent);
   }
 
   if (etiqueta === 'blockquote') {
-    return elemento.textContent.trim().split('\n').map(linea => `> ${linea}`).join('\n');
+    return elemento.textContent.trim().split('\n').map(function (linea) {
+      return '> ' + colapsarEspacios(linea);
+    }).join('\n');
   }
 
   if (etiqueta === 'pre' || etiqueta === 'code') {
@@ -19,14 +25,14 @@ function convertirElementoAmarkdown(elemento) {
   }
 
   if (etiqueta === 'ul' || etiqueta === 'ol') {
-    const items = Array.from(elemento.children).filter(li => li.tagName === 'LI');
-    return items.map((li, idx) => {
-      const prefijo = etiqueta === 'ol' ? `${idx + 1}. ` : '- ';
-      return `${prefijo}${li.textContent.trim()}`;
+    const items = Array.from(elemento.children).filter(function (li) { return li.tagName === 'LI'; });
+    return items.map(function (li, idx) {
+      const prefijo = etiqueta === 'ol' ? (idx + 1) + '. ' : '- ';
+      return prefijo + colapsarEspacios(li.textContent);
     }).join('\n');
   }
 
-  return elemento.textContent.trim();
+  return colapsarEspacios(elemento.textContent);
 }
 
 function extraerEnlaces(documento) {
@@ -38,8 +44,10 @@ function extraerEnlaces(documento) {
   return enlacesUtiles.map(a => `- [${a.textContent.trim()}](${a.href})`).join('\n');
 }
 
-function etiquetaEsSeparador(etiqueta) {
-  return ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'table', 'ul', 'ol', 'blockquote', 'pre'].includes(etiqueta);
+function esTextoVacio(textoPlano) {
+  var normalizado = textoPlano.replace(/\s+/g, ' ').trim();
+  if (!normalizado) return true;
+  return /^[.,;:!¡¿?()[\]{}'"«»\-–—·•…\s]+$/.test(normalizado);
 }
 
 function obtenerGrupo(etiqueta) {
@@ -94,34 +102,30 @@ function extraerMarkdown(documento) {
   const metadata = extraerMetadata(documento);
   const bloques = [];
   let resultado = '';
-  let grupoAnterior = '';
 
   for (const elemento of elementosFiltrados) {
     const etiqueta = elemento.tagName.toLowerCase();
     const grupoActual = obtenerGrupo(etiqueta);
 
-    if (grupoAnterior && grupoActual !== grupoAnterior) {
-      resultado += '\n';
-    }
-
     const md = convertirElementoAmarkdown(elemento);
     if (!md) continue;
 
+    const textoPlano = elemento.textContent;
+    if (esTextoVacio(textoPlano)) continue;
+
     resultado += md + '\n\n';
-    grupoAnterior = grupoActual;
 
     const bloque = { tipo: grupoActual, texto: md };
-    const textoPlano = elemento.textContent.trim();
 
     if (etiqueta.startsWith('h') && etiqueta.length === 2) {
-      bloque.contenido = textoPlano;
+      bloque.contenido = colapsarEspacios(textoPlano);
       bloque.nivel = parseInt(etiqueta[1]);
     } else if (etiqueta === 'ul' || etiqueta === 'ol') {
-      const items = Array.from(elemento.children).filter(li => li.tagName === 'LI');
-      bloque.contenido = items.map(li => li.textContent.trim());
+      const items = Array.from(elemento.children).filter(function (li) { return li.tagName === 'LI'; });
+      bloque.contenido = items.map(function (li) { return colapsarEspacios(li.textContent); });
       bloque.ordenada = etiqueta === 'ol';
     } else {
-      bloque.contenido = textoPlano;
+      bloque.contenido = colapsarEspacios(textoPlano);
     }
 
     bloques.push(bloque);
@@ -137,6 +141,7 @@ function extraerMarkdown(documento) {
   return {
     bloques: bloques,
     metadata: metadata,
+    enlaces: enlaces,
     markdown: encabezado + resultado.trim() + seccionEnlaces + fuente
   };
 }
@@ -147,7 +152,8 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
     responder({
       markdown: resultado.markdown,
       bloques: resultado.bloques,
-      metadata: resultado.metadata
+      metadata: resultado.metadata,
+      enlaces: resultado.enlaces
     });
   }
 });

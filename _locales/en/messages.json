@@ -194,5 +194,32 @@
   },
   "pieTextoApoyo": {
     "message": "If you'd like to support the project, visit"
+  },
+
+  "botonEditorBloquesTitulo": {
+    "message": "Block editor"
+  },
+  "tituloEditorBloques": {
+    "message": "Block editor"
+  },
+  "etiquetaBloques": {
+    "message": "Detected blocks"
+  },
+  "previaMarkdown": {
+    "message": "Preview"
+  },
+  "textoSinMetadato": {
+    "message": "No information"
+  },
+  "infoSeleccionados": {
+    "message": "$cantidad$ of $total$ blocks selected",
+    "placeholders": {
+      "cantidad": { "content": "$1", "example": "5" },
+      "total": { "content": "$2", "example": "12" }
+    }
+  },
+
+  "botonReescanearTitulo": {
+    "message": "Re-scan page"
   }
 }

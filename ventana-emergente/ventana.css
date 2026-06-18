@@ -83,62 +83,6 @@ h1 {
   margin: 4px 0 8px 0;
 }
 
-#areaResultado {
-  margin-top: 12px;
-}
-
-#textoMarkdown {
-  width: 100%;
-  height: 220px;
-  background: var(--fondo-editor);
-  color: var(--texto-primario);
-  border: 1px solid var(--borde-interfaz);
-  border-radius: 6px;
-  padding: 10px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-#acciones {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-#acciones button {
-  font-size: 12px;
-  padding: 8px 12px;
-}
-
-#botonCopiar {
-  background: var(--fondo-activo);
-  color: var(--texto-primario);
-}
-
-#botonCopiar:hover {
-  filter: brightness(1.15);
-}
-
-#botonDescargar {
-  background: var(--fondo-destacado);
-  color: var(--texto-primario);
-}
-
-#botonDescargar:hover {
-  filter: brightness(1.15);
-}
-
-.botonGuardar {
-  background: var(--estado-exito) !important;
-  color: var(--fondo-principal) !important;
-}
-
-.botonGuardar:hover {
-  filter: brightness(0.9) !important;
-}
-
 #zonaToast {
   position: fixed;
   bottom: 16px;

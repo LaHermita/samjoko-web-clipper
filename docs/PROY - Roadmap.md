@@ -1,7 +1,7 @@
 ---
 version: 0.5
 estado: en-progreso
-fase: 1-completada
+fase: 2-completada
 ---
 
 > [!summary] Resumen
@@ -40,13 +40,13 @@ Rediseño del popup con 3 botones-icono SVG inline (Heroicons outline, `currentC
 
 Panel lateral de Chrome que muestra los bloques extraídos para revisar antes de guardar.
 
-- [ ] `sidePanel` en `manifest.json`, página `editor-bloques/editor.html`
-- [ ] Content script devuelve bloques individuales (párrafos, headers, listas, código, tablas, imágenes)
-- [ ] Cada bloque: checkbox para incluir/excluir + preview del contenido
-- [ ] Markdown final se regenera al marcar/desmarcar bloques
-- [ ] Metadatos detectados: autor, fecha (de meta tags), título limpio
-- [ ] Botones: Guardar en bóveda, Descargar, Copiar, Cancelar
-- [ ] Barra de progreso durante guardado
+- [x] `sidePanel` en `manifest.json`, página `editor-bloques/editor.html`
+- [x] Content script devuelve bloques individuales (párrafos, headers, listas, código, tablas, imágenes)
+- [x] Cada bloque: checkbox para incluir/excluir + preview del contenido
+- [x] Markdown final se regenera al marcar/desmarcar bloques
+- [x] Metadatos detectados: autor, fecha (de meta tags), título limpio
+- [x] Botones: Guardar en bóveda, Descargar, Copiar, Cancelar
+- [x] Barra de progreso durante guardado
 
 ---
 

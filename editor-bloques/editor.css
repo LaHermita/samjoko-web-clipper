@@ -1,0 +1,298 @@
+body {
+  padding: 16px;
+}
+
+#encabezadoEditor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+#encabezadoEditor h1 {
+  font-size: 16px;
+  color: var(--color-acento);
+  margin: 0;
+}
+
+.boton-icono-editor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  padding: 5px;
+  cursor: pointer;
+  color: var(--color-icono);
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.boton-icono-editor:hover {
+  color: var(--color-acento);
+  background: var(--fondo-hover);
+  border-color: var(--color-acento);
+}
+
+.boton-icono-editor:active {
+  transform: scale(0.94);
+}
+
+.boton-icono-editor:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.boton-icono-editor .tooltip-editor {
+  position: absolute;
+  bottom: -26px;
+  right: 0;
+  background: var(--fondo-panel);
+  color: var(--texto-secundario);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  border: 1px solid var(--borde-interfaz);
+  z-index: 10;
+}
+
+.boton-icono-editor:hover .tooltip-editor {
+  opacity: 1;
+}
+
+#panelMetadata {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: var(--fondo-activo);
+  border-radius: 6px;
+  border: 1px solid var(--borde-suave);
+}
+
+#metaFila {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin-bottom: 2px;
+}
+
+#metaSeparador {
+  color: var(--borde-interfaz);
+}
+
+#metaUrl {
+  display: block;
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#metaUrl:hover {
+  color: var(--color-acento);
+  text-decoration: underline;
+}
+
+#cabeceraBloques {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#cabeceraBloques h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-primario);
+  margin: 0;
+}
+
+#contadorBloques {
+  font-size: 11px;
+  color: var(--texto-inactivo);
+}
+
+#listaBloques {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.bloque-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--fondo-editor);
+  border: 1px solid var(--borde-suave);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.bloque-item:hover {
+  border-color: var(--borde-interfaz);
+}
+
+.bloque-item.bloque-excluido {
+  opacity: 0.45;
+}
+
+.bloque-item.bloque-excluido:hover {
+  opacity: 0.7;
+}
+
+.bloque-check {
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: var(--color-acento);
+}
+
+.bloque-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.bloque-tipo {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-acento);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.bloque-previa {
+  font-size: 12px;
+  color: var(--texto-secundario);
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+#zonaPrevia {
+  margin-bottom: 16px;
+}
+
+#zonaPrevia h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-primario);
+  margin: 0 0 8px 0;
+}
+
+#textoPrevia {
+  background: var(--fondo-editor);
+  color: var(--texto-secundario);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+#barraAcciones {
+  display: flex;
+  gap: 8px;
+}
+
+#barraAcciones button {
+  flex: 1;
+  font-size: 12px;
+  padding: 8px;
+}
+
+#botonDescargar {
+  background: var(--fondo-destacado);
+  color: var(--texto-primario);
+}
+
+#botonDescargar:hover {
+  filter: brightness(1.15);
+}
+
+#botonCopiar {
+  background: var(--fondo-activo);
+  color: var(--texto-primario);
+}
+
+#botonCopiar:hover {
+  filter: brightness(1.15);
+}
+
+.botonGuardar {
+  background: var(--estado-exito) !important;
+  color: var(--fondo-principal) !important;
+}
+
+.botonGuardar:hover {
+  filter: brightness(0.9) !important;
+}
+
+#zonaToast {
+  position: fixed;
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  border: 1px solid transparent;
+}
+
+.toast.toast-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-exito {
+  background: var(--fondo-panel);
+  color: var(--estado-exito);
+  border-color: var(--estado-exito);
+}
+
+.toast-error {
+  background: var(--fondo-panel);
+  color: var(--estado-error);
+  border-color: var(--estado-error);
+}
+
+.toast-info {
+  background: var(--fondo-panel);
+  color: var(--texto-inactivo);
+  border-color: var(--borde-interfaz);
+}

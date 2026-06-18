@@ -8,8 +8,15 @@
     "activeTab",
     "scripting",
     "storage",
-    "notifications"
+    "notifications",
+    "sidePanel"
   ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "side_panel": {
+    "default_path": "editor-bloques/editor.html"
+  },
   "commands": {
     "_execute_action": {
       "suggested_key": {

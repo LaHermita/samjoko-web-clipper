@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="samjoko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../assets/themes.css">
+  <link rel="stylesheet" href="../assets/comun.css">
+  <link rel="stylesheet" href="../componentes/barra-progreso.css">
+  <link rel="stylesheet" href="editor.css">
+  <title></title>
+</head>
+<body>
+  <div id="contenedor">
+    <header id="encabezadoEditor">
+      <h1></h1>
+      <button id="botonReescanear" class="boton-icono-editor" aria-label="">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
+        </svg>
+        <span class="tooltip-editor"></span>
+      </button>
+    </header>
+
+    <div id="zonaProgreso"></div>
+
+    <div id="panelMetadata" class="oculto">
+      <div id="metaFila">
+        <span id="metaAutor"></span>
+        <span id="metaSeparador"></span>
+        <span id="metaFecha"></span>
+      </div>
+      <a id="metaUrl" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+
+    <div id="zonaBloques" class="oculto">
+      <div id="cabeceraBloques">
+        <h2></h2>
+        <span id="contadorBloques"></span>
+      </div>
+      <div id="listaBloques"></div>
+    </div>
+
+    <div id="zonaPrevia" class="oculto">
+      <h2></h2>
+      <pre id="textoPrevia"></pre>
+    </div>
+
+    <div id="barraAcciones" class="oculto">
+      <button id="botonGuardar" class="botonGuardar"></button>
+      <button id="botonDescargar"></button>
+      <button id="botonCopiar"></button>
+    </div>
+  </div>
+
+  <div id="zonaToast"></div>
+
+  <script src="../base-datos.js"></script>
+  <script src="../componentes/barra-progreso.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>
