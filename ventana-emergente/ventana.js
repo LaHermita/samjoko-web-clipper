@@ -93,7 +93,18 @@ async function extraerContenido(pestania) {
     barra.establecerTexto(traducir('barraProgresoConectando'));
     await chrome.scripting.executeScript({
       target: { tabId: pestania.id },
-      files: ['extractor-contenido.js']
+      files: [
+        'componentes/extraccion/nucleo-extraccion.js',
+        'componentes/extraccion/extractor-texto.js',
+        'componentes/extraccion/extractor-listas.js',
+        'componentes/extraccion/extractor-codigo.js',
+        'componentes/extraccion/extractor-tablas.js',
+        'componentes/extraccion/extractor-citas.js',
+        'componentes/extraccion/extractor-multimedia.js',
+        'componentes/extraccion/extractor-iframes.js',
+        'componentes/extraccion/extractor-enlaces.js',
+        'extractor-contenido.js'
+      ]
     });
     return await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
   }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_nombreExtension__",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "__MSG_descripcionExtension__",
   "default_locale": "es",
   "permissions": [
@@ -48,7 +48,18 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["extractor-contenido.js"]
+      "js": [
+        "componentes/extraccion/nucleo-extraccion.js",
+        "componentes/extraccion/extractor-texto.js",
+        "componentes/extraccion/extractor-listas.js",
+        "componentes/extraccion/extractor-codigo.js",
+        "componentes/extraccion/extractor-tablas.js",
+        "componentes/extraccion/extractor-citas.js",
+        "componentes/extraccion/extractor-multimedia.js",
+        "componentes/extraccion/extractor-iframes.js",
+        "componentes/extraccion/extractor-enlaces.js",
+        "extractor-contenido.js"
+      ]
     }
   ],
   "icons": {
