@@ -83,6 +83,76 @@ h1 {
   margin: 4px 0 8px 0;
 }
 
+#zonaNotas {
+  margin-top: 12px;
+}
+
+#zonaNotas label {
+  display: block;
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin-bottom: 4px;
+}
+
+#notasRapidas {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--fondo-editor);
+  color: var(--texto-primario);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+#notasRapidas:focus {
+  outline: none;
+  border-color: var(--color-acento);
+}
+
+#accionesNotas {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#accionesNotas button {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--borde-interfaz);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.boton-primario {
+  background: var(--estado-exito);
+  color: var(--fondo-principal);
+  border-color: var(--estado-exito);
+}
+
+.boton-primario:hover {
+  filter: brightness(0.9);
+}
+
+.boton-primario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.boton-secundario {
+  background: var(--fondo-activo);
+  color: var(--texto-primario);
+}
+
+.boton-secundario:hover {
+  background: var(--fondo-hover);
+}
+
 #zonaToast {
   position: fixed;
   bottom: 16px;

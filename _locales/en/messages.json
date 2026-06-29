@@ -267,5 +267,32 @@
   },
   "idiomaEn": {
     "message": "English"
+  },
+  "metaDetalles": {
+    "message": "More info"
+  },
+  "metaTiempoLecturaValor": {
+    "message": "$minutos$ min",
+    "placeholders": {
+      "minutos": { "content": "$1", "example": "15" }
+    }
+  },
+  "etiquetaNotasPersonales": {
+    "message": "Personal notes"
+  },
+  "placeholderNotasPersonales": {
+    "message": "Why are you saving this?"
+  },
+  "etiquetaIdioma": {
+    "message": "Language:"
+  },
+  "etiquetaTipoContenido": {
+    "message": "Type:"
+  },
+  "etiquetaTiempoLectura": {
+    "message": "Reading:"
+  },
+  "botonCancelar": {
+    "message": "Cancel"
   }
 }

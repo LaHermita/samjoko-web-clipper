@@ -6,6 +6,10 @@ const botonCapturaRapida = document.getElementById('botonCapturaRapida');
 const botonEditorBloques = document.getElementById('botonEditorBloques');
 const botonConfiguracion = document.getElementById('botonConfiguracion');
 
+const zonaNotas = document.getElementById('zonaNotas');
+const notasRapidas = document.getElementById('notasRapidas');
+const etiquetaNotasRapidas = document.getElementById('etiquetaNotasRapidas');
+
 async function inicializarI18n() {
   var config = await obtenerConfiguracion();
   document.documentElement.setAttribute('data-theme', config.tema);
@@ -22,6 +26,11 @@ async function inicializarI18n() {
 
   botonConfiguracion.querySelector('.tooltip').textContent = t('botonConfiguracionTitulo');
   botonConfiguracion.setAttribute('aria-label', t('botonConfiguracionTitulo'));
+
+  etiquetaNotasRapidas.textContent = t('etiquetaNotasPersonales');
+  notasRapidas.placeholder = t('placeholderNotasPersonales');
+  document.getElementById('botonGuardarNotas').textContent = t('botonGuardar');
+  document.getElementById('botonCancelarNotas').textContent = t('botonCancelar');
 }
 
 inicializarI18n();
@@ -82,38 +91,20 @@ async function capturaRapida() {
       return;
     }
 
-    var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
-
-    if (!verificacion.tieneCarpeta) {
-      barra.ocultar();
-      mostrarToast(t('errorSinCarpeta'), 'error');
-      return;
-    }
-
     var tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
-    var nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
 
-    var configPop = await obtenerConfiguracion();
-    var frontmatter = generarFrontmatter(extraido.metadata, configPop.usarFrontmatter);
-    var contenidoFinal = frontmatter + extraido.markdown;
+    zonaNotas.classList.remove('oculto');
+    document.getElementById('accionesNotas').classList.remove('oculto');
+    botonCapturaRapida.disabled = true;
 
-    barra.establecerTexto(t('barraProgresoGuardando'));
-    var resultado = await chrome.runtime.sendMessage({
-      accion: 'guardarArchivo',
-      contenido: contenidoFinal,
-      nombreArchivo: nombreBase
-    });
+    var datosPendientes = {
+      metadata: extraido.metadata,
+      markdown: extraido.markdown,
+      tituloPagina: tituloPagina
+    };
+    zonaNotas._datosPendientes = datosPendientes;
 
     barra.ocultar();
-
-    if (resultado.error) {
-      mostrarToast(resultado.mensaje || t('errorGuardado', ''), 'error');
-    } else {
-      mostrarToast(t('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
-      setTimeout(function () {
-        window.close();
-      }, 1200);
-    }
   } catch (error) {
     barra.ocultar();
     mostrarToast(t('errorGenerico', error.message), 'error');
@@ -134,6 +125,64 @@ async function abrirEditorBloques() {
   }
 }
 
+async function guardarConNotas() {
+  var datos = zonaNotas._datosPendientes;
+  if (!datos) return;
+
+  var botonGuardar = document.getElementById('botonGuardarNotas');
+  botonGuardar.disabled = true;
+
+  try {
+    var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
+
+    if (!verificacion.tieneCarpeta) {
+      mostrarToast(t('errorSinCarpeta'), 'error');
+      botonGuardar.disabled = false;
+      return;
+    }
+
+    var nombreBase = obtenerNombreDesdeTitulo(datos.tituloPagina) + '.md';
+    var notas = notasRapidas.value.trim();
+
+    var configPop = await obtenerConfiguracion();
+    var frontmatter = generarFrontmatter(datos.metadata, configPop.usarFrontmatter, notas);
+    var contenidoFinal = frontmatter + datos.markdown;
+
+    barra.establecerTexto(t('barraProgresoGuardando'));
+    barra.mostrar('indeterminado', t('barraProgresoGuardando'));
+
+    var resultado = await chrome.runtime.sendMessage({
+      accion: 'guardarArchivo',
+      contenido: contenidoFinal,
+      nombreArchivo: nombreBase
+    });
+
+    barra.ocultar();
+
+    if (resultado.error) {
+      mostrarToast(resultado.mensaje || t('errorGuardado', ''), 'error');
+      botonGuardar.disabled = false;
+    } else {
+      mostrarToast(t('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
+      setTimeout(function () {
+        window.close();
+      }, 1200);
+    }
+  } catch (error) {
+    barra.ocultar();
+    mostrarToast(t('errorGenerico', error.message), 'error');
+    botonGuardar.disabled = false;
+  }
+}
+
+function cancelarNotas() {
+  zonaNotas.classList.add('oculto');
+  document.getElementById('accionesNotas').classList.add('oculto');
+  botonCapturaRapida.disabled = false;
+  notasRapidas.value = '';
+  delete zonaNotas._datosPendientes;
+}
+
 botonCapturaRapida.addEventListener('click', capturaRapida);
 
 botonEditorBloques.addEventListener('click', abrirEditorBloques);
@@ -141,3 +190,6 @@ botonEditorBloques.addEventListener('click', abrirEditorBloques);
 botonConfiguracion.addEventListener('click', function () {
   chrome.runtime.openOptionsPage();
 });
+
+document.getElementById('botonGuardarNotas').addEventListener('click', guardarConNotas);
+document.getElementById('botonCancelarNotas').addEventListener('click', cancelarNotas);

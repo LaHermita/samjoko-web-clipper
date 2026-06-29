@@ -56,16 +56,70 @@ function obtenerNombreDesdeTitulo(titulo) {
   return `SAM - ${nombreLimpio}`;
 }
 
-function generarFrontmatter(metadata, usarFrontmatter) {
+function escaparValorYaml(valor) {
+  if (typeof valor === 'string') {
+    return '"' + valor.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+  }
+  return String(valor);
+}
+
+function generarFrontmatter(metadata, usarFrontmatter, notasPersonales) {
   if (!usarFrontmatter) return '';
 
-  var fecha = new Date().toISOString().split('T')[0];
+  var fechaCaptura = new Date().toISOString().split('T')[0];
   var lineas = ['---'];
-  lineas.push('fecha: ' + fecha);
-  lineas.push('fuente: ' + (metadata.url || ''));
-  lineas.push('titulo: "' + (metadata.titulo || '').replace(/"/g, '\\"') + '"');
-  if (metadata.autor) lineas.push('autor: "' + metadata.autor.replace(/"/g, '\\"') + '"');
-  if (metadata.fecha) lineas.push('fecha_publicacion: ' + metadata.fecha);
+
+  lineas.push('url_origen: ' + (metadata.url_origen || metadata.url || ''));
+  lineas.push('fecha_captura: ' + fechaCaptura);
+
+  var titulo = (metadata.titulo || '').replace(/"/g, '\\"');
+  lineas.push('titulo: "' + titulo + '"');
+
+  lineas.push('tipo: fuente');
+
+  if (metadata.autor) {
+    lineas.push('autor: ' + escaparValorYaml(metadata.autor));
+  }
+
+  if (metadata.fecha_publicacion || metadata.fecha) {
+    lineas.push('fecha_publicacion: ' + (metadata.fecha_publicacion || metadata.fecha));
+  }
+
+  var tags = metadata.tags || metadata.etiquetas;
+  if (tags && tags.length > 0) {
+    var tagsStr = tags.map(function (t) { return escaparValorYaml(t); }).join(', ');
+    lineas.push('tags: [' + tagsStr + ']');
+  }
+
+  if (metadata.descripcion) {
+    lineas.push('descripcion: ' + escaparValorYaml(metadata.descripcion));
+  }
+
+  if (metadata.idioma) {
+    lineas.push('idioma: ' + metadata.idioma);
+  }
+
+  if (metadata.sitio_nombre) {
+    lineas.push('sitio_nombre: ' + escaparValorYaml(metadata.sitio_nombre));
+  }
+
+  if (metadata.tipo_contenido) {
+    lineas.push('tipo_contenido: ' + metadata.tipo_contenido);
+  }
+
+  if (metadata.imagen_destacada) {
+    lineas.push('imagen_destacada: ' + escaparValorYaml(metadata.imagen_destacada));
+  }
+
+  if (metadata.tiempo_lectura) {
+    lineas.push('tiempo_lectura: ' + metadata.tiempo_lectura);
+  }
+
+  if (notasPersonales) {
+    lineas.push('notas_personales: ' + escaparValorYaml(notasPersonales));
+  }
+
+  lineas.push('estado: ACTIVO');
   lineas.push('---');
   lineas.push('');
   return lineas.join('\n');

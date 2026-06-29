@@ -116,6 +116,42 @@ function obtenerGrupo(etiqueta) {
   return 'other';
 }
 
+function sanitizarTitulo(titulo) {
+  return titulo
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .replace(/\s+/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+}
+
+function extraerBodyText(documento) {
+  var articulo = documento.querySelector('article');
+  var raiz = articulo || documento.body;
+  return raiz ? raiz.textContent : '';
+}
+
+function obtenerTipoContenido(ogType, schemaType) {
+  var tipo = (ogType || schemaType || '').toLowerCase();
+  var mapa = {
+    'article': 'articulo',
+    'blogposting': 'articulo',
+    'newsarticle': 'articulo',
+    'tutorial': 'tutorial',
+    'howto': 'tutorial',
+    'documentation': 'documentacion',
+    'techarticle': 'documentacion',
+    'news': 'noticia',
+    'newscollection': 'noticia',
+    'video': 'video',
+    'videoobject': 'video'
+  };
+  return mapa[tipo] || null;
+}
+
 function extraerMetadata(documento) {
   function obtenerMeta(nombres) {
     for (const nombre of nombres) {
@@ -132,18 +168,71 @@ function extraerMetadata(documento) {
       .filter(Boolean);
   }
 
-  const titulo = documento.title
-    ? documento.title.replace(/\s*[-–|]\s*.*$/, '').trim()
-    : chrome.i18n.getMessage('textoSinTitulo');
+  var tituloCrudo = documento.title || chrome.i18n.getMessage('textoSinTitulo');
+  var tituloLimpio = tituloCrudo.replace(/\s*[-–|]\s*.*$/, '').trim();
+  var titulo = sanitizarTitulo(tituloLimpio);
+
+  var ogType = obtenerMeta(['og:type']);
+  var schemaType = null;
+  var jsonLd = documento.querySelector('script[type="application/ld+json"]');
+  if (jsonLd) {
+    try {
+      var datos = JSON.parse(jsonLd.textContent);
+      schemaType = datos['@type'] || null;
+    } catch (e) {}
+  }
+
+  var bodyText = extraerBodyText(documento);
+  var palabras = bodyText.split(/\s+/).filter(Boolean).length;
+
+  var idiomaMeta = (documento.documentElement.getAttribute('lang') || '').toLowerCase();
+  var idioma = idiomaMeta && /^[a-z]{2}(-[a-z]{2})?$/.test(idiomaMeta) ? idiomaMeta.substring(0, 2) : null;
+
+  var urlOrigen = documento.URL || '';
+  var sitioNombre = obtenerMeta(['og:site_name']);
+  if (!sitioNombre && urlOrigen) {
+    try {
+      sitioNombre = new URL(urlOrigen).hostname.replace(/^www\./, '');
+    } catch (e) {}
+  }
+
+  var imagenDestacada = obtenerMeta(['og:image']);
+  if (!imagenDestacada) {
+    var linkImg = documento.querySelector('link[rel="image_src"]');
+    if (linkImg) imagenDestacada = linkImg.getAttribute('href');
+  }
+  if (imagenDestacada && imagenDestacada.startsWith('/') && urlOrigen) {
+    try {
+      var base = new URL(urlOrigen);
+      imagenDestacada = base.origin + imagenDestacada;
+    } catch (e) {}
+  }
 
   return {
     titulo: titulo,
-    url: documento.URL,
+    url: urlOrigen,
+    url_origen: urlOrigen,
     autor: obtenerMeta(['autor', 'article:author', 'twitter:creator']),
     fecha: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
+    fecha_publicacion: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
     etiquetas: obtenerMetaMultiple('keywords').flatMap(k =>
       k.split(',').map(t => t.trim()).filter(Boolean)
-    )
+    ),
+    descripcion: function() {
+      var desc = obtenerMeta(['description', 'og:description']);
+      if (desc) return desc.length > 200 ? desc.substring(0, 197) + '...' : desc;
+      var primerParrafo = documento.querySelector('p');
+      if (primerParrafo) {
+        var texto = primerParrafo.textContent.trim();
+        return texto.length > 200 ? texto.substring(0, 197) + '...' : texto;
+      }
+      return null;
+    }(),
+    idioma: idioma,
+    sitio_nombre: sitioNombre,
+    tipo_contenido: obtenerTipoContenido(ogType, schemaType),
+    imagen_destacada: imagenDestacada,
+    tiempo_lectura: palabras > 0 ? Math.ceil(palabras / 238) : null
   };
 }
 

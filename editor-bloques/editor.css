@@ -105,6 +105,81 @@ body {
   text-decoration: underline;
 }
 
+.meta-sep {
+  color: var(--borde-interfaz);
+}
+
+.meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--color-acento);
+}
+
+#metaDetalles {
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+#metaDetallesResumen {
+  color: var(--texto-inactivo);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+#metaDetallesResumen:hover {
+  color: var(--color-acento);
+}
+
+#metaDetallesContenido {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-detalle-fila {
+  display: flex;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.meta-detalle-etiqueta {
+  color: var(--texto-inactivo);
+  min-width: 80px;
+}
+
+#zonaNotasPersonales {
+  margin-top: 8px;
+}
+
+#etiquetaNotas {
+  display: block;
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin-bottom: 4px;
+}
+
+#notasPersonalesInput {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--fondo-editor);
+  color: var(--texto-primario);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+#notasPersonalesInput:focus {
+  outline: none;
+  border-color: var(--color-acento);
+}
+
 #cabeceraBloques {
   display: flex;
   align-items: baseline;

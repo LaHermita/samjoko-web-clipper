@@ -5,8 +5,22 @@ var zonaToast = document.getElementById('zonaToast');
 var panelMetadata = document.getElementById('panelMetadata');
 var metaAutor = document.getElementById('metaAutor');
 var metaSeparador = document.getElementById('metaSeparador');
+var metaSeparador2 = document.getElementById('metaSeparador2');
 var metaFecha = document.getElementById('metaFecha');
+var metaFuente = document.getElementById('metaFuente');
 var metaUrl = document.getElementById('metaUrl');
+var metaTags = document.getElementById('metaTags');
+var metaDetalles = document.getElementById('metaDetalles');
+var metaDetallesResumen = document.getElementById('metaDetallesResumen');
+var metaIdioma = document.getElementById('metaIdioma');
+var metaTipoContenido = document.getElementById('metaTipoContenido');
+var metaTiempoLectura = document.getElementById('metaTiempoLectura');
+var etiquetaIdioma = document.getElementById('etiquetaIdioma');
+var etiquetaTipoContenido = document.getElementById('etiquetaTipoContenido');
+var etiquetaTiempoLectura = document.getElementById('etiquetaTiempoLectura');
+var zonaNotasPersonales = document.getElementById('zonaNotasPersonales');
+var notasPersonalesInput = document.getElementById('notasPersonalesInput');
+var etiquetaNotas = document.getElementById('etiquetaNotas');
 
 var zonaBloques = document.getElementById('zonaBloques');
 var contadorBloques = document.getElementById('contadorBloques');
@@ -40,6 +54,11 @@ async function inicializarI18n() {
   botonDescargar.textContent = t('botonDescargar');
   botonCopiar.textContent = t('botonCopiar');
   metaSeparador.textContent = '·';
+
+  etiquetaIdioma.textContent = t('etiquetaIdioma');
+  etiquetaTipoContenido.textContent = t('etiquetaTipoContenido');
+  etiquetaTiempoLectura.textContent = t('etiquetaTiempoLectura');
+
   botonReescanear.querySelector('.tooltip-editor').textContent = t('botonReescanearTitulo');
   botonReescanear.setAttribute('aria-label', t('botonReescanearTitulo'));
 }
@@ -96,8 +115,9 @@ function actualizarContador() {
 function regenerarMarkdown() {
   var partes = [];
   var usarFrontmatter = configEditor ? configEditor.usarFrontmatter : false;
+  var notas = notasPersonalesInput ? notasPersonalesInput.value.trim() : '';
 
-  var fm = generarFrontmatter(metadataPagina, usarFrontmatter);
+  var fm = generarFrontmatter(metadataPagina, usarFrontmatter, notas);
   if (fm) partes.push(fm);
 
   if (metadataPagina && metadataPagina.titulo) {
@@ -187,31 +207,51 @@ function renderizarBloques() {
 function mostrarMetadata() {
   if (!metadataPagina) return;
 
-  var partes = [];
+  var tieneAutor = !!metadataPagina.autor;
+  var tieneFecha = !!(metadataPagina.fecha || metadataPagina.fecha_publicacion);
+  var tieneFuente = !!(metadataPagina.sitio_nombre);
+  var separadoresVisibles = 0;
 
-  if (metadataPagina.autor) {
-    metaAutor.textContent = metadataPagina.autor;
-  } else {
-    metaAutor.textContent = t('textoSinMetadato');
-  }
+  metaAutor.textContent = tieneAutor ? metadataPagina.autor : '';
+  if (tieneAutor) separadoresVisibles++;
 
-  if (metadataPagina.fecha) {
-    metaFecha.textContent = metadataPagina.fecha;
-  } else {
-    metaFecha.textContent = '';
-    metaSeparador.textContent = '';
-  }
+  metaFecha.textContent = tieneFecha ? (metadataPagina.fecha_publicacion || metadataPagina.fecha) : '';
+  if (tieneFecha) separadoresVisibles++;
 
-  if (metadataPagina.fecha) {
-    metaSeparador.textContent = '·';
-  } else {
-    metaSeparador.textContent = '';
-  }
+  metaFuente.textContent = tieneFuente ? metadataPagina.sitio_nombre : '';
+  if (tieneFuente) separadoresVisibles++;
+
+  metaSeparador.textContent = separadoresVisibles >= 2 ? '·' : '';
+  metaSeparador2.textContent = separadoresVisibles >= 3 ? '·' : '';
 
   if (metadataPagina.url) {
     metaUrl.href = metadataPagina.url;
     metaUrl.textContent = metadataPagina.url;
   }
+
+  var tags = metadataPagina.tags || metadataPagina.etiquetas;
+  if (tags && tags.length > 0) {
+    metaTags.textContent = tags.map(function (t) { return '#' + t; }).join(' ');
+  } else {
+    metaTags.textContent = '';
+  }
+
+  metaDetallesResumen.textContent = t('metaDetalles');
+
+  metaIdioma.textContent = metadataPagina.idioma || t('textoSinMetadato');
+  metaTipoContenido.textContent = metadataPagina.tipo_contenido || t('textoSinMetadato');
+  metaTiempoLectura.textContent = metadataPagina.tiempo_lectura
+    ? t('metaTiempoLecturaValor', [String(metadataPagina.tiempo_lectura)])
+    : t('textoSinMetadato');
+
+  if (tieneAutor || tieneFecha || metadataPagina.url) {
+    metaDetalles.classList.remove('oculto');
+  } else {
+    metaDetalles.classList.add('oculto');
+  }
+
+  etiquetaNotas.textContent = t('etiquetaNotasPersonales');
+  zonaNotasPersonales.classList.remove('oculto');
 
   panelMetadata.classList.remove('oculto');
 }
