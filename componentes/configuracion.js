@@ -2,7 +2,7 @@ const CONFIG_PREDETERMINADA = Object.freeze({
   idioma: 'es',
   tema: 'samjoko',
   subcarpeta: '',
-  usarFrontmatter: true,
+  usarMetadatosFrontales: true,
   elementosExcluir: [],
   elementosIncluir: []
 });

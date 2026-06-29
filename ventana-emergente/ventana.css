@@ -14,69 +14,86 @@ h1 {
 #barraAcciones {
   display: flex;
   justify-content: center;
-  gap: 28px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
-.boton-icono {
-  position: relative;
-  background: none;
-  border: none;
-  padding: 8px;
+.boton-accion {
+  background: var(--fondo-activo);
+  border: 1px solid var(--borde-suave);
   border-radius: 10px;
+  padding: 10px 8px 8px;
   cursor: pointer;
   color: var(--color-icono);
-  transition: background 0.2s, color 0.2s, transform 0.15s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-width: 88px;
+  flex: 1;
 }
 
-.boton-icono:hover {
+.boton-accion:hover {
   background: var(--fondo-hover);
   color: var(--color-acento);
+  border-color: var(--color-acento);
 }
 
-.boton-icono:active {
-  transform: scale(0.94);
+.boton-accion:active {
+  transform: scale(0.96);
 }
 
-.boton-icono:disabled {
+.boton-accion:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
+  border-color: var(--borde-suave);
 }
 
-.boton-icono.accion-primaria {
+.boton-accion:disabled:hover {
+  background: var(--fondo-activo);
+  color: var(--color-icono);
+  border-color: var(--borde-suave);
+}
+
+.etiqueta-boton {
+  font-size: 10px;
+  color: var(--texto-secundario);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.boton-accion:hover .etiqueta-boton {
   color: var(--color-acento);
 }
 
-.boton-icono.accion-primaria:hover {
-  color: var(--texto-primario);
-  background: var(--color-acento);
+.boton-accion:disabled .etiqueta-boton {
+  color: var(--texto-inactivo);
 }
 
-.boton-icono .tooltip {
-  position: absolute;
-  bottom: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--fondo-panel);
-  color: var(--texto-secundario);
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 4px;
+#infoCarpeta {
+  text-align: center;
+  font-size: 10px;
+  color: var(--texto-inactivo);
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  background: var(--fondo-editor);
+  border: 1px solid var(--borde-suave);
+  border-radius: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
-  border: 1px solid var(--borde-interfaz);
-  z-index: 10;
 }
 
-.boton-icono:hover .tooltip {
-  opacity: 1;
+#infoCarpeta.ok {
+  color: var(--estado-exito);
+  border-color: var(--estado-exito);
+}
+
+#infoCarpeta.error {
+  color: var(--estado-error);
+  border-color: var(--estado-error);
 }
 
 #zonaProgreso {
@@ -116,6 +133,10 @@ h1 {
   display: flex;
   gap: 8px;
   margin-top: 10px;
+}
+
+#accionesNotas.oculto {
+  display: none;
 }
 
 #accionesNotas button {

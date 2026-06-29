@@ -7,9 +7,9 @@ var zonaToast = document.getElementById('zonaToast');
 var selectorIdioma = document.getElementById('selectorIdioma');
 var selectorTema = document.getElementById('selectorTema');
 var entradaSubcarpeta = document.getElementById('entradaSubcarpeta');
-var interruptorFrontmatter = document.getElementById('interruptorFrontmatter');
+var interruptorMetadatosFrontales = document.getElementById('interruptorMetadatosFrontales');
 
-var configActual = null;
+var configuracionActual = null;
 
 function mostrarToast(texto, tipo) {
   tipo = tipo || 'exito';
@@ -38,79 +38,89 @@ function aplicarTema(tema) {
 
 function llenarSelectores() {
   var opcionesIdioma = selectorIdioma.options;
-  opcionesIdioma[0].textContent = t('idiomaEs');
-  opcionesIdioma[1].textContent = t('idiomaEn');
+  opcionesIdioma[0].textContent = traducir('idiomaEs');
+  opcionesIdioma[1].textContent = traducir('idiomaEn');
 
   var opcionesTema = selectorTema.options;
-  opcionesTema[0].textContent = t('temaSamjoko');
-  opcionesTema[1].textContent = t('temaVivero');
-  opcionesTema[2].textContent = t('temaNautilus');
-  opcionesTema[3].textContent = t('temaAkkoro');
+  opcionesTema[0].textContent = traducir('temaSamjoko');
+  opcionesTema[1].textContent = traducir('temaVivero');
+  opcionesTema[2].textContent = traducir('temaNautilus');
+  opcionesTema[3].textContent = traducir('temaAkkoro');
 }
 
-function inicializarI18nConConfig(config) {
-  document.title = t('tituloOpciones');
-  document.querySelector('#infoMarca h1').textContent = t('nombreExtension');
-  document.getElementById('subtituloPagina').textContent = t('subtituloOpciones');
+function inicializarInternacionalizacionConConfiguracion(config) {
+  document.title = traducir('tituloOpciones');
+  document.querySelector('#infoMarca h1').textContent = traducir('nombreExtension');
+  document.getElementById('subtituloPagina').textContent = traducir('subtituloOpciones');
 
-  document.querySelector('#cabeceraGeneral h3').textContent = t('seccionGeneral');
-  document.querySelector('#cabeceraSeccion h3').textContent = t('seccionCarpeta');
-  document.querySelector('#cabeceraFormato h3').textContent = t('seccionFormato');
+  document.querySelector('#cabeceraGeneral h3').textContent = traducir('seccionGeneral');
+  document.querySelector('#cabeceraSeccion h3').textContent = traducir('seccionCarpeta');
+  document.querySelector('#cabeceraFormato h3').textContent = traducir('seccionFormato');
 
-  document.getElementById('etiquetaIdioma').textContent = t('etiquetaIdioma');
-  document.getElementById('etiquetaTema').textContent = t('etiquetaTema');
+  document.getElementById('etiquetaIdioma').textContent = traducir('etiquetaIdioma');
+  document.getElementById('etiquetaTema').textContent = traducir('etiquetaTema');
 
-  document.getElementById('descripcionCarpeta').textContent = t('descripcionCarpeta');
-  document.querySelector('#botonSeleccionar span').textContent = t('botonSeleccionar');
-  document.getElementById('etiquetaCarpeta').textContent = t('etiquetaCarpetaActual');
-  botonLimpiar.setAttribute('aria-label', t('botonQuitarCarpeta'));
+  document.getElementById('descripcionCarpeta').textContent = traducir('descripcionCarpeta');
+  document.querySelector('#botonSeleccionar span').textContent = traducir('botonSeleccionar');
+  document.getElementById('etiquetaCarpeta').textContent = traducir('etiquetaCarpetaActual');
+  botonLimpiar.setAttribute('aria-label', traducir('botonQuitarCarpeta'));
 
-  document.getElementById('etiquetaSubcarpeta').textContent = t('etiquetaSubcarpeta');
-  entradaSubcarpeta.placeholder = t('etiquetaSubcarpeta');
+  document.getElementById('etiquetaSubcarpeta').textContent = traducir('etiquetaSubcarpeta');
+  entradaSubcarpeta.placeholder = traducir('etiquetaSubcarpeta');
 
-  document.querySelector('#seccionFormato .campoEtiqueta').textContent = t('etiquetaFrontmatter');
-  document.querySelector('#seccionFormato .campoDescripcion').textContent = t('descripcionFrontmatter');
+  document.querySelector('#seccionFormato .campoEtiqueta').textContent = traducir('etiquetaFrontmatter');
+  document.querySelector('#seccionFormato .campoDescripcion').textContent = traducir('descripcionFrontmatter');
 
-  document.getElementById('textoCopyright').textContent = t('pieCopyright');
-  document.querySelector('#textoApoyo span').textContent = t('pieTextoApoyo');
+  document.getElementById('textoCopyright').textContent = traducir('pieCopyright');
+  document.querySelector('#textoApoyo span').textContent = traducir('pieTextoApoyo');
 
   llenarSelectores();
 }
 
-function sincronizarUI(config) {
+function sincronizarInterfaz(config) {
   selectorIdioma.value = config.idioma || 'es';
   selectorTema.value = config.tema || 'samjoko';
   entradaSubcarpeta.value = config.subcarpeta || '';
-  interruptorFrontmatter.checked = config.usarFrontmatter !== false;
+  interruptorMetadatosFrontales.checked = config.usarMetadatosFrontales !== false;
 }
 
 async function guardarCampo(clave, valor) {
-  var antes = configActual.idioma;
-  configActual = await guardarConfiguracion({ [clave]: valor });
+  var antes = configuracionActual.idioma;
+  configuracionActual = await guardarConfiguracion({ [clave]: valor });
 
   if (clave === 'tema') {
     aplicarTema(valor);
   }
 
   if (clave === 'idioma' && valor !== antes) {
-    mostrarToast(t('mensajeConfigGuardada'), 'exito');
+    mostrarToast(traducir('mensajeConfigGuardada'), 'exito');
     setTimeout(function () {
       location.reload();
     }, 800);
     return;
   }
 
-  mostrarToast(t('mensajeConfigGuardada'), 'exito');
+  var elemento = document.querySelector('[name="' + clave + '"]') || document.getElementById(clave);
+  if (elemento) {
+    elemento.classList.remove('feedback-guardado');
+    void elemento.offsetWidth;
+    elemento.classList.add('feedback-guardado');
+    setTimeout(function () {
+      elemento.classList.remove('feedback-guardado');
+    }, 1000);
+  }
+
+  mostrarToast(traducir('mensajeConfigGuardada'), 'exito');
 }
 
 async function inicializar() {
-  configActual = await obtenerConfiguracion();
+  configuracionActual = await obtenerConfiguracion();
 
-  aplicarTema(configActual.tema);
+  aplicarTema(configuracionActual.tema);
 
-  await cargarIdioma(configActual.idioma);
-  inicializarI18nConConfig(configActual);
-  sincronizarUI(configActual);
+  await cargarIdioma(configuracionActual.idioma);
+  inicializarInternacionalizacionConConfiguracion(configuracionActual);
+  sincronizarInterfaz(configuracionActual);
 
   selectorIdioma.addEventListener('change', function () {
     guardarCampo('idioma', selectorIdioma.value);
@@ -124,8 +134,8 @@ async function inicializar() {
     guardarCampo('subcarpeta', entradaSubcarpeta.value.trim());
   });
 
-  interruptorFrontmatter.addEventListener('change', function () {
-    guardarCampo('usarFrontmatter', interruptorFrontmatter.checked);
+  interruptorMetadatosFrontales.addEventListener('change', function () {
+    guardarCampo('usarMetadatosFrontales', interruptorMetadatosFrontales.checked);
   });
 
   botonSeleccionar.addEventListener('click', async function () {
@@ -134,10 +144,10 @@ async function inicializar() {
       await guardarDirectorio(manejador);
       await chrome.runtime.sendMessage({ accion: 'establecerDirectorio' });
       await actualizarInfoCarpeta();
-      mostrarToast(t('mensajeCarpetaSeleccionada', manejador.name), 'exito');
+      mostrarToast(traducir('mensajeCarpetaSeleccionada', manejador.name), 'exito');
     } catch (error) {
       if (error.name !== 'AbortError' && error.name !== 'SecurityError') {
-        mostrarToast(t('errorSeleccionCarpeta', error.message), 'error');
+        mostrarToast(traducir('errorSeleccionCarpeta', error.message), 'error');
       }
     }
   });
@@ -145,7 +155,7 @@ async function inicializar() {
   botonLimpiar.addEventListener('click', async function () {
     await chrome.runtime.sendMessage({ accion: 'limpiarDirectorio' });
     await actualizarInfoCarpeta();
-    mostrarToast(t('mensajeCarpetaEliminada'), 'info');
+    mostrarToast(traducir('mensajeCarpetaEliminada'), 'info');
   });
 
   actualizarInfoCarpeta();

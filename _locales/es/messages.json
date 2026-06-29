@@ -297,5 +297,67 @@
   },
   "botonCancelar": {
     "message": "Cancelar"
+  },
+  "botonSeleccionarTodos": {
+    "message": "Seleccionar todos"
+  },
+  "botonDeseleccionarTodos": {
+    "message": "Deseleccionar todos"
+  },
+  "mensajeSinCarpeta": {
+    "message": "Sin carpeta configurada"
+  },
+  "textoVacio": {
+    "message": "No se ha encontrado contenido en esta página. Prueba a recargar o navega a otra página."
+  },
+  "filtroTodos": {
+    "message": "Todos"
+  },
+  "infoEstadisticas": {
+    "message": "$bloques$ bloques · $palabras$ palabras · $parrafos$ párrafos · $caracteres$ caracteres",
+    "placeholders": {
+      "bloques": { "content": "$1", "example": "12" },
+      "palabras": { "content": "$2", "example": "450" },
+      "parrafos": { "content": "$3", "example": "8" },
+      "caracteres": { "content": "$4", "example": "2800" }
+    }
+  },
+
+  "onboardingTitulo": {
+    "message": "Bienvenido a Samjoko Web Clipper"
+  },
+  "onboardingPaso1Titulo": {
+    "message": "1. Configura la carpeta de destino"
+  },
+  "onboardingPaso1Texto": {
+    "message": "Elige una carpeta en tu ordenador donde se guardarán todas tus capturas en Markdown."
+  },
+  "onboardingPaso2Titulo": {
+    "message": "2. Captura contenido"
+  },
+  "onboardingPaso2Texto": {
+    "message": "Haz clic en «Captura rápida» para extraer el contenido de la página actual."
+  },
+  "onboardingPaso3Titulo": {
+    "message": "3. Edita y guarda"
+  },
+  "onboardingPaso3Texto": {
+    "message": "Revisa y edita los bloques extraídos en el Editor de bloques, luego guarda tu captura."
+  },
+  "onboardingBotonEmpezar": {
+    "message": "¡Empezar!"
+  },
+  "onboardingBotonSiguiente": {
+    "message": "Siguiente"
+  },
+  "onboardingBotonAnterior": {
+    "message": "Anterior"
+  },
+  "onboardingPasoActual": {
+    "message": "Paso $actual$ de $total$",
+    "placeholders": {
+      "actual": { "content": "$1", "example": "1" },
+      "total": { "content": "$2", "example": "3" }
+    }
   }
 }

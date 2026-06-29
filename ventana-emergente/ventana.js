@@ -1,3 +1,6 @@
+if (typeof window.traducir !== 'function') { window.traducir = function (c) { return c; }; }
+var t = window.traducir;
+
 const zonaProgreso = document.getElementById('zonaProgreso');
 const barra = new BarraProgreso(zonaProgreso);
 const zonaToast = document.getElementById('zonaToast');
@@ -10,30 +13,57 @@ const zonaNotas = document.getElementById('zonaNotas');
 const notasRapidas = document.getElementById('notasRapidas');
 const etiquetaNotasRapidas = document.getElementById('etiquetaNotasRapidas');
 
-async function inicializarI18n() {
-  var config = await obtenerConfiguracion();
-  document.documentElement.setAttribute('data-theme', config.tema);
-  await cargarIdioma(config.idioma);
+const infoCarpeta = document.getElementById('infoCarpeta');
 
-  document.title = t('tituloPopup');
-  document.querySelector('h1').textContent = t('tituloPopup');
+async function inicializarInternacionalizacion() {
+  var configuracion = await obtenerConfiguracion();
+  document.documentElement.setAttribute('data-theme', configuracion.tema);
+  await cargarIdioma(configuracion.idioma);
 
-  botonCapturaRapida.querySelector('.tooltip').textContent = t('botonCapturaRapidaTitulo');
-  botonCapturaRapida.setAttribute('aria-label', t('botonCapturaRapidaTitulo'));
+  document.title = traducir('tituloPopup');
+  document.querySelector('h1').textContent = traducir('tituloPopup');
 
-  botonEditorBloques.querySelector('.tooltip').textContent = t('botonEditorBloquesTitulo');
-  botonEditorBloques.setAttribute('aria-label', t('botonEditorBloquesTitulo'));
+  document.getElementById('etiquetaCapturaRapida').textContent = traducir('botonCapturaRapidaTitulo');
+  botonCapturaRapida.setAttribute('aria-label', traducir('botonCapturaRapidaTitulo'));
 
-  botonConfiguracion.querySelector('.tooltip').textContent = t('botonConfiguracionTitulo');
-  botonConfiguracion.setAttribute('aria-label', t('botonConfiguracionTitulo'));
+  document.getElementById('etiquetaEditorBloques').textContent = traducir('botonEditorBloquesTitulo');
+  botonEditorBloques.setAttribute('aria-label', traducir('botonEditorBloquesTitulo'));
 
-  etiquetaNotasRapidas.textContent = t('etiquetaNotasPersonales');
-  notasRapidas.placeholder = t('placeholderNotasPersonales');
-  document.getElementById('botonGuardarNotas').textContent = t('botonGuardar');
-  document.getElementById('botonCancelarNotas').textContent = t('botonCancelar');
+  document.getElementById('etiquetaConfiguracion').textContent = traducir('botonConfiguracionTitulo');
+  botonConfiguracion.setAttribute('aria-label', traducir('botonConfiguracionTitulo'));
+
+  etiquetaNotasRapidas.textContent = traducir('etiquetaNotasPersonales');
+  notasRapidas.placeholder = traducir('placeholderNotasPersonales');
+  document.getElementById('botonGuardarNotas').textContent = traducir('botonGuardar');
+  document.getElementById('botonCancelarNotas').textContent = traducir('botonCancelar');
+
+  actualizarInfoCarpeta();
 }
 
-inicializarI18n();
+async function actualizarInfoCarpeta() {
+  try {
+    var respuesta = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
+    if (respuesta.tieneCarpeta) {
+      infoCarpeta.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="vertical-align:middle;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>' + respuesta.nombre;
+      infoCarpeta.className = 'ok';
+    } else {
+      infoCarpeta.textContent = traducir('mensajeSinCarpeta');
+      infoCarpeta.className = 'error';
+    }
+  } catch {
+    infoCarpeta.textContent = traducir('mensajeSinCarpeta');
+    infoCarpeta.className = 'error';
+  }
+  infoCarpeta.classList.remove('oculto');
+}
+
+inicializarInternacionalizacion().then(function () {
+  return necesitaOnboarding();
+}).then(function (mostrar) {
+  if (mostrar) {
+    crearOnboarding();
+  }
+});
 
 function mostrarToast(texto, tipo) {
   tipo = tipo || 'exito';
@@ -60,7 +90,7 @@ async function extraerContenido(pestania) {
   try {
     return await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
   } catch (errorIgnorado) {
-    barra.establecerTexto(t('barraProgresoConectando'));
+    barra.establecerTexto(traducir('barraProgresoConectando'));
     await chrome.scripting.executeScript({
       target: { tabId: pestania.id },
       files: ['extractor-contenido.js']
@@ -71,15 +101,15 @@ async function extraerContenido(pestania) {
 
 async function capturaRapida() {
   botonCapturaRapida.disabled = true;
-  barra.mostrar('indeterminado', t('barraProgresoExtrayendo'));
+  barra.mostrar('indeterminado', traducir('barraProgresoExtrayendo'));
 
   try {
-    var resultadoQuery = await chrome.tabs.query({ active: true, currentWindow: true });
-    var pestania = resultadoQuery[0];
+    var resultadoConsulta = await chrome.tabs.query({ active: true, currentWindow: true });
+    var pestania = resultadoConsulta[0];
 
     if (!pestania || !pestania.id) {
       barra.ocultar();
-      mostrarToast(t('errorPestaniaActiva'), 'error');
+      mostrarToast(traducir('errorPestaniaActiva'), 'error');
       return;
     }
 
@@ -87,7 +117,7 @@ async function capturaRapida() {
 
     if (!extraido || !extraido.markdown) {
       barra.ocultar();
-      mostrarToast(t('errorSinContenido'), 'error');
+      mostrarToast(traducir('errorSinContenido'), 'error');
       return;
     }
 
@@ -107,7 +137,7 @@ async function capturaRapida() {
     barra.ocultar();
   } catch (error) {
     barra.ocultar();
-    mostrarToast(t('errorGenerico', error.message), 'error');
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
   } finally {
     botonCapturaRapida.disabled = false;
   }
@@ -121,7 +151,7 @@ async function abrirEditorBloques() {
       window.close();
     }, 200);
   } catch (error) {
-    mostrarToast(t('errorGenerico', error.message), 'error');
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
   }
 }
 
@@ -136,7 +166,7 @@ async function guardarConNotas() {
     var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
 
     if (!verificacion.tieneCarpeta) {
-      mostrarToast(t('errorSinCarpeta'), 'error');
+      mostrarToast(traducir('errorSinCarpeta'), 'error');
       botonGuardar.disabled = false;
       return;
     }
@@ -144,12 +174,12 @@ async function guardarConNotas() {
     var nombreBase = obtenerNombreDesdeTitulo(datos.tituloPagina) + '.md';
     var notas = notasRapidas.value.trim();
 
-    var configPop = await obtenerConfiguracion();
-    var frontmatter = generarFrontmatter(datos.metadata, configPop.usarFrontmatter, notas);
-    var contenidoFinal = frontmatter + datos.markdown;
+    var configuracionVentanaEmergente = await obtenerConfiguracion();
+    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas);
+    var contenidoFinal = metadatosFrontales + datos.markdown;
 
-    barra.establecerTexto(t('barraProgresoGuardando'));
-    barra.mostrar('indeterminado', t('barraProgresoGuardando'));
+    barra.establecerTexto(traducir('barraProgresoGuardando'));
+    barra.mostrar('indeterminado', traducir('barraProgresoGuardando'));
 
     var resultado = await chrome.runtime.sendMessage({
       accion: 'guardarArchivo',
@@ -160,17 +190,17 @@ async function guardarConNotas() {
     barra.ocultar();
 
     if (resultado.error) {
-      mostrarToast(resultado.mensaje || t('errorGuardado', ''), 'error');
+      mostrarToast(resultado.mensaje || traducir('errorGuardado', ''), 'error');
       botonGuardar.disabled = false;
     } else {
-      mostrarToast(t('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
+      mostrarToast(traducir('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
       setTimeout(function () {
         window.close();
       }, 1200);
     }
   } catch (error) {
     barra.ocultar();
-    mostrarToast(t('errorGenerico', error.message), 'error');
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
     botonGuardar.disabled = false;
   }
 }

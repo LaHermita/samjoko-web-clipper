@@ -27,9 +27,9 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
   }
 
   let directorioDestino = manejadorDirectorio;
-  const config = await obtenerConfiguracion();
-  if (config.subcarpeta) {
-    const partes = config.subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
+  const configuracion = await obtenerConfiguracion();
+  if (configuracion.subcarpeta) {
+    const partes = configuracion.subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
     for (const parte of partes) {
       directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
     }
@@ -37,9 +37,9 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
 
   const nombreUnico = await obtenerNombreArchivoUnico(directorioDestino, nombreArchivo);
   const archivoHandle = await directorioDestino.getFileHandle(nombreUnico, { create: true });
-  const writable = await archivoHandle.createWritable();
-  await writable.write(contenido);
-  await writable.close();
+  const flujoEscritura = await archivoHandle.createWritable();
+  await flujoEscritura.write(contenido);
+  await flujoEscritura.close();
 
   return nombreUnico;
 }
@@ -103,7 +103,7 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
 
   if (mensaje.accion === 'obtenerConfiguracion') {
     (async () => {
-      const config = await obtenerConfiguracion();
+      const configuracion = await obtenerConfiguracion();
       responder(config);
     })();
     return true;
@@ -119,8 +119,8 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
 
   if (mensaje.accion === 'restablecerConfiguracion') {
     (async () => {
-      const config = await restablecerConfiguracion();
-      responder(config);
+      const configuracion = await restablecerConfiguracion();
+      responder(configuracion);
     })();
     return true;
   }
@@ -177,9 +177,9 @@ chrome.commands.onCommand.addListener(async (comando) => {
     }
 
     const tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
-    const configSW = await obtenerConfiguracion();
-    const frontmatter = generarFrontmatter(extraido.metadata, configSW.usarFrontmatter);
-    const contenidoFinal = frontmatter + extraido.markdown;
+    const configuracionTrabajador = await obtenerConfiguracion();
+    const metadatosFrontales = generarMetadatosFrontales(extraido.metadata, configuracionTrabajador.usarMetadatosFrontales);
+    const contenidoFinal = metadatosFrontales + extraido.markdown;
     const nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
     const nombreGuardado = await guardarArchivoEnCarpeta(contenidoFinal, nombreBase);
 

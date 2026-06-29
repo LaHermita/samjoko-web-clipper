@@ -6,13 +6,13 @@ function colapsarEspacios(texto) {
 // Etapas parametrizables. Añadir nuevas aquí para escalar a niveles 2 y 3.
 
 var CONFIG_EXTRACCION = {
-  activo: true,
-  filtrarBoilerplate: true,
-  patronesBoilerplate: /nav|menu|footer|sidebar|comment|ad-|ads|widget|social|share|breadcrumb|pagination|related|recommended|newsletter|subscribe|cookie|popup|modal|banner|promo|sponsor/i,
-  maxDensidadEnlaces: 0.5,
-  filtrarCalidad: false,
+  esActivo: true,
+  debeFiltrarIrrelevante: true,
+  patronesIrrelevantes: /nav|menu|footer|sidebar|comment|ad-|ads|widget|social|share|breadcrumb|pagination|related|recommended|newsletter|subscribe|cookie|popup|modal|banner|promo|sponsor/i,
+  densidadMaximaEnlaces: 0.5,
+  debeFiltrarCalidad: false,
   longitudMinimaParrafo: 8,
-  detectarHeadingsVisuales: true
+  debeDetectarEncabezadosVisuales: true
 };
 
 function tieneAltaDensidadEnlaces(elemento) {
@@ -24,10 +24,10 @@ function tieneAltaDensidadEnlaces(elemento) {
   for (var i = 0; i < enlaces.length; i++) {
     textoEnlaces += enlaces[i].textContent.trim().length;
   }
-  return (textoEnlaces / textoTotal) > CONFIG_EXTRACCION.maxDensidadEnlaces;
+  return (textoEnlaces / textoTotal) > CONFIG_EXTRACCION.densidadMaximaEnlaces;
 }
 
-function tienePatronBoilerplate(elemento) {
+function tienePatronIrrelevante(elemento) {
   var textoClases = (elemento.className || '') + ' ' + (elemento.id || '');
   var ancestro = elemento.parentElement;
   var profundidad = 0;
@@ -38,7 +38,7 @@ function tienePatronBoilerplate(elemento) {
     ancestro = ancestro.parentElement;
     profundidad++;
   }
-  return CONFIG_EXTRACCION.patronesBoilerplate.test(textoClases.toLowerCase());
+  return CONFIG_EXTRACCION.patronesIrrelevantes.test(textoClases.toLowerCase());
 }
 
 function esParrafoCorto(etiqueta, grupo, textoPlano) {
@@ -47,7 +47,7 @@ function esParrafoCorto(etiqueta, grupo, textoPlano) {
   return normalizado.length < CONFIG_EXTRACCION.longitudMinimaParrafo;
 }
 
-function esHeadingVisual(elemento) {
+function esEncabezadoVisual(elemento) {
   var etiqueta = elemento.tagName;
   if (etiqueta === 'STRONG' || etiqueta === 'B') return true;
   var textoClases = ((elemento.className || '') + ' ' + (elemento.id || '')).toLowerCase();
@@ -55,12 +55,12 @@ function esHeadingVisual(elemento) {
 }
 
 function esBloqueValido(elemento, etiqueta, grupo, textoPlano) {
-  if (!CONFIG_EXTRACCION.activo) return true;
-  if (CONFIG_EXTRACCION.filtrarBoilerplate) {
-    if (tienePatronBoilerplate(elemento)) return false;
+  if (!CONFIG_EXTRACCION.esActivo) return true;
+  if (CONFIG_EXTRACCION.debeFiltrarIrrelevante) {
+    if (tienePatronIrrelevante(elemento)) return false;
     if (tieneAltaDensidadEnlaces(elemento)) return false;
   }
-  if (CONFIG_EXTRACCION.filtrarCalidad) {
+  if (CONFIG_EXTRACCION.debeFiltrarCalidad) {
     if (esParrafoCorto(etiqueta, grupo, textoPlano)) return false;
   }
   return true;
@@ -128,14 +128,14 @@ function sanitizarTitulo(titulo) {
     .trim();
 }
 
-function extraerBodyText(documento) {
+function extraerTextoCuerpo(documento) {
   var articulo = documento.querySelector('article');
   var raiz = articulo || documento.body;
   return raiz ? raiz.textContent : '';
 }
 
-function obtenerTipoContenido(ogType, schemaType) {
-  var tipo = (ogType || schemaType || '').toLowerCase();
+function obtenerTipoContenido(tipoOpenGraph, tipoSchema) {
+  var tipo = (tipoOpenGraph || tipoSchema || '').toLowerCase();
   var mapa = {
     'article': 'articulo',
     'blogposting': 'articulo',
@@ -152,7 +152,7 @@ function obtenerTipoContenido(ogType, schemaType) {
   return mapa[tipo] || null;
 }
 
-function extraerMetadata(documento) {
+function extraerMetadatos(documento) {
   function obtenerMeta(nombres) {
     for (const nombre of nombres) {
       const elemento = documento.querySelector(`meta[name="${nombre}"], meta[property="${nombre}"]`);
@@ -161,7 +161,7 @@ function extraerMetadata(documento) {
     return null;
   }
 
-  function obtenerMetaMultiple(nombre) {
+  function obtenerMetadatosMultiples(nombre) {
     const elementos = documento.querySelectorAll(`meta[name="${nombre}"], meta[property="${nombre}"]`);
     return Array.from(elementos)
       .map(el => el.content?.trim())
@@ -172,18 +172,18 @@ function extraerMetadata(documento) {
   var tituloLimpio = tituloCrudo.replace(/\s*[-–|]\s*.*$/, '').trim();
   var titulo = sanitizarTitulo(tituloLimpio);
 
-  var ogType = obtenerMeta(['og:type']);
-  var schemaType = null;
-  var jsonLd = documento.querySelector('script[type="application/ld+json"]');
-  if (jsonLd) {
+  var tipoOpenGraph = obtenerMeta(['og:type']);
+  var tipoSchema = null;
+  var scriptJsonLd = documento.querySelector('script[type="application/ld+json"]');
+  if (scriptJsonLd) {
     try {
-      var datos = JSON.parse(jsonLd.textContent);
-      schemaType = datos['@type'] || null;
+      var datos = JSON.parse(scriptJsonLd.textContent);
+      tipoSchema = datos['@type'] || null;
     } catch (e) {}
   }
 
-  var bodyText = extraerBodyText(documento);
-  var palabras = bodyText.split(/\s+/).filter(Boolean).length;
+  var textoCuerpo = extraerTextoCuerpo(documento);
+  var palabras = textoCuerpo.split(/\s+/).filter(Boolean).length;
 
   var idiomaMeta = (documento.documentElement.getAttribute('lang') || '').toLowerCase();
   var idioma = idiomaMeta && /^[a-z]{2}(-[a-z]{2})?$/.test(idiomaMeta) ? idiomaMeta.substring(0, 2) : null;
@@ -198,8 +198,8 @@ function extraerMetadata(documento) {
 
   var imagenDestacada = obtenerMeta(['og:image']);
   if (!imagenDestacada) {
-    var linkImg = documento.querySelector('link[rel="image_src"]');
-    if (linkImg) imagenDestacada = linkImg.getAttribute('href');
+    var enlaceImagen = documento.querySelector('link[rel="image_src"]');
+    if (enlaceImagen) imagenDestacada = enlaceImagen.getAttribute('href');
   }
   if (imagenDestacada && imagenDestacada.startsWith('/') && urlOrigen) {
     try {
@@ -211,11 +211,11 @@ function extraerMetadata(documento) {
   return {
     titulo: titulo,
     url: urlOrigen,
-    url_origen: urlOrigen,
+    urlOrigen: urlOrigen,
     autor: obtenerMeta(['autor', 'article:author', 'twitter:creator']),
     fecha: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
-    fecha_publicacion: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
-    etiquetas: obtenerMetaMultiple('keywords').flatMap(k =>
+    fechaPublicacion: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
+    etiquetas: obtenerMetadatosMultiples('keywords').flatMap(k =>
       k.split(',').map(t => t.trim()).filter(Boolean)
     ),
     descripcion: function() {
@@ -229,10 +229,10 @@ function extraerMetadata(documento) {
       return null;
     }(),
     idioma: idioma,
-    sitio_nombre: sitioNombre,
-    tipo_contenido: obtenerTipoContenido(ogType, schemaType),
-    imagen_destacada: imagenDestacada,
-    tiempo_lectura: palabras > 0 ? Math.ceil(palabras / 238) : null
+    sitioNombre: sitioNombre,
+    tipoContenido: obtenerTipoContenido(tipoOpenGraph, tipoSchema),
+    imagenDestacada: imagenDestacada,
+    tiempoLectura: palabras > 0 ? Math.ceil(palabras / 238) : null
   };
 }
 
@@ -248,9 +248,9 @@ function extraerMarkdown(documento) {
     !elemento.closest('script, style, nav, footer, header, aside')
   );
 
-  const metadata = extraerMetadata(documento);
+  const metadata = extraerMetadatos(documento);
   const bloques = [];
-  var linksAcumulados = [];
+  var enlacesAcumulados = [];
   let resultado = '';
 
   for (const elemento of elementosFiltrados) {
@@ -266,17 +266,17 @@ function extraerMarkdown(documento) {
 
     if (!esBloqueValido(elemento, elemento.tagName, grupoActual, textoPlano)) continue;
 
-    var enlacesElemento = elemento.querySelectorAll('a[href]');
-    for (var j = 0; j < enlacesElemento.length; j++) {
-      var a = enlacesElemento[j];
+    var elementosEnlace = elemento.querySelectorAll('a[href]');
+    for (var j = 0; j < elementosEnlace.length; j++) {
+      var a = elementosEnlace[j];
       var href = a.getAttribute('href');
       if (href && href.indexOf('javascript:') !== 0 && href.indexOf('#') !== 0) {
-        linksAcumulados.push({ texto: colapsarEspacios(a.textContent), url: href });
+        enlacesAcumulados.push({ texto: colapsarEspacios(a.textContent), url: href });
       }
     }
 
-    if (CONFIG_EXTRACCION.activo && CONFIG_EXTRACCION.detectarHeadingsVisuales) {
-      if (esHeadingVisual(elemento) && grupoActual === 'text') {
+    if (CONFIG_EXTRACCION.esActivo && CONFIG_EXTRACCION.debeDetectarEncabezadosVisuales) {
+      if (esEncabezadoVisual(elemento) && grupoActual === 'text') {
         md = '## ' + colapsarEspacios(textoPlano);
         grupoActual = 'heading';
       }
@@ -305,11 +305,11 @@ function extraerMarkdown(documento) {
 
   var urlsVistas = {};
   var enlacesFormateados = '';
-  for (var k = 0; k < linksAcumulados.length; k++) {
-    var link = linksAcumulados[k];
-    if (link.texto && link.url && !urlsVistas[link.url]) {
-      urlsVistas[link.url] = true;
-      enlacesFormateados += '- [' + link.texto + '](' + link.url + ')\n';
+  for (var k = 0; k < enlacesAcumulados.length; k++) {
+    var enlace = enlacesAcumulados[k];
+    if (enlace.texto && enlace.url && !urlsVistas[enlace.url]) {
+      urlsVistas[enlace.url] = true;
+      enlacesFormateados += '- [' + enlace.texto + '](' + enlace.url + ')\n';
     }
   }
   enlacesFormateados = enlacesFormateados.trim();

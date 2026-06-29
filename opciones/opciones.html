@@ -32,7 +32,7 @@
 
       <div class="campoConfig">
         <label for="selectorIdioma" id="etiquetaIdioma"></label>
-        <select id="selectorIdioma">
+        <select id="selectorIdioma" name="idioma">
           <option value="es"></option>
           <option value="en"></option>
         </select>
@@ -40,7 +40,7 @@
 
       <div class="campoConfig">
         <label for="selectorTema" id="etiquetaTema"></label>
-        <select id="selectorTema" disabled>
+        <select id="selectorTema" name="tema" disabled>
           <option value="samjoko"></option>
           <option value="vivero"></option>
           <option value="nautilus"></option>
@@ -80,7 +80,7 @@
 
       <div class="campoConfig">
         <label for="entradaSubcarpeta" id="etiquetaSubcarpeta"></label>
-        <input type="text" id="entradaSubcarpeta" placeholder="">
+        <input type="text" id="entradaSubcarpeta" name="subcarpeta" placeholder="">
       </div>
     </section>
 
@@ -98,7 +98,7 @@
           <span class="campoDescripcion"></span>
         </div>
         <label class="interruptor">
-          <input type="checkbox" id="interruptorFrontmatter">
+          <input type="checkbox" id="interruptorFrontmatter" name="usarFrontmatter">
           <span class="interruptor-control"></span>
         </label>
       </div>

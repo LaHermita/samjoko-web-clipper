@@ -294,5 +294,67 @@
   },
   "botonCancelar": {
     "message": "Cancel"
+  },
+  "botonSeleccionarTodos": {
+    "message": "Select all"
+  },
+  "botonDeseleccionarTodos": {
+    "message": "Deselect all"
+  },
+  "mensajeSinCarpeta": {
+    "message": "No folder configured"
+  },
+  "textoVacio": {
+    "message": "No content found on this page. Try reloading or navigate to another page."
+  },
+  "filtroTodos": {
+    "message": "All"
+  },
+  "infoEstadisticas": {
+    "message": "$bloques$ blocks · $palabras$ words · $parrafos$ paragraphs · $caracteres$ chars",
+    "placeholders": {
+      "bloques": { "content": "$1", "example": "12" },
+      "palabras": { "content": "$2", "example": "450" },
+      "parrafos": { "content": "$3", "example": "8" },
+      "caracteres": { "content": "$4", "example": "2800" }
+    }
+  },
+
+  "onboardingTitulo": {
+    "message": "Welcome to Samjoko Web Clipper"
+  },
+  "onboardingPaso1Titulo": {
+    "message": "1. Set your destination folder"
+  },
+  "onboardingPaso1Texto": {
+    "message": "Choose a folder on your computer where all Markdown captures will be saved."
+  },
+  "onboardingPaso2Titulo": {
+    "message": "2. Capture content"
+  },
+  "onboardingPaso2Texto": {
+    "message": "Click «Quick capture» to extract content from the current page."
+  },
+  "onboardingPaso3Titulo": {
+    "message": "3. Edit and save"
+  },
+  "onboardingPaso3Texto": {
+    "message": "Review and edit extracted blocks in the Block editor, then save your capture."
+  },
+  "onboardingBotonEmpezar": {
+    "message": "Let's start!"
+  },
+  "onboardingBotonSiguiente": {
+    "message": "Next"
+  },
+  "onboardingBotonAnterior": {
+    "message": "Back"
+  },
+  "onboardingPasoActual": {
+    "message": "Step $actual$ of $total$",
+    "placeholders": {
+      "actual": { "content": "$1", "example": "1" },
+      "total": { "content": "$2", "example": "3" }
+    }
   }
 }

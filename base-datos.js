@@ -1,10 +1,10 @@
-const NOMBRE_DB = 'samjoko-nav';
-const VERSION_DB = 1;
+const NOMBRE_BASE_DE_DATOS = 'samjoko-nav';
+const VERSION_BASE_DE_DATOS = 1;
 const ALMACEN_DIRECTORIO = 'directorio';
 
 function abrirBase() {
   return new Promise((resolver, rechazar) => {
-    const peticion = indexedDB.open(NOMBRE_DB, VERSION_DB);
+    const peticion = indexedDB.open(NOMBRE_BASE_DE_DATOS, VERSION_BASE_DE_DATOS);
     peticion.onupgradeneeded = (evento) => {
       const db = evento.target.result;
       if (!db.objectStoreNames.contains(ALMACEN_DIRECTORIO)) {
@@ -17,9 +17,9 @@ function abrirBase() {
 }
 
 async function guardarDirectorio(manejador) {
-  const db = await abrirBase();
+  const baseDeDatos = await abrirBase();
   return new Promise((resolver, rechazar) => {
-    const transaccion = db.transaction(ALMACEN_DIRECTORIO, 'readwrite');
+    const transaccion = baseDeDatos.transaction(ALMACEN_DIRECTORIO, 'readwrite');
     const almacen = transaccion.objectStore(ALMACEN_DIRECTORIO);
     almacen.put(manejador, 'carpetaDestino');
     transaccion.oncomplete = () => resolver();
@@ -28,9 +28,9 @@ async function guardarDirectorio(manejador) {
 }
 
 async function obtenerDirectorio() {
-  const db = await abrirBase();
+  const baseDeDatos = await abrirBase();
   return new Promise((resolver, rechazar) => {
-    const transaccion = db.transaction(ALMACEN_DIRECTORIO, 'readonly');
+    const transaccion = baseDeDatos.transaction(ALMACEN_DIRECTORIO, 'readonly');
     const almacen = transaccion.objectStore(ALMACEN_DIRECTORIO);
     const peticion = almacen.get('carpetaDestino');
     peticion.onsuccess = () => resolver(peticion.result);
@@ -63,13 +63,13 @@ function escaparValorYaml(valor) {
   return String(valor);
 }
 
-function generarFrontmatter(metadata, usarFrontmatter, notasPersonales) {
-  if (!usarFrontmatter) return '';
+function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales) {
+  if (!usarMetadatosFrontales) return '';
 
   var fechaCaptura = new Date().toISOString().split('T')[0];
   var lineas = ['---'];
 
-  lineas.push('url_origen: ' + (metadata.url_origen || metadata.url || ''));
+  lineas.push('url_origen: ' + (metadata.urlOrigen || metadata.url || ''));
   lineas.push('fecha_captura: ' + fechaCaptura);
 
   var titulo = (metadata.titulo || '').replace(/"/g, '\\"');
@@ -81,8 +81,8 @@ function generarFrontmatter(metadata, usarFrontmatter, notasPersonales) {
     lineas.push('autor: ' + escaparValorYaml(metadata.autor));
   }
 
-  if (metadata.fecha_publicacion || metadata.fecha) {
-    lineas.push('fecha_publicacion: ' + (metadata.fecha_publicacion || metadata.fecha));
+  if (metadata.fechaPublicacion || metadata.fecha) {
+    lineas.push('fecha_publicacion: ' + (metadata.fechaPublicacion || metadata.fecha));
   }
 
   var tags = metadata.tags || metadata.etiquetas;
@@ -99,20 +99,20 @@ function generarFrontmatter(metadata, usarFrontmatter, notasPersonales) {
     lineas.push('idioma: ' + metadata.idioma);
   }
 
-  if (metadata.sitio_nombre) {
-    lineas.push('sitio_nombre: ' + escaparValorYaml(metadata.sitio_nombre));
+  if (metadata.sitioNombre) {
+    lineas.push('sitio_nombre: ' + escaparValorYaml(metadata.sitioNombre));
   }
 
-  if (metadata.tipo_contenido) {
-    lineas.push('tipo_contenido: ' + metadata.tipo_contenido);
+  if (metadata.tipoContenido) {
+    lineas.push('tipo_contenido: ' + metadata.tipoContenido);
   }
 
-  if (metadata.imagen_destacada) {
-    lineas.push('imagen_destacada: ' + escaparValorYaml(metadata.imagen_destacada));
+  if (metadata.imagenDestacada) {
+    lineas.push('imagen_destacada: ' + escaparValorYaml(metadata.imagenDestacada));
   }
 
-  if (metadata.tiempo_lectura) {
-    lineas.push('tiempo_lectura: ' + metadata.tiempo_lectura);
+  if (metadata.tiempoLectura) {
+    lineas.push('tiempo_lectura: ' + metadata.tiempoLectura);
   }
 
   if (notasPersonales) {
@@ -131,8 +131,8 @@ async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
     const sufijo = contador === 0 ? '' : `-${contador}`;
     const punto = nombreBase.lastIndexOf('.');
     const base = punto !== -1 ? nombreBase.substring(0, punto) : nombreBase;
-    const ext = punto !== -1 ? nombreBase.substring(punto) : '';
-    const nombre = `${base}${sufijo}${ext}`;
+    const extension = punto !== -1 ? nombreBase.substring(punto) : '';
+    const nombre = `${base}${sufijo}${extension}`;
 
     try {
       await manejadorDirectorio.getFileHandle(nombre);

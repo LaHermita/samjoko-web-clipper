@@ -2,7 +2,7 @@ const MENSAJES_CARGADOS = {};
 
 async function cargarIdioma(idioma) {
   try {
-    const respuesta = await fetch(`../_locales/${idioma}/messages.json`);
+    const respuesta = await fetch(chrome.runtime.getURL(`_locales/${idioma}/messages.json`));
     const datos = await respuesta.json();
     Object.keys(MENSAJES_CARGADOS).forEach(k => delete MENSAJES_CARGADOS[k]);
     Object.assign(MENSAJES_CARGADOS, datos);
@@ -12,7 +12,7 @@ async function cargarIdioma(idioma) {
   }
 }
 
-function t(clave, sustituciones) {
+function traducir(clave, sustituciones) {
   const definicion = MENSAJES_CARGADOS[clave];
 
   if (definicion) {
@@ -40,3 +40,5 @@ function t(clave, sustituciones) {
 
   return clave;
 }
+
+var t = traducir;

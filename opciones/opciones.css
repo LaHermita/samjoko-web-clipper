@@ -27,7 +27,7 @@ body {
 #iconoMarca img {
   display: block;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--sombra-caja);
   background: var(--fondo-panel);
 }
 
@@ -98,6 +98,16 @@ section {
 .campoConfig select:focus,
 .campoConfig input[type="text"]:focus {
   border-color: var(--color-acento);
+}
+
+.feedback-guardado {
+  animation: pulso-guardado 0.6s ease;
+}
+
+@keyframes pulso-guardado {
+  0% { box-shadow: 0 0 0 0 rgba(var(--color-acento-rgb), 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(var(--color-acento-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--color-acento-rgb), 0); }
 }
 
 .campoConfig select {
@@ -199,6 +209,10 @@ section {
   border: 1px solid var(--borde-suave);
 }
 
+#infoCarpeta.oculto {
+  display: none;
+}
+
 #infoCarpeta > svg {
   flex-shrink: 0;
   color: var(--estado-exito);
@@ -269,7 +283,7 @@ section {
   opacity: 0;
   transition: transform 0.25s ease, opacity 0.25s ease;
   border: 1px solid transparent;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-caja);
 }
 
 .toast.toast-visible {

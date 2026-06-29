@@ -1,10 +1,10 @@
 /* =========================
-   🎛️ TEMAS - VARIABLES CSS
+   TEMAS - VARIABLES CSS
 ========================= */
 
 :root,
 /* =========================
-   🌿 TEMA VIVERO (natural)
+   TEMA VIVERO (natural)
 ========================= */
 [data-theme="vivero"] {
   /* --- Fondos principales --- */
@@ -26,6 +26,7 @@
   --borde-interfaz: #c7d1c7;         /* borde verde grisáceo */
   --borde-suave: #d8e0d8;            /* borde muy suave */
   --borde-fuerte: #b8c2b8;           /* borde más marcado */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.08);
 
   /* --- Tabs y barra superior --- */
   --tab-activa-fondo: #eef2ec;
@@ -66,7 +67,7 @@
 
 
 /* =========================
-   🐚 TEMA NAUTILUS (claro, sin blancos)
+   TEMA NAUTILUS (claro, sin blancos)
 ========================= */
 [data-theme="nautilus"] {
   /* --- Fondos principales --- */
@@ -88,6 +89,7 @@
   --borde-interfaz: #d6c7c0;         /* borde cálido */
   --borde-suave: #e4d7d1;            /* borde muy suave */
   --borde-fuerte: #cbbab3;           /* borde más marcado */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.15);
 
   /* --- Tabs y barra superior --- */
   --tab-activa-fondo: #f6f1eb;       /* sin blanco */
@@ -127,7 +129,7 @@
 }
 
 /* =========================
-   💜 TEMA AKKORO (cyberpunk)
+   TEMA AKKORO (cyberpunk)
 ========================= */
 [data-theme="akkoro"] {
   /* --- Fondos principales --- */
@@ -149,6 +151,7 @@
   --borde-interfaz: #3a2d4f;         /* borde violeta oscuro */
   --borde-suave: #4a3a63;            /* borde suave */
   --borde-fuerte: #2e2340;           /* borde profundo */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.35);
 
   /* --- Tabs y barra superior --- */
   --tab-activa-fondo: #1f1828;
@@ -188,7 +191,7 @@
 }
 
 /* =========================
-   🦅 TEMA SAMJOKO (oscuro)
+   TEMA SAMJOKO (oscuro)
 ========================= */
 [data-theme="samjoko"] {
   /* --- Fondos principales --- */
@@ -210,6 +213,7 @@
   --borde-interfaz: #2c2c30;         /* borde oscuro */
   --borde-suave: #3a3a3f;            /* borde suave */
   --borde-fuerte: #1f1f23;           /* borde profundo */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.25);
 
   /* --- Tabs y barra superior --- */
   --tab-activa-fondo: #121214;
