@@ -104,7 +104,7 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
   if (mensaje.accion === 'obtenerConfiguracion') {
     (async () => {
       const configuracion = await obtenerConfiguracion();
-      responder(config);
+      responder(configuracion);
     })();
     return true;
   }
