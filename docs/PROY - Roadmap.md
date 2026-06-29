@@ -20,6 +20,7 @@ Fundamentos técnicos antes de seguir construyendo. Sin esto, cada feature nueva
 - [x] **Variable `--texto-boton`** en `themes.css` — los botones usan `color: #fff` hardcodeado
 - [x] **Refactor content script**: `extraerMarkdown()` devuelve `{bloques, metadata}` en vez de string plano
 - [x] **`BarraProgreso` portable**: su CSS se mueve a `componentes/barra-progreso.css`
+- [ ] **Eliminación de código legacy**: auditoría completa de todo el proyecto para detectar variables, funciones, parámetros, bloques condicionales y alias de compatibilidad que hayan quedado huérfanos tras los refactors. Eliminarlos cuando sea seguro. Incluye: alias `t` → `traducir` si ya ningún código usa `t`, funciones sin llamar, parámetros sin uso, compatibilidad hacia atrás ya innecesaria.
 
 ---
 
@@ -120,6 +121,7 @@ Mejora del pipeline de extracción y generación de notas pensando en una bóved
   - `extractor-citas.js` — `<blockquote>`, `<q>` (nuevo)
   - `extractor-multimedia.js` — `<figure>`, `<img>`, `<video>` (nuevo)
   - `extractor-enlaces.js` — enlaces del contenido válido (ya funciona)
+  - `extractor-iframes.js` — captura de contenido dentro de `<iframe>` same-origin (recursivo, fusiona bloques y metadatos) ([#iframe-mejora])
 - [ ] **Registro de extractores**: que cada extractor se auto-registre en el núcleo, de forma que añadir uno nuevo solo sea crear el archivo y registrar su tipo
 
 ### 5.2 — Pipeline de extracción (niveles 2 y 3)
@@ -130,7 +132,9 @@ Mejora del pipeline de extracción y generación de notas pensando en una bóved
   - Definiciones `<dl>` → listas de definición Markdown o formato `término: descripción`
   - Figuras `<figure>` + `<figcaption>` → imagen con pie de foto
   - Fragmentos de código con `data-language` o clase → bloques de código con lenguaje
+- [ ] **Soporte de iframes same-origin**: recorrer `document.querySelectorAll('iframe')`, acceder a `contentDocument`, y extraer bloques + metadatos de cada uno. Fusionar resultados. Los iframes cross-domain (YouTube, Twitter) quedan fuera por seguridad del navegador
 - [ ] **Nivel 3 — Inteligencia contextual**:
+
   - Detectar y excluir zonas de ruido (comentarios, relacionados, sidebar) incluso sin marcado semántico, por análisis de densidad de enlaces y posición en el layout
   - Normalización jerárquica de headings: si aparece un H3 sin H2 predecesor, subirlo a H2
   - Detectar "leer más" / "seguir leyendo" y cortar el contenido en ese punto
