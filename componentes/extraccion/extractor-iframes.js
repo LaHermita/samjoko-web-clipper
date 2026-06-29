@@ -15,8 +15,46 @@
     if (!documento || !documento.body) return false;
     var texto = documento.body.textContent.trim();
     if (!texto) return false;
-    var elementos = documento.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol, pre, code, blockquote, table, img');
-    return elementos.length > 0;
+    var hijos = documento.body.children;
+    return hijos.length > 0;
+  }
+
+  function extraerTextoPlano(documento) {
+    var cuerpo = documento.body;
+    if (!cuerpo) return '';
+    var parrafos = [];
+    var elementos = cuerpo.querySelectorAll('h1, h2, h3, h4, h5, h6, p, div, li, td, th, blockquote, pre, figcaption, dt, dd');
+    for (var i = 0; i < elementos.length; i++) {
+      var texto = ns.colapsarEspacios(elementos[i].textContent);
+      if (texto && !/^[.,;:!¡¿?()\[\]{}'"«»\-–—·•…\s]+$/.test(texto)) {
+        parrafos.push(texto);
+      }
+    }
+    return parrafos.join('\n\n');
+  }
+
+  function extraerContenidoDocumento(doc, urlOrigen) {
+    var extraido = ns.extraer(doc, { urlOrigen: urlOrigen || (doc.URL || '') });
+    if (extraido && extraido.bloques && extraido.bloques.length > 0) {
+      var tieneContenidoReal = false;
+      for (var b = 0; b < extraido.bloques.length; b++) {
+        if (extraido.bloques[b].tipo !== 'links') {
+          tieneContenidoReal = true;
+          break;
+        }
+      }
+      if (tieneContenidoReal) return extraido;
+    }
+    var textoPlano = extraerTextoPlano(doc);
+    if (textoPlano.trim()) {
+      var bloques = [{
+        tipo: 'text',
+        texto: textoPlano,
+        contenido: textoPlano
+      }];
+      return ns.ensamblarMarkdown(bloques, ns.extraerMetadatos(doc, urlOrigen), []);
+    }
+    return null;
   }
 
   function extraerIframesRecursivo(documento, urlOrigen, profundidad, maxProfundidad, visitados) {
@@ -41,21 +79,10 @@
       if (!tieneContenidoUtil(docIframe)) continue;
 
       try {
-        var extraido = ns.extraer(docIframe, {
-          urlOrigen: urlOrigen || (documento.URL || '')
-        });
+        var extraido = extraerContenidoDocumento(docIframe, urlOrigen);
 
-        if (extraido && extraido.bloques && extraido.bloques.length > 0) {
-          var tieneContenidoReal = false;
-          for (var b = 0; b < extraido.bloques.length; b++) {
-            if (extraido.bloques[b].tipo !== 'links') {
-              tieneContenidoReal = true;
-              break;
-            }
-          }
-          if (tieneContenidoReal) {
-            resultados.push(extraido);
-          }
+        if (extraido) {
+          resultados.push(extraido);
         }
 
         var subResultados = extraerIframesRecursivo(
@@ -85,11 +112,9 @@
       visitados[idIframe] = true;
 
       try {
-        var extraido = ns.extraer(docIframe, {
-          urlOrigen: document.URL || ''
-        });
+        var extraido = extraerContenidoDocumento(docIframe, document.URL || '');
 
-        if (!extraido || !extraido.bloques || extraido.bloques.length === 0) return null;
+        if (!extraido) return null;
 
         var bloquesIframe = [];
         var textoIframe = '';
