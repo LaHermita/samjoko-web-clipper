@@ -221,5 +221,51 @@
 
   "botonReescanearTitulo": {
     "message": "Re-scan page"
+  },
+
+  "seccionGeneral": {
+    "message": "General"
+  },
+  "seccionFormato": {
+    "message": "Note format"
+  },
+  "etiquetaIdioma": {
+    "message": "Language"
+  },
+  "etiquetaTema": {
+    "message": "Theme"
+  },
+  "temaSamjoko": {
+    "message": "Samjoko (dark)"
+  },
+  "temaVivero": {
+    "message": "Vivero (light)"
+  },
+  "temaNautilus": {
+    "message": "Nautilus (warm)"
+  },
+  "temaAkkoro": {
+    "message": "Akkoro (cyberpunk)"
+  },
+  "etiquetaSubcarpeta": {
+    "message": "Subfolder (optional)"
+  },
+  "descripcionSubcarpeta": {
+    "message": "Subfolder name inside the vault where captures will be saved. Leave empty to use the root."
+  },
+  "etiquetaFrontmatter": {
+    "message": "Include YAML frontmatter"
+  },
+  "descripcionFrontmatter": {
+    "message": "Adds metadata (date, source, title) at the beginning of each capture in YAML format."
+  },
+  "mensajeConfigGuardada": {
+    "message": "Settings saved"
+  },
+  "idiomaEs": {
+    "message": "Spanish"
+  },
+  "idiomaEn": {
+    "message": "English"
   }
 }

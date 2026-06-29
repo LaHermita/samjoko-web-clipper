@@ -48,15 +48,15 @@ section {
   margin-bottom: 16px;
 }
 
-#cabeceraSeccion {
+.cabeceraSeccion {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   color: var(--color-acento);
 }
 
-#cabeceraSeccion h3 {
+.cabeceraSeccion h3 {
   font-size: 18px;
   font-weight: 600;
   color: var(--texto-primario);
@@ -68,6 +68,112 @@ section {
   color: var(--texto-inactivo);
   margin: 0 0 18px 0;
   line-height: 1.5;
+}
+
+.campoConfig {
+  margin-top: 14px;
+}
+
+.campoConfig label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  margin-bottom: 6px;
+}
+
+.campoConfig select,
+.campoConfig input[type="text"] {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: var(--texto-primario);
+  background: var(--fondo-principal);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campoConfig select:focus,
+.campoConfig input[type="text"]:focus {
+  border-color: var(--color-acento);
+}
+
+.campoConfig select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.campoConfig-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.campoInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.campoEtiqueta {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-primario);
+  margin-bottom: 4px;
+}
+
+.campoDescripcion {
+  display: block;
+  font-size: 12px;
+  color: var(--texto-inactivo);
+  line-height: 1.4;
+}
+
+.interruptor {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.interruptor input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.interruptor-control {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--borde-interfaz);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.interruptor-control::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--texto-boton);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.interruptor input:checked + .interruptor-control {
+  background: var(--color-acento);
+}
+
+.interruptor input:checked + .interruptor-control::before {
+  transform: translateX(20px);
 }
 
 #botonSeleccionar {

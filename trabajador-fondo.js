@@ -1,4 +1,4 @@
-importScripts('base-datos.js');
+importScripts('base-datos.js', 'componentes/configuracion.js');
 
 let manejadorDirectorio = null;
 let promesaInicializacion;
@@ -26,8 +26,17 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
     throw new Error(chrome.i18n.getMessage('errorSWPermisoDenegado'));
   }
 
-  const nombreUnico = await obtenerNombreArchivoUnico(manejadorDirectorio, nombreArchivo);
-  const archivoHandle = await manejadorDirectorio.getFileHandle(nombreUnico, { create: true });
+  let directorioDestino = manejadorDirectorio;
+  const config = await obtenerConfiguracion();
+  if (config.subcarpeta) {
+    const partes = config.subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
+    for (const parte of partes) {
+      directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
+    }
+  }
+
+  const nombreUnico = await obtenerNombreArchivoUnico(directorioDestino, nombreArchivo);
+  const archivoHandle = await directorioDestino.getFileHandle(nombreUnico, { create: true });
   const writable = await archivoHandle.createWritable();
   await writable.write(contenido);
   await writable.close();
@@ -91,6 +100,30 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
     })();
     return true;
   }
+
+  if (mensaje.accion === 'obtenerConfiguracion') {
+    (async () => {
+      const config = await obtenerConfiguracion();
+      responder(config);
+    })();
+    return true;
+  }
+
+  if (mensaje.accion === 'guardarConfiguracion') {
+    (async () => {
+      const nuevaConfig = await guardarConfiguracion(mensaje.datos);
+      responder(nuevaConfig);
+    })();
+    return true;
+  }
+
+  if (mensaje.accion === 'restablecerConfiguracion') {
+    (async () => {
+      const config = await restablecerConfiguracion();
+      responder(config);
+    })();
+    return true;
+  }
 });
 
 chrome.commands.onCommand.addListener(async (comando) => {
@@ -144,8 +177,11 @@ chrome.commands.onCommand.addListener(async (comando) => {
     }
 
     const tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
+    const configSW = await obtenerConfiguracion();
+    const frontmatter = generarFrontmatter(extraido.metadata, configSW.usarFrontmatter);
+    const contenidoFinal = frontmatter + extraido.markdown;
     const nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
-    const nombreGuardado = await guardarArchivoEnCarpeta(extraido.markdown, nombreBase);
+    const nombreGuardado = await guardarArchivoEnCarpeta(contenidoFinal, nombreBase);
 
     chrome.notifications.create('captura-rapida-exito', {
       type: 'basic',

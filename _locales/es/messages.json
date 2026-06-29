@@ -224,5 +224,51 @@
 
   "botonReescanearTitulo": {
     "message": "Re-escanear página"
+  },
+
+  "seccionGeneral": {
+    "message": "General"
+  },
+  "seccionFormato": {
+    "message": "Formato de nota"
+  },
+  "etiquetaIdioma": {
+    "message": "Idioma"
+  },
+  "etiquetaTema": {
+    "message": "Tema visual"
+  },
+  "temaSamjoko": {
+    "message": "Samjoko (oscuro)"
+  },
+  "temaVivero": {
+    "message": "Vivero (claro)"
+  },
+  "temaNautilus": {
+    "message": "Nautilus (cálido)"
+  },
+  "temaAkkoro": {
+    "message": "Akkoro (cyberpunk)"
+  },
+  "etiquetaSubcarpeta": {
+    "message": "Subcarpeta (opcional)"
+  },
+  "descripcionSubcarpeta": {
+    "message": "Nombre de la subcarpeta dentro de la bóveda donde se guardarán las capturas. Déjalo vacío para usar la raíz."
+  },
+  "etiquetaFrontmatter": {
+    "message": "Incluir frontmatter YAML"
+  },
+  "descripcionFrontmatter": {
+    "message": "Añade metadatos (fecha, fuente, título) al inicio de cada captura en formato YAML."
+  },
+  "mensajeConfigGuardada": {
+    "message": "Configuración guardada"
+  },
+  "idiomaEs": {
+    "message": "Español"
+  },
+  "idiomaEn": {
+    "message": "Inglés"
   }
 }

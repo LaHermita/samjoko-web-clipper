@@ -25,19 +25,26 @@ var bloquesExtraidos = [];
 var metadataPagina = null;
 var enlacesPagina = '';
 var tituloPagina = '';
+var configEditor = null;
 
-(function inicializarI18n() {
-  document.title = chrome.i18n.getMessage('tituloEditorBloques');
-  document.querySelector('#encabezadoEditor h1').textContent = chrome.i18n.getMessage('tituloEditorBloques');
-  document.querySelector('#cabeceraBloques h2').textContent = chrome.i18n.getMessage('etiquetaBloques');
-  document.querySelector('#zonaPrevia h2').textContent = chrome.i18n.getMessage('previaMarkdown');
-  botonGuardar.textContent = chrome.i18n.getMessage('botonGuardar');
-  botonDescargar.textContent = chrome.i18n.getMessage('botonDescargar');
-  botonCopiar.textContent = chrome.i18n.getMessage('botonCopiar');
+async function inicializarI18n() {
+  configEditor = await obtenerConfiguracion();
+  document.documentElement.setAttribute('data-theme', configEditor.tema);
+  await cargarIdioma(configEditor.idioma);
+
+  document.title = t('tituloEditorBloques');
+  document.querySelector('#encabezadoEditor h1').textContent = t('tituloEditorBloques');
+  document.querySelector('#cabeceraBloques h2').textContent = t('etiquetaBloques');
+  document.querySelector('#zonaPrevia h2').textContent = t('previaMarkdown');
+  botonGuardar.textContent = t('botonGuardar');
+  botonDescargar.textContent = t('botonDescargar');
+  botonCopiar.textContent = t('botonCopiar');
   metaSeparador.textContent = '·';
-  botonReescanear.querySelector('.tooltip-editor').textContent = chrome.i18n.getMessage('botonReescanearTitulo');
-  botonReescanear.setAttribute('aria-label', chrome.i18n.getMessage('botonReescanearTitulo'));
-})();
+  botonReescanear.querySelector('.tooltip-editor').textContent = t('botonReescanearTitulo');
+  botonReescanear.setAttribute('aria-label', t('botonReescanearTitulo'));
+}
+
+inicializarI18n();
 
 function mostrarToast(texto, tipo) {
   tipo = tipo || 'exito';
@@ -83,11 +90,15 @@ function actualizarContador() {
     }
   }
 
-  contadorBloques.textContent = chrome.i18n.getMessage('infoSeleccionados', [String(seleccionados), String(total)]);
+  contadorBloques.textContent = t('infoSeleccionados', [String(seleccionados), String(total)]);
 }
 
 function regenerarMarkdown() {
   var partes = [];
+  var usarFrontmatter = configEditor ? configEditor.usarFrontmatter : false;
+
+  var fm = generarFrontmatter(metadataPagina, usarFrontmatter);
+  if (fm) partes.push(fm);
 
   if (metadataPagina && metadataPagina.titulo) {
     partes.push('# ' + metadataPagina.titulo);
@@ -103,7 +114,7 @@ function regenerarMarkdown() {
   if (metadataPagina && metadataPagina.url) {
     partes.push('');
     partes.push('---');
-    partes.push('*' + chrome.i18n.getMessage('seccionFuente') + ': ' + metadataPagina.url + '*');
+    partes.push('*' + t('seccionFuente') + ': ' + metadataPagina.url + '*');
   }
 
   return partes.join('\n');
@@ -181,7 +192,7 @@ function mostrarMetadata() {
   if (metadataPagina.autor) {
     metaAutor.textContent = metadataPagina.autor;
   } else {
-    metaAutor.textContent = chrome.i18n.getMessage('textoSinMetadato');
+    metaAutor.textContent = t('textoSinMetadato');
   }
 
   if (metadataPagina.fecha) {
@@ -220,7 +231,7 @@ function reiniciarUI() {
 
 async function cargarContenido() {
   botonReescanear.disabled = true;
-  barra.mostrar('indeterminado', chrome.i18n.getMessage('barraProgresoExtrayendo'));
+  barra.mostrar('indeterminado', t('barraProgresoExtrayendo'));
 
   reiniciarUI();
 
@@ -231,7 +242,7 @@ async function cargarContenido() {
     if (!pestania || !pestania.id) {
       barra.ocultar();
       botonReescanear.disabled = false;
-      mostrarToast(chrome.i18n.getMessage('errorPestaniaActiva'), 'error');
+      mostrarToast(t('errorPestaniaActiva'), 'error');
       return;
     }
 
@@ -239,7 +250,7 @@ async function cargarContenido() {
     try {
       extraido = await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
     } catch (errorIgnorado) {
-      barra.establecerTexto(chrome.i18n.getMessage('barraProgresoConectando'));
+      barra.establecerTexto(t('barraProgresoConectando'));
       await chrome.scripting.executeScript({
         target: { tabId: pestania.id },
         files: ['extractor-contenido.js']
@@ -251,7 +262,7 @@ async function cargarContenido() {
 
     if (!extraido || !extraido.bloques || extraido.bloques.length === 0) {
       botonReescanear.disabled = false;
-      mostrarToast(chrome.i18n.getMessage('errorSinContenido'), 'error');
+      mostrarToast(t('errorSinContenido'), 'error');
       return;
     }
 
@@ -279,7 +290,7 @@ async function cargarContenido() {
   } catch (error) {
     barra.ocultar();
     botonReescanear.disabled = false;
-    mostrarToast(chrome.i18n.getMessage('errorGenerico', error.message), 'error');
+    mostrarToast(t('errorGenerico', error.message), 'error');
   }
 }
 
@@ -287,18 +298,18 @@ async function guardarEnCarpeta() {
   var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
 
   if (!verificacion.tieneCarpeta) {
-    mostrarToast(chrome.i18n.getMessage('errorSinCarpeta'), 'error');
+    mostrarToast(t('errorSinCarpeta'), 'error');
     return;
   }
 
-  barra.mostrar('indeterminado', chrome.i18n.getMessage('barraProgresoPreparando'));
+  barra.mostrar('indeterminado', t('barraProgresoPreparando'));
   botonGuardar.disabled = true;
 
   try {
     var nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
     var markdownFinal = regenerarMarkdown();
 
-    barra.establecerTexto(chrome.i18n.getMessage('barraProgresoGuardando'));
+    barra.establecerTexto(t('barraProgresoGuardando'));
     var resultado = await chrome.runtime.sendMessage({
       accion: 'guardarArchivo',
       contenido: markdownFinal,
@@ -308,13 +319,13 @@ async function guardarEnCarpeta() {
     barra.ocultar();
 
     if (resultado.error) {
-      mostrarToast(resultado.mensaje || chrome.i18n.getMessage('errorGuardado', ''), 'error');
+      mostrarToast(resultado.mensaje || t('errorGuardado', ''), 'error');
     } else {
-      mostrarToast(chrome.i18n.getMessage('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
+      mostrarToast(t('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
     }
   } catch (error) {
     barra.ocultar();
-    mostrarToast(chrome.i18n.getMessage('errorGuardado', error.message), 'error');
+    mostrarToast(t('errorGuardado', error.message), 'error');
   } finally {
     botonGuardar.disabled = false;
   }
@@ -325,9 +336,9 @@ botonGuardar.addEventListener('click', guardarEnCarpeta);
 botonCopiar.addEventListener('click', async function () {
   try {
     await navigator.clipboard.writeText(regenerarMarkdown());
-    mostrarToast(chrome.i18n.getMessage('mensajeCopiado'), 'exito');
+    mostrarToast(t('mensajeCopiado'), 'exito');
   } catch (errorIgnorado) {
-    mostrarToast(chrome.i18n.getMessage('errorCopiado'), 'error');
+    mostrarToast(t('errorCopiado'), 'error');
   }
 });
 
@@ -341,9 +352,12 @@ botonDescargar.addEventListener('click', function () {
   enlace.download = nombreArchivoFinal;
   enlace.click();
   URL.revokeObjectURL(url);
-  mostrarToast(chrome.i18n.getMessage('mensajeDescargadoComo', nombreArchivoFinal), 'exito');
+  mostrarToast(t('mensajeDescargadoComo', nombreArchivoFinal), 'exito');
 });
 
 botonReescanear.addEventListener('click', cargarContenido);
 
-cargarContenido();
+(async function iniciar() {
+  await inicializarI18n();
+  cargarContenido();
+})();

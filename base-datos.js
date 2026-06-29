@@ -49,10 +49,26 @@ async function verificarPermiso(manejador) {
 function obtenerNombreDesdeTitulo(titulo) {
   const nombreLimpio = titulo
     .toLowerCase()
-    .replace(/[^a-z0-9áéíóúñü\s-]/g, '')
-    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9áéíóúñü\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
     .substring(0, 60) || chrome.i18n.getMessage('fallbackTituloArchivo');
   return `SAM - ${nombreLimpio}`;
+}
+
+function generarFrontmatter(metadata, usarFrontmatter) {
+  if (!usarFrontmatter) return '';
+
+  var fecha = new Date().toISOString().split('T')[0];
+  var lineas = ['---'];
+  lineas.push('fecha: ' + fecha);
+  lineas.push('fuente: ' + (metadata.url || ''));
+  lineas.push('titulo: "' + (metadata.titulo || '').replace(/"/g, '\\"') + '"');
+  if (metadata.autor) lineas.push('autor: "' + metadata.autor.replace(/"/g, '\\"') + '"');
+  if (metadata.fecha) lineas.push('fecha_publicacion: ' + metadata.fecha);
+  lineas.push('---');
+  lineas.push('');
+  return lineas.join('\n');
 }
 
 async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
