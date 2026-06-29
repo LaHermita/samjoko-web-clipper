@@ -1,5 +1,5 @@
 ---
-version: 0.7
+version: 0.8
 estado: en-progreso
 fase: 3-completada
 ---
@@ -146,43 +146,82 @@ Mejora del pipeline de extracción y generación de notas pensando en una bóved
   - Tablas sin `thead` (solo filas de datos) → inferir que la primera fila es cabecera si todas son `<th>`
 - [ ] **Vista previa en editor**: mostrar la tabla formateada correctamente en el bloque de vista previa
 
-### 5.4 — Frontmatter YAML completo y configurable
+### 5.4 — Frontmatter YAML completo (Schema REF-Vivero)
 
-- [ ] **Propiedades estándar** (siempre presentes):
-  ```yaml
-  ---
-  tipo: articulo             # detectado automáticamente
-  fuente: "Nombre del sitio"
-  url: https://...
-  fecha_captura: 2026-06-29
-  fecha_publicacion: 2026-06-28  # de meta tags
-  autor: "Nombre"               # de meta tags / microdata
-  tags: [web, tutorial]         # generados + manuales
-  resumen: "Primera línea..."   # opcional, vía NLP o primera frase
-  estado: pendiente             # pendiente | procesado | archivado
-  ---
-  ```
-- [ ] **Detección automática del tipo de documento** por dominio/patrón URL:
-  - `blog.*` / `*/blog/*` → `articulo`
-  - `docs.*` / `*/docs/*` → `documentacion`
-  - `github.com` → `codigo` / `repositorio`
-  - `news.*` → `noticia`
-  - `*.wikipedia.org` → `referencia`
-  - `learn.*` / `tutorial.*` → `tutorial`
-  - `api.*` / `*/api/*` → `referencia-api`
-- [ ] **Selector de tipo en opciones**: si la detección falla, permitir elegir/corregir el tipo antes de guardar
-- [ ] **Plantilla de frontmatter configurable**: usuario puede definir qué campos incluir y sus valores por defecto
+Implementar el schema completo definido en `docs/REF - WEB-CLIPPER.md`. La extensión genera estos campos al capturar; Vivero añade los suyos propios (NLP) sin pisarlos.
+
+**Campos obligatorios de la extensión:**
+- [ ] **`url_origen`**: `document.URL` o `location.href` — URL canónica de la página
+- [ ] **`fecha_captura`**: `new Date().toISOString().split('T')[0]` — fecha del clip
+- [ ] **`titulo`**: `document.title` sanitizado (quitar emojis, saltos de línea, HTML entities)
+- [ ] **`tipo: fuente`**: valor fijo para todo web clipping (no se detecta por dominio)
+
+**Campos opcionales de la extensión:**
+- [ ] **`autor`**: extraer de `<meta name="author">` o `<meta property="article:author">` (omitir si no existe)
+- [ ] **`fecha_publicacion`**: extraer de `<meta property="article:published_time">`, `<meta name="date">`, elementos `<time>`, o schema.org JSON-LD (omitir si no se encuentra)
+- [ ] **`descripcion`**: `<meta name="description">` o primer párrafo relevante, truncado a ~200 caracteres (omitir si no hay)
+- [ ] **`tags`**: input del usuario al clipear; omitir campo entero si no añade ninguno
+- [ ] **`idioma`**: `<html lang="...">` → código ISO 639-1 minúscula (`es`, `en`, `pt`). Fallback: detección por contenido futura (CompromiseJS). Omitir si no se detecta
+- [ ] **`sitio_nombre`**: `<meta property="og:site_name">` → nombre del sitio. Fallback: dominio de `url_origen` sin `www.` ni path (ej: `calnewport.com`). Omitir si no se puede determinar
+- [ ] **`tipo_contenido`**: mapear de `<meta property="og:type">` o schema.org `@type`:
+  - `article`/`blogposting`/`newsarticle` → `articulo`
+  - `tutorial`/`howto` → `tutorial`
+  - `documentation`/`techarticle` → `documentacion`
+  - `news`/`newscollection` → `noticia`
+  - `video`/`videoobject` → `video`
+  - cualquier otro → `otro`. Omitir si no se detecta
+- [ ] **`imagen_destacada`**: `<meta property="og:image">` o `<link rel="image_src">`. Validar que es URL absoluta (relativizar contra `url_origen` si es relativa). Omitir si no existe
+- [ ] **`tiempo_lectura`**: cálculo `Math.ceil(bodyText.split(/\s+/).length / 238)` (238 wpm). Omitir si no se puede calcular
+- [ ] **`notas_personales`**: textarea en popup de captura. Omitir campo entero si el usuario no escribe nada
+- [ ] **`estado: ACTIVO`**: valor por defecto (opcional)
+
+**Reglas de formato y compatibilidad:**
+- [ ] **Formato fecha estricto `YYYY-MM-DD`**: si solo se dispone de datetime completo, truncar a fecha
+- [ ] **Compatibilidad hacia atrás (parser K1)**: debe aceptar documentos legacy sin frontmatter o con solo `fecha:`. La extensión **no debe** generar ese formato legacy
+- [ ] **Sanitización de `titulo`**: convertir a texto plano (quitar emojis, saltos de línea, HTML entities)
+- [ ] **Escape de caracteres especiales Markdown** en títulos y metadatos (barras, pipes, corchetes)
+
+**Schema completo de ejemplo (lo que genera la extensión):**
+```yaml
+---
+url_origen: <string>           # obligatorio
+fecha_captura: <YYYY-MM-DD>    # obligatorio
+fecha_publicacion: <YYYY-MM-DD> # si disponible
+autor: <string>                 # si disponible
+titulo: <string>                # obligatorio
+tipo: fuente                    # fijo
+tags: [<string>, ...]           # manuales del usuario
+descripcion: <string>           # opcional
+idioma: <string>                # opcional, ISO 639-1
+sitio_nombre: <string>          # opcional
+tipo_contenido: <string>        # opcional (articulo/tutorial/documentacion/noticia/video/otro)
+imagen_destacada: <string>      # opcional, URL
+tiempo_lectura: <integer>       # opcional, minutos
+notas_personales: <string>      # opcional
+estado: ACTIVO                  # opcional
+---
+```
+
+- [ ] **Plantilla de frontmatter configurable**: usuario puede definir qué campos opcionales incluir y sus valores por defecto
+
+**Merge rule (tags manuales vs NLP):** cuando el pipeline NLP procese el documento, los campos generados por la extensión **no se sobrescriben**:
+  - `tags` (manual del usuario) y `tags_auto` (NLP) coexisten; en UI se fusionan, pero cada grupo persiste en su campo
+  - `tipo: fuente` nunca se sobrescribe (el usuario puede cambiarlo manualmente después a `síntesis`/`entidad`/`concepto`/`moc`)
+  - El resto de campos de origen (`url_origen`, `autor`, `idioma`, `sitio_nombre`, `tipo_contenido`, `imagen_destacada`, `tiempo_lectura`, `notas_personales`) son inmutables por el NLP
 
 ### 5.5 — Enriquecimiento semántico (NLP ligero)
 
-- [ ] **Extracción de entidades** por heurísticas (sin librería externa en primera iteración):
-  - Nombres propios: palabras con primera letra mayúscula que no sean inicio de frase
-  - Tecnologías: términos conocidos (JavaScript, Python, React, Docker…) mediante un diccionario interno
-  - Hashtags: palabras clave que aparecen con alta frecuencia en el contenido
+Campos que genera el pipeline NLP (Vivero, no la extensión). Ref: `docs/REF - WEB-CLIPPER.md §2`.
+
+- [ ] **`tags_auto`**: keywords extraídas del contenido mediante heurísticas (iteración 1) o CompromiseJS (iteración 2). Merge rule: se fusionan con `tags` en UI sin pisarlas
+- [ ] **`entidades`**: personas, lugares, organizaciones detectadas por NER. Iteración 1: heurísticas (nombres propios mayúscula no inicio de frase). Iteración 2: CompromiseJS POS tagging
+- [ ] **`temas`**: conceptos principales del contenido. TF-IDF o diccionario interno
+- [ ] **`palabras`**: word count preciso del contenido. Refina el `tiempo_lectura` que la extensión calcula al capturar
+- [ ] **`autogenerado_por`**: marca `vivero-compromise` indicando que el documento fue analizado por el pipeline NLP
 - [ ] **CompromiseJS** (iteración 2, ~250kB descargado en `componentes/procesador-lenguaje.js`):
   - POS tagging para identificar mejor nombres propios, verbos y adjetivos
-  - Análisis TF-IDF para generar keywords relevantes
-  - Detección de idioma del contenido
+  - Análisis TF-IDF para generar keywords relevantes → `tags_auto` y `temas`
+  - Detección de idioma del contenido (fallback para `idioma` de la extensión)
   - Generación de resumen automático (extractivo: primeras frases con alto score)
 - [ ] **Diccionario de tecnologías/términos**: archivo JSON en `assets/diccionario-entidades.json` mantenible, con categorías (lenguajes, frameworks, herramientas, conceptos)
 
@@ -204,7 +243,6 @@ Mejora del pipeline de extracción y generación de notas pensando en una bóved
 - [ ] **Sanitización de URLs**: eliminar parámetros de tracking (`utm_*`, `fbclid`, `ref=*`)
 - [ ] **Opciones de wrapping**: hard-wrap (80/120 columnas) vs soft-wrap configurable
 - [ ] **Normalización de espacios**: colapsar espacios múltiples, eliminar espacios al final de línea
-- [ ] **Escape de caracteres especiales Markdown** en títulos y metadatos (barras, pipes, corchetes)
 
 ---
 
