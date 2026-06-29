@@ -82,6 +82,16 @@ Los documentos usan prefijo de tipo documental según la taxonomía V2:
 
 ---
 
+## Reglas de dependencias externas
+
+- **Cualquier librería externa debe poder incluirse como un archivo `.js` descargado** directamente en el repositorio, sin depender de npm, CDN o gestores de paquetes en producción.
+- Las librerías se colocan en `componentes/` con un nombre descriptivo en `kebab-case` (ej. `procesador-lenguaje.js`).
+- Si la librería tiene múltiples builds, se elige el build para navegador (no Node.js, no ESModule si no es compatible con service worker).
+- Se permite usar CDN solo durante desarrollo/pruebas; en producción el archivo debe estar embebido en el proyecto.
+- El archivo descargado se documenta con un comentario al inicio indicando: nombre, versión, URL de origen y fecha de descarga.
+
+---
+
 ## Alcance
 
 Estas reglas aplican a:
