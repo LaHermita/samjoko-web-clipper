@@ -19,7 +19,7 @@
   <img alt="CSS3" src="https://img.shields.io/badge/CSS-Themes-1572b6?style=flat-square&logo=css3&logoColor=white">
   <img alt="IndexedDB" src="https://img.shields.io/badge/Storage-IndexedDB-7a9b5f?style=flat-square&logo=databricks&logoColor=white">
   <img alt="Licencia" src="https://img.shields.io/badge/Licencia-MIT-8c8986?style=flat-square">
-  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.0-d47a2c?style=flat-square">
+  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.1-d47a2c?style=flat-square">
 </p>
 
 ---

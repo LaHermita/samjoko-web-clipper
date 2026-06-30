@@ -328,6 +328,38 @@ responder(configuracion);
 
 ---
 
+#### ~~BUG CRÍTICO — `base-datos.js:188`~~ ✅ CORREGIDO
+
+```javascript
+// Línea 188 — falta `async` (ANTES)
+function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
+
+// Línea 188 — corrección aplicada (DESPUÉS)
+async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
+```
+
+**Sección del CHK afectada**: 13. Calidad y funcionalidad mínima — "No permitir funcionalidad rota". El uso de `await` fuera de una función `async` provocaba un `SyntaxError` al cargar el script, rompiendo el guardado con nombres duplicados.
+
+**Corrección aplicada**: 2026-06-30. Añadido `async` a la declaración de la función.
+
+---
+
+#### ~~ACCESIBILIDAD — Onboarding: focus trap~~ ✅ CORREGIDO
+
+**Detalle**: El diálogo de onboarding tenía `aria-modal="true"` pero no implementaba un focus trap, permitiendo que el foco escapara del diálogo con la tecla Tab.
+
+**Corrección aplicada**: 2026-06-30. Añadido event listener `keydown` en `componentes/onboarding.js` que atrapa el foco cíclicamente entre los elementos enfocables del diálogo.
+
+---
+
+#### ~~ACCESIBILIDAD — `role="status"` en opciones~~ ✅ CORREGIDO
+
+**Detalle**: El `infoCarpeta` de la página de opciones carecía de `role="status"`, a diferencia del del popup que sí lo tenía.
+
+**Corrección aplicada**: 2026-06-30. Añadido `role="status"` al elemento en `opciones/opciones.html`.
+
+---
+
 ### PENDIENTES CRÍTICOS (bloquean publicación)
 
 | # | Sección CHK | Pendiente | Estado |
@@ -378,7 +410,7 @@ responder(configuracion);
 | §26 Exportación | ✅ | No maneja datos exportables. |
 
 > Creado: 2026-06-29  
-> Última actualización: 2026-06-30  
+> Última actualización: 2026-06-30 (2ª auditoría) · versión del proyecto: 0.4.1  
 > Auditoría realizada por: opencode (IA)  
 > Plantilla: [`PLANT - Publicacion Chrome Web Store.md`](PLANT%20-%20Publicacion%20Chrome%20Web%20Store.md)  
 > Fuentes: [Política de Privacidad de Google](https://policies.google.com/privacy?hl=es-419), [Acuerdo para Desarrolladores](https://developer.chrome.com/docs/webstore/program-policies/terms), [Políticas del Programa](https://developer.chrome.com/docs/webstore/program-policies), [Políticas detalladas](https://developer.chrome.com/docs/webstore/program-policies/policies)

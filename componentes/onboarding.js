@@ -122,6 +122,33 @@ function crearOnboarding() {
 
   renderizar();
 
+  function obtenerElementosEnfocables() {
+    return elementoRaiz.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+  }
+
+  function atraparFoco(evento) {
+    if (evento.key !== 'Tab') return;
+    var elementos = obtenerElementosEnfocables();
+    if (elementos.length === 0) return;
+    var primero = elementos[0];
+    var ultimo = elementos[elementos.length - 1];
+    if (evento.shiftKey) {
+      if (document.activeElement === primero) {
+        evento.preventDefault();
+        ultimo.focus();
+      }
+    } else {
+      if (document.activeElement === ultimo) {
+        evento.preventDefault();
+        primero.focus();
+      }
+    }
+  }
+
+  elementoRaiz.addEventListener('keydown', atraparFoco);
+
   siguienteBoton.focus();
 }
 

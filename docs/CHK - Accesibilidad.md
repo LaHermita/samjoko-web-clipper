@@ -21,7 +21,7 @@ Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 
 - [ ] **Popup**: Tab recorre header, 3 botones, info carpeta, notas, acciones notas
 - [ ] **Opciones**: Tab recorre selectores, input, botones, checkboxes, footer
 - [ ] **Editor**: Tab recorre reescanear, metadatos, botón seleccionar, bloques, acciones
-- [ ] **Onboarding**: Tab cíclico dentro del diálogo, sin escapes
+- [x] **Onboarding**: Tab cíclico dentro del diálogo, sin escapes
 - [ ] **Focus visible**: todos los elementos interactivos tienen `:focus-visible`
 - [ ] **Atajos documentados**: Ctrl+Shift+K y Ctrl+Shift+S visibles en opciones y popup
 
@@ -32,7 +32,7 @@ Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 
 - [ ] **Formularios**: todos `<input>`/`<select>`/`<textarea>` con `<label for="...">`
 - [ ] **Toasts**: `#zonaToast` con `aria-live="polite"`
 - [ ] **Barra progreso**: `role="progressbar"` + `aria-live="polite"`
-- [ ] **Info carpeta**: `role="status"` para anunciar cambios dinámicos
+- [x] **Info carpeta**: `role="status"` para anunciar cambios dinámicos
 - [ ] **Onboarding**: `aria-describedby` vinculado a la descripción del paso
 - [ ] **Select all toggle**: `aria-pressed` dinámico
 
