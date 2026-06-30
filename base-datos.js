@@ -79,62 +79,81 @@ function esUrlSegura(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 }
 
-function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales) {
+function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales, camposFrontmatter) {
   if (!usarMetadatosFrontales) return '';
+  if (!camposFrontmatter) camposFrontmatter = {};
+
+  function debeIncluir(campo) {
+    return camposFrontmatter[campo] !== false;
+  }
 
   var fechaCaptura = new Date().toISOString().split('T')[0];
   var lineas = ['---'];
 
-  lineas.push('url_origen: ' + escaparValorYaml(metadata.urlOrigen || metadata.url || ''));
-  lineas.push('fecha_captura: ' + fechaCaptura);
+  if (debeIncluir('url_origen')) {
+    lineas.push('url_origen: ' + escaparValorYaml(metadata.urlOrigen || metadata.url || ''));
+  }
 
-  lineas.push('titulo: ' + escaparValorYaml(metadata.titulo || ''));
+  if (debeIncluir('fecha_captura')) {
+    lineas.push('fecha_captura: ' + fechaCaptura);
+  }
 
-  lineas.push('tipo: fuente');
+  if (debeIncluir('titulo')) {
+    lineas.push('titulo: ' + escaparValorYaml(metadata.titulo || ''));
+  }
 
-  if (metadata.autor) {
+  if (debeIncluir('tipo')) {
+    lineas.push('tipo: fuente');
+  }
+
+  if (debeIncluir('autor') && metadata.autor) {
     lineas.push('autor: ' + escaparValorYaml(metadata.autor));
   }
 
-  if (metadata.fechaPublicacion || metadata.fecha) {
+  if (debeIncluir('fecha_publicacion') && (metadata.fechaPublicacion || metadata.fecha)) {
     lineas.push('fecha_publicacion: ' + escaparValorYaml(metadata.fechaPublicacion || metadata.fecha));
   }
 
-  var tags = metadata.tags || metadata.etiquetas;
-  if (tags && tags.length > 0) {
-    var tagsStr = tags.map(function (t) { return escaparValorYaml(t); }).join(', ');
-    lineas.push('tags: [' + tagsStr + ']');
+  if (debeIncluir('tags')) {
+    var tags = metadata.tags || metadata.etiquetas;
+    if (tags && tags.length > 0) {
+      var tagsStr = tags.map(function (t) { return escaparValorYaml(t); }).join(', ');
+      lineas.push('tags: [' + tagsStr + ']');
+    }
   }
 
-  if (metadata.descripcion) {
+  if (debeIncluir('descripcion') && metadata.descripcion) {
     lineas.push('descripcion: ' + escaparValorYaml(metadata.descripcion));
   }
 
-  if (metadata.idioma) {
+  if (debeIncluir('idioma') && metadata.idioma) {
     lineas.push('idioma: ' + escaparValorYaml(metadata.idioma));
   }
 
-  if (metadata.sitioNombre) {
+  if (debeIncluir('sitio_nombre') && metadata.sitioNombre) {
     lineas.push('sitio_nombre: ' + escaparValorYaml(metadata.sitioNombre));
   }
 
-  if (metadata.tipoContenido) {
+  if (debeIncluir('tipo_contenido') && metadata.tipoContenido) {
     lineas.push('tipo_contenido: ' + escaparValorYaml(metadata.tipoContenido));
   }
 
-  if (metadata.imagenDestacada && esUrlSegura(metadata.imagenDestacada)) {
+  if (debeIncluir('imagen_destacada') && metadata.imagenDestacada && esUrlSegura(metadata.imagenDestacada)) {
     lineas.push('imagen_destacada: ' + escaparValorYaml(metadata.imagenDestacada));
   }
 
-  if (metadata.tiempoLectura) {
+  if (debeIncluir('tiempo_lectura') && metadata.tiempoLectura) {
     lineas.push('tiempo_lectura: ' + metadata.tiempoLectura);
   }
 
-  if (notasPersonales) {
+  if (debeIncluir('notas_personales') && notasPersonales) {
     lineas.push('notas_personales: ' + escaparValorYaml(notasPersonales));
   }
 
-  lineas.push('estado: ACTIVO');
+  if (debeIncluir('estado')) {
+    lineas.push('estado: ACTIVO');
+  }
+
   lineas.push('---');
   lineas.push('');
   return lineas.join('\n');

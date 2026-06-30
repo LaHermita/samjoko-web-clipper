@@ -59,6 +59,10 @@
   /* --- Botones --- */
   --texto-boton: #ffffff;
 
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 0% 0%, #2f3a2f 0%, #eef2ec 45%, #eef2ec 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #2f3a2f 0%, #eef2ec 40%, #eef2ec 100%);
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #7a9b5f;       /* verde hoja madura */
   --grafo-nodo-borde: #5a7c47;       /* verde más oscuro */
@@ -122,6 +126,10 @@
   /* --- Botones --- */
   --texto-boton: #ffffff;
 
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 0% 0%, #3a2f2b 0%, #f6f1eb 45%, #f6f1eb 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #3a2f2b 0%, #f6f1eb 40%, #f6f1eb 100%);
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #c45b55;       /* coral rojizo */
   --grafo-nodo-borde: #a74944;       /* coral más oscuro */
@@ -184,6 +192,10 @@
   /* --- Botones --- */
   --texto-boton: #ffffff;
 
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 15% 0%, #000000 0%, #1b1524 45%, #2e243e 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #000000 0%, #1b1524 35%, #2e243e 100%);
+
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #b45cff;       /* morado neón suave */
   --grafo-nodo-borde: #9945dd;       /* morado más oscuro */
@@ -245,6 +257,10 @@
 
   /* --- Botones --- */
   --texto-boton: #ffffff;
+
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 15% 0%, #000000 0%, #0f0f11 45%, #1c1c20 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #000000 0%, #0f0f11 35%, #1c1c20 100%);
 
   /* --- Grafo 3D --- */
   --grafo-nodo-color: #d47a2c;       /* naranja pata de cuervo */

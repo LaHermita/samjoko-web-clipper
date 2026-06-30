@@ -200,7 +200,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
       } catch (errorInyeccion) {
         chrome.notifications.create('captura-rapida-error', {
           type: 'basic',
-          iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+          iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',
           title: chrome.i18n.getMessage('nombreExtension'),
           message: chrome.i18n.getMessage('errorSinContenido')
         });
@@ -211,7 +211,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
     if (!extraido || !extraido.markdown) {
       chrome.notifications.create('captura-rapida-error', {
         type: 'basic',
-        iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+        iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',
         title: chrome.i18n.getMessage('nombreExtension'),
         message: chrome.i18n.getMessage('errorSinContenido')
       });
@@ -223,7 +223,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
     if (!manejadorDirectorio) {
       chrome.notifications.create('captura-rapida-error', {
         type: 'basic',
-        iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+        iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',
         title: chrome.i18n.getMessage('nombreExtension'),
         message: chrome.i18n.getMessage('errorSWCarpetaNoConfigurada')
       });
@@ -232,21 +232,21 @@ chrome.commands.onCommand.addListener(async (comando) => {
 
     const tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
     const configuracionTrabajador = await obtenerConfiguracion();
-    const metadatosFrontales = generarMetadatosFrontales(extraido.metadata, configuracionTrabajador.usarMetadatosFrontales);
+    const metadatosFrontales = generarMetadatosFrontales(extraido.metadata, configuracionTrabajador.usarMetadatosFrontales, '', configuracionTrabajador.camposFrontmatter);
     const contenidoFinal = metadatosFrontales + extraido.markdown;
     const nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
     const nombreGuardado = await guardarArchivoEnCarpeta(contenidoFinal, nombreBase);
 
     chrome.notifications.create('captura-rapida-exito', {
       type: 'basic',
-      iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+      iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',
       title: chrome.i18n.getMessage('nombreExtension'),
       message: chrome.i18n.getMessage('notificacionGuardadoExitoso', nombreGuardado)
     });
   } catch (errorIgnorado) {
     chrome.notifications.create('captura-rapida-error', {
       type: 'basic',
-      iconUrl: 'assets/icons/Samjoko-Icono_Circular_128px.png',
+      iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',
       title: chrome.i18n.getMessage('nombreExtension'),
       message: chrome.i18n.getMessage('notificacionErrorGuardado')
     });

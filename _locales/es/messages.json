@@ -262,6 +262,9 @@
   "descripcionFrontmatter": {
     "message": "Añade metadatos (fecha, fuente, título) al inicio de cada captura en formato YAML."
   },
+  "etiquetaCamposFrontmatter": {
+    "message": "Campos del frontmatter"
+  },
   "mensajeConfigGuardada": {
     "message": "Configuración guardada"
   },

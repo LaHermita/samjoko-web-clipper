@@ -8,6 +8,26 @@ var selectorIdioma = document.getElementById('selectorIdioma');
 var selectorTema = document.getElementById('selectorTema');
 var entradaSubcarpeta = document.getElementById('entradaSubcarpeta');
 var interruptorMetadatosFrontales = document.getElementById('interruptorMetadatosFrontales');
+var zonaCamposFrontmatter = document.getElementById('camposFrontmatter');
+var listaCamposFrontmatter = document.getElementById('listaCamposFrontmatter');
+
+var ETIQUETAS_CAMPOS = {
+  url_origen: 'URL de origen',
+  fecha_captura: 'Fecha de captura',
+  titulo: 'Título',
+  tipo: 'Tipo (fuente)',
+  autor: 'Autor',
+  fecha_publicacion: 'Fecha de publicación',
+  tags: 'Etiquetas',
+  descripcion: 'Descripción',
+  idioma: 'Idioma',
+  sitio_nombre: 'Nombre del sitio',
+  tipo_contenido: 'Tipo de contenido',
+  imagen_destacada: 'Imagen destacada',
+  tiempo_lectura: 'Tiempo de lectura',
+  notas_personales: 'Notas personales',
+  estado: 'Estado (ACTIVO)'
+};
 
 var configuracionActual = null;
 
@@ -70,6 +90,7 @@ function inicializarInternacionalizacionConConfiguracion(config) {
 
   document.querySelector('#seccionFormato .campoEtiqueta').textContent = traducir('etiquetaFrontmatter');
   document.querySelector('#seccionFormato .campoDescripcion').textContent = traducir('descripcionFrontmatter');
+  document.getElementById('etiquetaCamposFrontmatter').textContent = traducir('etiquetaCamposFrontmatter');
 
   document.getElementById('textoCopyright').textContent = traducir('pieCopyright');
   document.querySelector('#textoApoyo span').textContent = traducir('pieTextoApoyo');
@@ -77,11 +98,51 @@ function inicializarInternacionalizacionConConfiguracion(config) {
   llenarSelectores();
 }
 
+function crearCampoCheckbox(clave, etiqueta, activo) {
+  var contenedor = document.createElement('label');
+  contenedor.className = 'campo-checkbox-frontmatter';
+
+  var checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = activo;
+  checkbox.dataset.campo = clave;
+
+  var texto = document.createElement('span');
+  texto.textContent = etiqueta;
+
+  contenedor.appendChild(checkbox);
+  contenedor.appendChild(texto);
+
+  checkbox.addEventListener('change', function () {
+    var camposActuales = Object.assign({}, configuracionActual.camposFrontmatter);
+    camposActuales[clave] = checkbox.checked;
+    guardarCampo('camposFrontmatter', camposActuales);
+  });
+
+  return contenedor;
+}
+
+function sincronizarCamposFrontmatter(config) {
+  listaCamposFrontmatter.innerHTML = '';
+  var campos = config.camposFrontmatter || {};
+  for (var clave in ETIQUETAS_CAMPOS) {
+    var activo = campos[clave] !== false;
+    var elemento = crearCampoCheckbox(clave, ETIQUETAS_CAMPOS[clave], activo);
+    listaCamposFrontmatter.appendChild(elemento);
+  }
+  if (config.usarMetadatosFrontales) {
+    zonaCamposFrontmatter.classList.remove('oculto');
+  } else {
+    zonaCamposFrontmatter.classList.add('oculto');
+  }
+}
+
 function sincronizarInterfaz(config) {
   selectorIdioma.value = config.idioma || 'es';
   selectorTema.value = config.tema || 'samjoko';
   entradaSubcarpeta.value = config.subcarpeta || '';
   interruptorMetadatosFrontales.checked = config.usarMetadatosFrontales !== false;
+  sincronizarCamposFrontmatter(config);
 }
 
 async function guardarCampo(clave, valor) {
@@ -136,6 +197,11 @@ async function inicializar() {
 
   interruptorMetadatosFrontales.addEventListener('change', function () {
     guardarCampo('usarMetadatosFrontales', interruptorMetadatosFrontales.checked);
+    if (interruptorMetadatosFrontales.checked) {
+      zonaCamposFrontmatter.classList.remove('oculto');
+    } else {
+      zonaCamposFrontmatter.classList.add('oculto');
+    }
   });
 
   botonSeleccionar.addEventListener('click', async function () {

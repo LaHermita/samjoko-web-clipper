@@ -22,14 +22,20 @@ async function inicializarInternacionalizacion() {
   document.title = traducir('tituloPopup');
   document.querySelector('h1').textContent = traducir('tituloPopup');
 
-  document.getElementById('etiquetaCapturaRapida').textContent = traducir('botonCapturaRapidaTitulo');
-  botonCapturaRapida.setAttribute('aria-label', traducir('botonCapturaRapidaTitulo'));
+  var textoCaptura = traducir('botonCapturaRapidaTitulo');
+  document.getElementById('etiquetaCapturaRapida').textContent = textoCaptura;
+  botonCapturaRapida.setAttribute('aria-label', textoCaptura);
+  botonCapturaRapida.setAttribute('title', textoCaptura + ' (Ctrl+Shift+S)');
 
-  document.getElementById('etiquetaEditorBloques').textContent = traducir('botonEditorBloquesTitulo');
-  botonEditorBloques.setAttribute('aria-label', traducir('botonEditorBloquesTitulo'));
+  var textoEditor = traducir('botonEditorBloquesTitulo');
+  document.getElementById('etiquetaEditorBloques').textContent = textoEditor;
+  botonEditorBloques.setAttribute('aria-label', textoEditor);
+  botonEditorBloques.setAttribute('title', textoEditor);
 
-  document.getElementById('etiquetaConfiguracion').textContent = traducir('botonConfiguracionTitulo');
-  botonConfiguracion.setAttribute('aria-label', traducir('botonConfiguracionTitulo'));
+  var textoConfig = traducir('botonConfiguracionTitulo');
+  document.getElementById('etiquetaConfiguracion').textContent = textoConfig;
+  botonConfiguracion.setAttribute('aria-label', textoConfig);
+  botonConfiguracion.setAttribute('title', textoConfig);
 
   etiquetaNotasRapidas.textContent = traducir('etiquetaNotasPersonales');
   notasRapidas.placeholder = traducir('placeholderNotasPersonales');
@@ -184,7 +190,7 @@ async function guardarConNotas() {
     var notas = notasRapidas.value.trim();
 
     var configuracionVentanaEmergente = await obtenerConfiguracion();
-    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas);
+    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas, configuracionVentanaEmergente.camposFrontmatter);
     var contenidoFinal = metadatosFrontales + datos.markdown;
 
     barra.establecerTexto(traducir('barraProgresoGuardando'));

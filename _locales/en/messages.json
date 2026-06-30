@@ -259,6 +259,9 @@
   "descripcionFrontmatter": {
     "message": "Adds metadata (date, source, title) at the beginning of each capture in YAML format."
   },
+  "etiquetaCamposFrontmatter": {
+    "message": "Frontmatter fields"
+  },
   "mensajeConfigGuardada": {
     "message": "Settings saved"
   },

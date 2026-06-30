@@ -1,7 +1,7 @@
 ---
 version: 1.0
 estado: en-progreso
-fase: 4-pendiente
+fase: 4-en-progreso, 4.5-pendiente
 ---
 
 > [!summary] Resumen
@@ -115,29 +115,66 @@ Refuerzo de la postura de seguridad de la extensión contra abusos, inyección d
 Refinamientos de usabilidad, feedback visual y accesibilidad en todos los componentes.
 
 ### Popup
-- [ ] **Iconos con texto visible**: rediseñar el layout del popup para que cada botón muestre icono + etiqueta de texto siempre visible (no solo en tooltip hover). Layout tipo tarjeta o fila con icono y texto.
+- [x] **Iconos con texto visible**: cada botón en el popup ya muestra icono SVG + etiqueta de texto siempre visible (`<span class="etiqueta-boton">` dentro de cada `<button>`). Implementado en HTML+CSS+JS desde fase 1.
+- [x] **Embellecer popup**: sombras en botones (`box-shadow: var(--sombra-caja)`), bordes pulidos (`border-radius: 12px`), foco visible (`:focus-visible`), separación visual mejorada. Info carpeta con sombra y colores de estado. Notas con borde superior separador.
 - [ ] **Toast expandible**: en captura rápida, mostrar un mini-resumen del Markdown obtenido en un toast que se pueda expandir
-- [ ] **Estado de carpeta**: indicar visualmente si hay carpeta configurada directamente en el popup (sin tener que abrir opciones)
+- [x] **Estado de carpeta**: indicador visual en el popup con clase `.ok`/`.error` y texto descriptivo. Implementado en `actualizarInfoCarpeta()` en ventana.js.
 
 ### Side panel (editor de bloques)
-- [ ] **Estado vacío**: cuando no hay contenido, mostrar ilustración/mensaje amigable con icono en vez de un toast de error
-- [ ] **Seleccionar / Deseleccionar todos**: botón toggle para marcar o desmarcar todos los bloques de una vez
+- [x] **Estado vacío**: when no contenido, mostrar icono + mensaje amigable en `#zonaVacia` con card, sombra y borde. Implementado desde fase 2.
+- [x] **Seleccionar / Deseleccionar todos**: botón toggle en `#cabeceraBloques` con texto dinámico. Implementado desde fase 2.
 - [ ] **Filtro por tipo de bloque**: permitir filtrar bloques por tipo (solo headings, solo listas, solo código, etc.)
 - [ ] **Contador de palabras y bloques**: en la vista previa, mostrar estadísticas (palabras, párrafos, caracteres)
 - [ ] **Reordenar bloques por arrastre**: drag & drop para cambiar el orden de los bloques seleccionados
 
 ### Onboarding
-- [ ] **Mini-tutorial primera instalación**: guía de 3 pasos al abrir la extensión por primera vez (1. Configurar carpeta, 2. Capturar página, 3. Revisar en editor)
-- [ ] **Tooltips más descriptivos** en los iconos del popup y editor
-
-### Accesibilidad
-- [ ] **Navegación por teclado**: soporte completo de Tab/Enter/Espacio en el editor de bloques y popup
-- [ ] **Focus states visibles**: estilos de foco en todos los elementos interactivos
-- [ ] **Contraste**: verificar y ajustar ratios de contraste en los 4 temas
+- [x] **Mini-tutorial primera instalación**: guía de 3 pasos al abrir la extensión por primera vez (1. Configurar carpeta, 2. Capturar página, 3. Revisar en editor)
+- [x] **Tooltips más descriptivos**: popup con `title` + atajo teclado en captura rápida. Editor con `title` en reescanear y botones de acción. Tooltips visibles con texto en etiqueta-boton popup y `.tooltip-editor` hover en editor.
 
 ### Opciones y feedback
 - [ ] **Vista previa de tema**: cuando se reactive el selector, mostrar una previsualización del tema antes de aplicarlo
-- [ ] **Feedback visual más claro** al guardar configuración (animación de check en el botón o sección)
+- [x] **Feedback visual al guardar configuración**: animación `pulso-guardado` con `scale(1.02)` + borde acento + sombra. Corregido error de variable `--color-acento-rgb` inexistente.
+
+---
+
+## Fase 4.5 — Accesibilidad integral
+
+Auditoría y mejora de accesibilidad en todos los componentes de la extensión. El objetivo es que la extensión sea utilizable con lectores de pantalla, navegación exclusiva por teclado, y cumpla un nivel AA de WCAG 2.1.
+
+### Auditoría general
+- [ ] **Auditar estructura HTML semántica** en popup, opciones, editor de bloques y onboarding: verificar uso correcto de `<nav>`, `<main>`, `<section>`, `<aside>`, `<header>`, `<footer>`, `<h1>`-`<h6>`
+- [ ] **Jerarquía de encabezados**: comprobar que los títulos siguen una secuencia lógica sin saltos de nivel
+- [ ] **Landmarks ARIA**: añadir `role="region"` y `aria-label` descriptivo a secciones principales donde falte semántica nativa
+- [ ] **Idioma declarado**: verificar que `lang="es"` en `<html>` de popup, opciones y editor coincida con el idioma activo
+- [ ] **Zoom y escalado**: comprobar que la extensión funciona correctamente con zoom al 200% sin recortes ni solapamientos
+
+### Contraste y color
+- [ ] **Verificar ratios de contraste WCAG AA (4.5:1 texto normal, 3:1 texto grande)** en los 4 temas: samjoko, vivero, nautilus, akkoro
+- [ ] **Contraste en estados**: `:hover`, `:focus`, `:active`, `:disabled` deben mantener contraste suficiente
+- [ ] **Independencia del color**: asegurar que ninguna información se transmite solo mediante color (ej. iconos de estado deben tener texto o icono adicional)
+
+### Teclado
+- [ ] **Navegación por teclado completa**: Tab debe recorrer todos los elementos interactivos en orden lógico en popup, opciones y editor de bloques
+- [ ] **Trampas de foco**: verificar que no hay elementos que atrapen el foco sin posibilidad de salir
+- [ ] **Atajos de teclado documentados**: listar `Ctrl+Shift+K` (abrir popup) y `Ctrl+Shift+S` (captura rápida) en la UI o en opciones
+
+### Lectores de pantalla
+- [ ] **Textos alternativos en iconos**: todos los SVG decorativos deben tener `aria-hidden="true"`; los iconos funcionales deben tener texto descriptivo con `aria-label` en el botón contenedor
+- [ ] **Mensajes de estado dinámicos**: los toasts y la barra de progreso deben usar `aria-live="polite"` para que el lector de pantalla los anuncie
+- [ ] **Campos de formulario**: todos los `<input>`, `<select>` y `<textarea>` deben tener `<label>` asociado o `aria-label`
+- [ ] **Anuncio de cambios de contenido**: las zonas que se muestran/ocultan dinámicamente (info carpeta, notas, frontmatter) deben notificarse con `aria-live` o `role="status"`
+- [ ] **Descripciones accesibles para onboarding**: los pasos del tutorial deben tener `aria-describedby` o descripciones textuales claras
+
+### ARIA y roles
+- [ ] **Roles explícitos en navegación**: `<nav id="barraAcciones">` debe tener `aria-label` descriptivo
+- [ ] **Estado de elementos interactivos**: botones con `aria-pressed`, `aria-expanded` o `aria-disabled` según corresponda
+- [ ] **Diálogos y overlays**: el onboarding es un overlay modal — debe tener `role="dialog"`, `aria-modal="true"` y gestionar el foco al abrir/cerrar
+- [ ] **Regiones vivas**: `#zonaToast` ya tiene `aria-live="polite"` — verificar que `#zonaProgreso` también lo tenga
+
+### Documentación y pruebas
+- [ ] **Checklist de accesibilidad**: generar `docs/CHK - Accesibilidad.md` con lista verificable
+- [ ] **Prueba con lectores de pantalla**: verificar flujo completo (abrir popup → capturar → revisar en editor → guardar) con NVDA o VoiceOver
+- [ ] **Prueba solo teclado**: completar todas las acciones sin usar el ratón
 
 ---
 
@@ -244,7 +281,7 @@ estado: ACTIVO                  # opcional
 ---
 ```
 
-- [ ] **Plantilla de frontmatter configurable**: usuario puede definir qué campos opcionales incluir y sus valores por defecto
+- [x] **Plantilla de frontmatter configurable**: usuario puede definir qué campos opcionales incluir y sus valores por defecto
 
 **Merge rule (tags manuales vs NLP):** cuando el pipeline NLP procese el documento, los campos generados por la extensión **no se sobrescriben**:
   - `tags` (manual del usuario) y `tags_auto` (NLP) coexisten; en UI se fusionan, pero cada grupo persiste en su campo

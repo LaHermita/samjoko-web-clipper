@@ -2,16 +2,36 @@ var ESQUEMA_CONFIG = {
   idioma: 'string',
   tema: 'string',
   subcarpeta: 'string',
-  usarMetadatosFrontales: 'boolean'
+  usarMetadatosFrontales: 'boolean',
+  camposFrontmatter: 'object'
 };
 
 var TAMANO_MAXIMO_CONFIG = 10240;
+
+const CAMPOS_FRONTMATTER_PREDETERMINADOS = Object.freeze({
+  url_origen: true,
+  fecha_captura: true,
+  titulo: true,
+  tipo: true,
+  autor: true,
+  fecha_publicacion: true,
+  tags: true,
+  descripcion: true,
+  idioma: true,
+  sitio_nombre: true,
+  tipo_contenido: true,
+  imagen_destacada: true,
+  tiempo_lectura: true,
+  notas_personales: true,
+  estado: true
+});
 
 const CONFIG_PREDETERMINADA = Object.freeze({
   idioma: 'es',
   tema: 'samjoko',
   subcarpeta: '',
-  usarMetadatosFrontales: true
+  usarMetadatosFrontales: true,
+  camposFrontmatter: { ...CAMPOS_FRONTMATTER_PREDETERMINADOS }
 });
 
 const CLAVE_CONFIG = 'configuracion';
@@ -22,6 +42,13 @@ function validarConfiguracion(datos) {
     if (datos.hasOwnProperty(clave)) {
       var tipo = ESQUEMA_CONFIG[clave];
       if (tipo && typeof datos[clave] !== tipo) return false;
+      if (clave === 'camposFrontmatter' && typeof datos[clave] === 'object') {
+        for (var campo in datos[clave]) {
+          if (CAMPOS_FRONTMATTER_PREDETERMINADOS.hasOwnProperty(campo) && typeof datos[clave][campo] !== 'boolean') {
+            return false;
+          }
+        }
+      }
     }
   }
   var serializado = JSON.stringify(datos);

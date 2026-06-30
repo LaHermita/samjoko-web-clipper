@@ -57,17 +57,25 @@ async function inicializarInternacionalizacion() {
   document.querySelector('#encabezadoEditor h1').textContent = traducir('tituloEditorBloques');
   document.querySelector('#cabeceraBloques h2').textContent = traducir('etiquetaBloques');
   document.querySelector('#zonaPrevia h2').textContent = traducir('previaMarkdown');
-  botonGuardar.textContent = traducir('botonGuardar');
-  botonDescargar.textContent = traducir('botonDescargar');
-  botonCopiar.textContent = traducir('botonCopiar');
+  var textoGuardar = traducir('botonGuardar');
+  botonGuardar.textContent = textoGuardar;
+  botonGuardar.setAttribute('title', textoGuardar);
+  var textoDescargar = traducir('botonDescargar');
+  botonDescargar.textContent = textoDescargar;
+  botonDescargar.setAttribute('title', textoDescargar);
+  var textoCopiar = traducir('botonCopiar');
+  botonCopiar.textContent = textoCopiar;
+  botonCopiar.setAttribute('title', textoCopiar);
   metaSeparador.textContent = '·';
 
   etiquetaIdioma.textContent = traducir('etiquetaIdioma');
   etiquetaTipoContenido.textContent = traducir('etiquetaTipoContenido');
   etiquetaTiempoLectura.textContent = traducir('etiquetaTiempoLectura');
 
-  botonReescanear.querySelector('.tooltip-editor').textContent = traducir('botonReescanearTitulo');
-  botonReescanear.setAttribute('aria-label', traducir('botonReescanearTitulo'));
+  var textoReescanear = traducir('botonReescanearTitulo');
+  botonReescanear.querySelector('.tooltip-editor').textContent = textoReescanear;
+  botonReescanear.setAttribute('aria-label', textoReescanear);
+  botonReescanear.setAttribute('title', textoReescanear);
 
   botonSeleccionarTodos.textContent = traducir('botonDeseleccionarTodos');
 
@@ -163,7 +171,7 @@ function regenerarMarkdown() {
   var usarMetadatosFrontales = configuracionEditor ? configuracionEditor.usarMetadatosFrontales : false;
   var notas = notasPersonalesInput ? notasPersonalesInput.value.trim() : '';
 
-  var metadatosFrontales = generarMetadatosFrontales(metadataPagina, usarMetadatosFrontales, notas);
+  var metadatosFrontales = generarMetadatosFrontales(metadataPagina, usarMetadatosFrontales, notas, configuracionEditor ? configuracionEditor.camposFrontmatter : null);
   if (metadatosFrontales) partes.push(metadatosFrontales);
 
   if (metadataPagina && metadataPagina.titulo) {

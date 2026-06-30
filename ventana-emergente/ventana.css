@@ -1,14 +1,35 @@
+html {
+  background: var(--degradado-fondo-ventana, var(--degradado-fondo));
+}
+
 body {
   padding: 20px 16px;
   width: 340px;
   min-height: auto;
+  background: transparent;
+  margin: 0;
 }
 
-h1 {
+#encabezadoPopup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--borde-suave);
+}
+
+#encabezadoPopup img {
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: var(--sombra-caja);
+}
+
+#encabezadoPopup h1 {
   font-size: 16px;
-  margin: 0 0 20px 0;
+  margin: 0;
   color: var(--color-acento);
-  text-align: center;
 }
 
 #barraAcciones {
@@ -20,12 +41,13 @@ h1 {
 
 .boton-accion {
   background: var(--fondo-activo);
-  border: 1px solid var(--borde-suave);
-  border-radius: 10px;
-  padding: 10px 8px 8px;
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 12px;
+  padding: 12px 8px 10px;
   cursor: pointer;
   color: var(--color-icono);
-  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  box-shadow: var(--sombra-caja);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,6 +60,12 @@ h1 {
   background: var(--fondo-hover);
   color: var(--color-acento);
   border-color: var(--color-acento);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.boton-accion:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
 }
 
 .boton-accion:active {
@@ -48,13 +76,15 @@ h1 {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
-  border-color: var(--borde-suave);
+  border-color: var(--borde-interfaz);
+  box-shadow: none;
 }
 
 .boton-accion:disabled:hover {
   background: var(--fondo-activo);
   color: var(--color-icono);
-  border-color: var(--borde-suave);
+  border-color: var(--borde-interfaz);
+  box-shadow: none;
 }
 
 .etiqueta-boton {
@@ -74,13 +104,14 @@ h1 {
 
 #infoCarpeta {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--texto-inactivo);
-  padding: 6px 10px;
-  margin-bottom: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
   background: var(--fondo-editor);
-  border: 1px solid var(--borde-suave);
-  border-radius: 6px;
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 8px;
+  box-shadow: var(--sombra-caja);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -89,11 +120,13 @@ h1 {
 #infoCarpeta.ok {
   color: var(--estado-exito);
   border-color: var(--estado-exito);
+  background: var(--fondo-activo);
 }
 
 #infoCarpeta.error {
   color: var(--estado-error);
   border-color: var(--estado-error);
+  background: var(--fondo-hover);
 }
 
 #zonaProgreso {
@@ -101,14 +134,19 @@ h1 {
 }
 
 #zonaNotas {
-  margin-top: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borde-suave);
 }
 
 #zonaNotas label {
   display: block;
   font-size: 11px;
-  color: var(--texto-inactivo);
-  margin-bottom: 4px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 #notasRapidas {
@@ -117,16 +155,18 @@ h1 {
   background: var(--fondo-editor);
   color: var(--texto-primario);
   border: 1px solid var(--borde-interfaz);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 8px 10px;
   font-size: 12px;
   font-family: inherit;
   resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 #notasRapidas:focus {
   outline: none;
   border-color: var(--color-acento);
+  box-shadow: 0 0 0 2px var(--borde-suave);
 }
 
 #accionesNotas {
@@ -142,26 +182,33 @@ h1 {
 #accionesNotas button {
   flex: 1;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
   border: 1px solid var(--borde-interfaz);
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .boton-primario {
   background: var(--estado-exito);
   color: var(--fondo-principal);
   border-color: var(--estado-exito);
+  box-shadow: var(--sombra-caja);
 }
 
 .boton-primario:hover {
   filter: brightness(0.9);
 }
 
+.boton-primario:focus-visible {
+  outline: 2px solid var(--estado-exito);
+  outline-offset: 2px;
+}
+
 .boton-primario:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
   filter: none;
 }
 
@@ -172,6 +219,11 @@ h1 {
 
 .boton-secundario:hover {
   background: var(--fondo-hover);
+}
+
+.boton-secundario:focus-visible {
+  outline: 2px solid var(--texto-primario);
+  outline-offset: 2px;
 }
 
 #zonaToast {
@@ -188,13 +240,14 @@ h1 {
 
 .toast {
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
   text-align: center;
   transform: translateY(16px);
   opacity: 0;
   transition: transform 0.25s ease, opacity 0.25s ease;
   border: 1px solid transparent;
+  box-shadow: var(--sombra-caja);
 }
 
 .toast.toast-visible {
