@@ -17,10 +17,12 @@ const infoCarpeta = document.getElementById('infoCarpeta');
 async function inicializarInternacionalizacion() {
   var configuracion = await obtenerConfiguracion();
   document.documentElement.setAttribute('data-theme', configuracion.tema);
+  document.documentElement.lang = configuracion.idioma || 'es';
   await cargarIdioma(configuracion.idioma);
 
   document.title = traducir('tituloPopup');
   document.querySelector('h1').textContent = traducir('tituloPopup');
+  document.querySelector('#barraAcciones').setAttribute('aria-label', traducir('tituloPopup'));
 
   var textoCaptura = traducir('botonCapturaRapidaTitulo');
   document.getElementById('etiquetaCapturaRapida').textContent = textoCaptura;

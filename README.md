@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <img alt="Samjoko Web Clipper" src="assets/icons/Samjoko-Icono_Circular_128px.png" width="96" height="96">
+    <img alt="Samjoko Web Clipper" src="assets/icons/Samjoko-Icono_LowP_128px.png" width="96" height="96">
   </picture>
 </p>
 
@@ -19,7 +19,7 @@
   <img alt="CSS3" src="https://img.shields.io/badge/CSS-Themes-1572b6?style=flat-square&logo=css3&logoColor=white">
   <img alt="IndexedDB" src="https://img.shields.io/badge/Storage-IndexedDB-7a9b5f?style=flat-square&logo=databricks&logoColor=white">
   <img alt="Licencia" src="https://img.shields.io/badge/Licencia-MIT-8c8986?style=flat-square">
-  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.2.0-d47a2c?style=flat-square">
+  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.0-d47a2c?style=flat-square">
 </p>
 
 ---
@@ -41,14 +41,17 @@
 | Editor de bloques en panel lateral para revisar antes de guardar     | Side panel block editor to review before saving             |
 | Enlaces recolectados solo del contenido válido, toggleables          | Links collected only from valid content, toggleable         |
 | Scoping automático a `<article>` si la página lo usa                 | Auto-scoping to `<article>` when the page uses it           |
+| Frontmatter YAML configurable campo por campo                        | Configurable YAML frontmatter, field by field               |
+| Captura rápida con atajo de teclado y notas personales               | Quick capture with keyboard shortcut and personal notes     |
+| 4 temas visuales intercambiables                                     | 4 interchangeable visual themes                             |
+| Onboarding interactivo de 3 pasos                                    | Interactive 3-step onboarding                               |
+| Página de opciones con diseño responsive en cards                    | Options page with responsive card layout                    |
 | Copia al portapapeles con un clic                                    | One-click copy to clipboard                                 |
 | Descarga como archivo `.md`                                          | Download as `.md` file                                      |
 | Guarda directamente en una carpeta local (File System Access API)    | Save directly to a local folder (File System Access API)    |
-| Captura rápida con atajo de teclado `Ctrl+Shift+S`                   | Quick capture with `Ctrl+Shift+S` keyboard shortcut         |
-| 4 temas visuales intercambiables                                     | 4 interchangeable visual themes                             |
-| Persistencia con IndexedDB                                           | IndexedDB persistence                                       |
-| Página de opciones integrada                                         | Built-in options page                                       |
+| Accesibilidad: ARIA, teclado, lector de pantalla, contraste          | Accessibility: ARIA, keyboard, screen reader, contrast      |
 | Sin dependencias externas                                            | No external dependencies                                    |
+| Página de opciones integrada                                         | Built-in options page                                       |
 
 ---
 
@@ -93,33 +96,34 @@ git clone https://github.com/usuario/samjoko-nav-extension.git
 ```
 samjoko-nav-extension/
 ├── manifest.json              # Chrome Extension Manifest V3
-├── _locales/                  # Traducciones i18n
-│   ├── es/
-│   │   └── messages.json
-│   └── en/
-│       └── messages.json
+├── AGENTS.md                  # Instrucciones para asistentes IA
+├── _locales/                  # Traducciones i18n (es, en)
 ├── assets/
 │   ├── themes.css             # Variables CSS de los 4 temas
-│   ├── comun.css              # Estilos compartidos (body, button, mensajes)
-│   └── icons/                 # Iconos de la extensión
+│   ├── comun.css              # Estilos compartidos (body, button, foco)
+│   └── icons/                 # Iconos LowP de la extensión
 ├── componentes/
-│   ├── barra-progreso.js      # Componente de barra de progreso
-│   └── barra-progreso.css     # Estilos de la barra de progreso
-├── ventana-emergente/         # Popup (browser action)
-│   ├── ventana.html
-│   ├── ventana.css
-│   └── ventana.js
-├── editor-bloques/             # Side panel (block editor)
-│   ├── editor.html
-│   ├── editor.css
-│   └── editor.js
-├── opciones/                   # Página de opciones
-│   ├── opciones.html
-│   ├── opciones.css
-│   └── opciones.js
+│   ├── configuracion.js       # Gestión de configuración (chrome.storage)
+│   ├── traduccion.js          # Motor de traducción con override
+│   ├── barra-progreso.js/css  # Componente de barra de progreso
+│   ├── onboarding.js/css      # Tutorial de primera instalación
+│   └── extraccion/            # Pipeline de extracción por tipos
+│       ├── nucleo-extraccion.js
+│       ├── extractor-texto.js
+│       ├── extractor-listas.js
+│       ├── extractor-codigo.js
+│       ├── extractor-tablas.js
+│       ├── extractor-citas.js
+│       ├── extractor-multimedia.js
+│       ├── extractor-iframes.js
+│       └── extractor-enlaces.js
+├── ventana-emergente/         # Popup
+├── editor-bloques/            # Side panel (editor de bloques)
+├── opciones/                  # Página de opciones
+├── docs/                      # Documentación del proyecto
 ├── trabajador-fondo.js        # Service worker
-├── extractor-contenido.js     # Content script
-└── base-datos.js              # IndexedDB helper
+├── extractor-contenido.js     # Content script (orquestador)
+└── base-datos.js              # IndexedDB + generación frontmatter
 ```
 
 ---

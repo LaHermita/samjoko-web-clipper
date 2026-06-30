@@ -59,6 +59,11 @@
   transition: background 0.2s;
 }
 
+.punto-paso:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
 .punto-paso.activo {
   background: var(--color-acento);
 }
@@ -78,6 +83,11 @@
   color: var(--texto-primario);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
+}
+
+#onboardingNavegacion button:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
 }
 
 #onboardingNavegacion button:hover {
@@ -106,6 +116,11 @@
   font-size: 10px;
   color: var(--texto-inactivo);
   cursor: pointer;
+}
+
+#onboardingOmitir:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
 }
 
 #onboardingOmitir:hover {

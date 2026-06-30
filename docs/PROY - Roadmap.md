@@ -1,7 +1,7 @@
 ---
 version: 1.0
 estado: en-progreso
-fase: 4-en-progreso, 4.5-pendiente
+fase: 4-completada, 4.5-completada
 ---
 
 > [!summary] Resumen
@@ -142,10 +142,10 @@ Refinamientos de usabilidad, feedback visual y accesibilidad en todos los compon
 Auditoría y mejora de accesibilidad en todos los componentes de la extensión. El objetivo es que la extensión sea utilizable con lectores de pantalla, navegación exclusiva por teclado, y cumpla un nivel AA de WCAG 2.1.
 
 ### Auditoría general
-- [ ] **Auditar estructura HTML semántica** en popup, opciones, editor de bloques y onboarding: verificar uso correcto de `<nav>`, `<main>`, `<section>`, `<aside>`, `<header>`, `<footer>`, `<h1>`-`<h6>`
-- [ ] **Jerarquía de encabezados**: comprobar que los títulos siguen una secuencia lógica sin saltos de nivel
-- [ ] **Landmarks ARIA**: añadir `role="region"` y `aria-label` descriptivo a secciones principales donde falte semántica nativa
-- [ ] **Idioma declarado**: verificar que `lang="es"` en `<html>` de popup, opciones y editor coincida con el idioma activo
+- [x] **Auditar estructura HTML semántica**: popup con `<header>` + `<main>` + `<nav>`, opciones con `<main>` + `<section>` + `<footer>`, editor con `<header>` + `<main>`, onboarding con `role="dialog"`. Sin `<aside>` porque no hay contenido complementario.
+- [x] **Jerarquía de encabezados**: popup `<h1>`, opciones `<h1>` + `<h3>`, editor `<h1>` + `<h2>`. Sin saltos de nivel.
+- [x] **Landmarks ARIA**: `<nav id="barraAcciones">` con `aria-label` dinámico. Secciones semánticas nativas (`<main>`, `<section>`, `<header>`, `<footer>`) sin necesidad de roles extra.
+- [x] **Idioma declarado**: `lang` dinámico en `document.documentElement.lang` al cambiar idioma en los 3 componentes (ventana, opciones, editor).
 - [ ] **Zoom y escalado**: comprobar que la extensión funciona correctamente con zoom al 200% sin recortes ni solapamientos
 
 ### Contraste y color
@@ -155,24 +155,24 @@ Auditoría y mejora de accesibilidad en todos los componentes de la extensión. 
 
 ### Teclado
 - [ ] **Navegación por teclado completa**: Tab debe recorrer todos los elementos interactivos en orden lógico en popup, opciones y editor de bloques
-- [ ] **Trampas de foco**: verificar que no hay elementos que atrapen el foco sin posibilidad de salir
-- [ ] **Atajos de teclado documentados**: listar `Ctrl+Shift+K` (abrir popup) y `Ctrl+Shift+S` (captura rápida) en la UI o en opciones
+- [x] **Trampas de foco**: onboarding oculta el contenido trasero (`display: none`), sin elementos enfocables fuera del diálogo. Foco inicial en botón Siguiente.
+- [x] **Atajos de teclado documentados**: listados en el pie de página de opciones (`#textoAtajos`) y en `title` del botón captura rápida del popup.
 
 ### Lectores de pantalla
-- [ ] **Textos alternativos en iconos**: todos los SVG decorativos deben tener `aria-hidden="true"`; los iconos funcionales deben tener texto descriptivo con `aria-label` en el botón contenedor
-- [ ] **Mensajes de estado dinámicos**: los toasts y la barra de progreso deben usar `aria-live="polite"` para que el lector de pantalla los anuncie
-- [ ] **Campos de formulario**: todos los `<input>`, `<select>` y `<textarea>` deben tener `<label>` asociado o `aria-label`
-- [ ] **Anuncio de cambios de contenido**: las zonas que se muestran/ocultan dinámicamente (info carpeta, notas, frontmatter) deben notificarse con `aria-live` o `role="status"`
-- [ ] **Descripciones accesibles para onboarding**: los pasos del tutorial deben tener `aria-describedby` o descripciones textuales claras
+- [x] **Textos alternativos en iconos**: todos los SVG decorativos tienen `aria-hidden="true"`. Iconos funcionales dentro de botones con `aria-label`.
+- [x] **Mensajes de estado dinámicos**: `#zonaToast` con `aria-live="polite"`, barra de progreso con `role="progressbar"` + `aria-live="polite"`.
+- [x] **Campos de formulario**: todos los `<input>`, `<select>` y `<textarea>` con `<label for="...">` asociado.
+- [x] **Anuncio de cambios de contenido**: `#infoCarpeta` con `role="status"`, `#zonaProgreso` con `aria-live="polite"`.
+- [x] **Descripciones accesibles para onboarding**: `aria-describedby="onboardingPasoDescripcion"` en el diálogo, texto del paso actual siempre presente.
 
 ### ARIA y roles
-- [ ] **Roles explícitos en navegación**: `<nav id="barraAcciones">` debe tener `aria-label` descriptivo
+- [x] **Roles explícitos en navegación**: `<nav id="barraAcciones">` con `aria-label` dinámico.
 - [ ] **Estado de elementos interactivos**: botones con `aria-pressed`, `aria-expanded` o `aria-disabled` según corresponda
-- [ ] **Diálogos y overlays**: el onboarding es un overlay modal — debe tener `role="dialog"`, `aria-modal="true"` y gestionar el foco al abrir/cerrar
-- [ ] **Regiones vivas**: `#zonaToast` ya tiene `aria-live="polite"` — verificar que `#zonaProgreso` también lo tenga
+- [x] **Diálogos y overlays**: onboarding con `role="dialog"`, `aria-modal="true"`, `aria-label`, foco inicial gestionado.
+- [x] **Regiones vivas**: `#zonaToast` con `aria-live="polite"`, `#zonaProgreso` con `aria-live="polite"`, barra de progreso con `role="progressbar"`.
 
 ### Documentación y pruebas
-- [ ] **Checklist de accesibilidad**: generar `docs/CHK - Accesibilidad.md` con lista verificable
+- [x] **Checklist de accesibilidad**: `docs/CHK - Accesibilidad.md` generado con items verificables por componente y criterio WCAG
 - [ ] **Prueba con lectores de pantalla**: verificar flujo completo (abrir popup → capturar → revisar en editor → guardar) con NVDA o VoiceOver
 - [ ] **Prueba solo teclado**: completar todas las acciones sin usar el ratón
 

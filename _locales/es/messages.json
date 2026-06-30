@@ -362,5 +362,8 @@
       "actual": { "content": "$1", "example": "1" },
       "total": { "content": "$2", "example": "3" }
     }
+  },
+  "textoAtajosTeclado": {
+    "message": "Atajos de teclado: Ctrl+Shift+K (abrir popup), Ctrl+Shift+S (captura rápida)"
   }
 }

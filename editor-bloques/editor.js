@@ -51,6 +51,7 @@ var configuracionEditor = null;
 async function inicializarInternacionalizacion() {
   configuracionEditor = await obtenerConfiguracion();
   document.documentElement.setAttribute('data-theme', configuracionEditor.tema);
+  document.documentElement.lang = configuracionEditor.idioma || 'es';
   await cargarIdioma(configuracionEditor.idioma);
 
   document.title = traducir('tituloEditorBloques');
@@ -149,6 +150,7 @@ function actualizarEstadoBotonSeleccion() {
   botonSeleccionarTodos.textContent = estanTodosSeleccionados
     ? traducir('botonDeseleccionarTodos')
     : traducir('botonSeleccionarTodos');
+  botonSeleccionarTodos.setAttribute('aria-pressed', String(!estanTodosSeleccionados));
 }
 
 function actualizarEstadisticas() {

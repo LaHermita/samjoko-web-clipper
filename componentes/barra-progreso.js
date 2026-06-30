@@ -11,6 +11,8 @@ class BarraProgreso {
   _crearElemento() {
     const raiz = document.createElement('div');
     raiz.className = 'barra-progreso oculto';
+    raiz.setAttribute('role', 'progressbar');
+    raiz.setAttribute('aria-live', 'polite');
     raiz.innerHTML = `
       <div class="barra-progreso-pista">
         <div class="barra-progreso-relleno"></div>

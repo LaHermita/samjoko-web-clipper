@@ -353,6 +353,12 @@ body {
   border-top: 1px solid var(--borde-suave);
 }
 
+#textoAtajos {
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin: 0 0 8px 0;
+}
+
 #textoCopyright {
   font-size: 13px;
   color: var(--texto-inactivo);

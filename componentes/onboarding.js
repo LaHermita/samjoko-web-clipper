@@ -28,6 +28,10 @@ function crearOnboarding() {
 
   var elementoRaiz = document.createElement('div');
   elementoRaiz.id = 'onboardingRaiz';
+  elementoRaiz.setAttribute('role', 'dialog');
+  elementoRaiz.setAttribute('aria-modal', 'true');
+  elementoRaiz.setAttribute('aria-label', traducir('onboardingTitulo'));
+  elementoRaiz.setAttribute('aria-describedby', 'onboardingPasoDescripcion');
 
   var pasoActual = 0;
 
@@ -117,6 +121,8 @@ function crearOnboarding() {
   omitirBoton.addEventListener('click', completarOnboarding);
 
   renderizar();
+
+  siguienteBoton.focus();
 }
 
 function completarOnboarding() {

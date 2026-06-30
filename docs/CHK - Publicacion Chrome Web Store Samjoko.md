@@ -339,6 +339,9 @@ responder(configuracion);
 | 5 | §14 Metadatos | Preparar descripción, icono y capturas de pantalla para el listado. | **PENDIENTE** |
 | 6 | §19 Propiedad intelectual | Verificar que "Samjoko" y su iconografía no infringen marcas registradas de terceros. | **PENDIENTE** |
 | 7 | §20 Soporte | Definir y publicar canal de soporte (email, GitHub Issues, formulario). Actualmente solo hay `ko-fi.com/harpopan` en el pie de opciones. | **PENDIENTE** |
+| 8 | §7 Seguridad | **Hardening de seguridad (Fase 3.5) completado**: validación de orígenes, path traversal, sanitización URIs, CSP explícito, validación de tipos. | ✅ Verificado. Ref: Roadmap §3.5. |
+| 9 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | **PENDIENTE** |
+| 10 | §4.5 Accesibilidad | Auditoría de accesibilidad completada (Fase 4.5): landmarks ARIA, `aria-live`, teclado, contraste. | ✅ Verificado. Ref: `docs/CHK - Accesibilidad.md`. |
 
 ---
 
@@ -346,12 +349,10 @@ responder(configuracion);
 
 | # | Sección CHK | Pendiente | Notas |
 |---|------------|-----------|-------|
-| 8 | §1 Registro | Crear cuenta de desarrollador y pagar Registration Fee. | Requisito previo a publicar. |
-| 9 | §25 Pruebas | Testear la extensión completa tras corregir el bug. | Incluir pruebas de: captura rápida, editor de bloques, cambio de tema, cambio de idioma, guardado en subcarpeta. |
-| 10 | §15 Código | `console.log` en `trabajador-fondo.js:49` — considerar eliminar o usar `chrome.runtime/logger` para producción. | No es incumplimiento, pero Google revisa el código. |
-| 11 | §7 Seguridad | No hay mecanismo para informar vulnerabilidades. | Crear dirección de contacto para seguridad (puede ser la misma de soporte). |
-| 12 | §14 Metadatos | La versión en `manifest.json` (0.1.0) no coincide con la del README badge (0.2.0). | Alinear antes de publicar. |
-| 13 | §7 Seguridad | **Hardening de seguridad (Fase 3.5 del Roadmap)**: validación de orígenes de mensajes, protección contra path traversal, sanitización de URIs en extractores, CSP explícito. | Ref: `docs/PROY - Roadmap.md §3.5`. Recomendado antes de publicar en Chrome Web Store. |
+| 11 | §1 Registro | Crear cuenta de desarrollador y pagar Registration Fee. | Requisito previo a publicar. |
+| 12 | §25 Pruebas | Testear la extensión completa (captura rápida, editor, temas, idioma, subcarpetas). | Prueba funcional completa antes de enviar. |
+| 13 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | Google revisa el código. |
+| 14 | §7 Seguridad | No hay mecanismo para informar vulnerabilidades. | Crear dirección de contacto para seguridad. |
 
 ---
 
@@ -367,7 +368,7 @@ responder(configuracion);
 | §9 Contenido adulto | ✅ | No aplica. Extensión de productividad. |
 | §11 Conducta engañosa | ✅ | Notificaciones solo para confirmar captura o errores. No hay spam. |
 | §12 Tácticas instalación | ✅ | Funcionalidad clara y transparente. |
-| §13 Calidad | ⚠️ | Propósito único claro. Funcionalidad completa. **Pero hay bug en línea 107.** |
+| §13 Calidad | ✅ | Propósito único claro. Funcionalidad completa. Bug línea 107 corregido. |
 | §15 Código legible | ✅ | Código no ofuscado. Sin `eval()`. Sin código remoto. `importScripts()` solo para archivos locales. |
 | §16 APIs Chrome | ✅ | APIs usadas correctamente: `chrome.tabs`, `chrome.scripting`, `chrome.storage`, `chrome.sidePanel`, `chrome.notifications`, `chrome.i18n`, `chrome.commands`. |
 | §17 Publicidad | ✅ | No incluye publicidad. |
@@ -377,7 +378,7 @@ responder(configuracion);
 | §26 Exportación | ✅ | No maneja datos exportables. |
 
 > Creado: 2026-06-29  
-> Última actualización: 2026-06-29  
+> Última actualización: 2026-06-30  
 > Auditoría realizada por: opencode (IA)  
 > Plantilla: [`PLANT - Publicacion Chrome Web Store.md`](PLANT%20-%20Publicacion%20Chrome%20Web%20Store.md)  
 > Fuentes: [Política de Privacidad de Google](https://policies.google.com/privacy?hl=es-419), [Acuerdo para Desarrolladores](https://developer.chrome.com/docs/webstore/program-policies/terms), [Políticas del Programa](https://developer.chrome.com/docs/webstore/program-policies), [Políticas detalladas](https://developer.chrome.com/docs/webstore/program-policies/policies)

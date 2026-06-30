@@ -359,5 +359,8 @@
       "actual": { "content": "$1", "example": "1" },
       "total": { "content": "$2", "example": "3" }
     }
+  },
+  "textoAtajosTeclado": {
+    "message": "Keyboard shortcuts: Ctrl+Shift+K (open popup), Ctrl+Shift+S (quick capture)"
   }
 }

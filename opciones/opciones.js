@@ -92,6 +92,7 @@ function inicializarInternacionalizacionConConfiguracion(config) {
   document.querySelector('#seccionFormato .campoDescripcion').textContent = traducir('descripcionFrontmatter');
   document.getElementById('etiquetaCamposFrontmatter').textContent = traducir('etiquetaCamposFrontmatter');
 
+  document.getElementById('textoAtajos').textContent = traducir('textoAtajosTeclado');
   document.getElementById('textoCopyright').textContent = traducir('pieCopyright');
   document.querySelector('#textoApoyo span').textContent = traducir('pieTextoApoyo');
 
@@ -178,6 +179,7 @@ async function inicializar() {
   configuracionActual = await obtenerConfiguracion();
 
   aplicarTema(configuracionActual.tema);
+  document.documentElement.lang = configuracionActual.idioma || 'es';
 
   await cargarIdioma(configuracionActual.idioma);
   inicializarInternacionalizacionConConfiguracion(configuracionActual);
