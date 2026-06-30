@@ -11,9 +11,7 @@
     "notifications",
     "sidePanel"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "host_permissions": ["<all_urls>"],
   "side_panel": {
     "default_path": "editor-bloques/editor.html"
   },
@@ -38,8 +36,8 @@
     "default_popup": "ventana-emergente/ventana.html",
     "default_title": "__MSG_tituloAccion__",
     "default_icon": {
-      "16": "assets/icons/Samjoko-Icono_Circular_16px.png",
-      "32": "assets/icons/Samjoko-Icono_Circular_30px.png"
+      "16": "assets/icons/Samjoko-Icono_LowP_16px.png",
+      "32": "assets/icons/Samjoko-Icono_LowP_32px.png"
     }
   },
   "background": {
@@ -63,9 +61,9 @@
     }
   ],
   "icons": {
-    "16": "assets/icons/Samjoko-Icono_Circular_16px.png",
-    "32": "assets/icons/Samjoko-Icono_Circular_30px.png",
-    "48": "assets/icons/Samjoko-Icono_Circular_48px.png",
-    "128": "assets/icons/Samjoko-Icono_Circular_128px.png"
+    "16": "assets/icons/Samjoko-Icono_LowP_16px.png",
+    "32": "assets/icons/Samjoko-Icono_LowP_32px.png",
+    "48": "assets/icons/Samjoko-Icono_LowP_48px.png",
+    "128": "assets/icons/Samjoko-Icono_LowP_128px.png"
   }
 }
