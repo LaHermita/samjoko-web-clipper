@@ -12,14 +12,9 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
   };
 
   ns.registroExtractores = [];
-  ns.recolectoresEnlaces = [];
 
   ns.registrarExtractor = function(extractor) {
     ns.registroExtractores.push(extractor);
-  };
-
-  ns.registrarRecolectorEnlaces = function(recolector) {
-    ns.recolectoresEnlaces.push(recolector);
   };
 
   ns.colapsarEspacios = function(texto) {
@@ -376,15 +371,6 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       }
 
       bloques.push(bloque);
-    }
-
-    for (var r = 0; r < ns.recolectoresEnlaces.length; r++) {
-      var enlacesExtra = ns.recolectoresEnlaces[r].recolectar(documento, bloques, elementosFiltrados);
-      if (enlacesExtra && enlacesExtra.length) {
-        for (var le = 0; le < enlacesExtra.length; le++) {
-          enlacesAcumulados.push(enlacesExtra[le]);
-        }
-      }
     }
 
     return ns.ensamblarMarkdown(bloques, metadata, enlacesAcumulados);

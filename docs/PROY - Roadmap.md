@@ -1,7 +1,7 @@
 ---
-version: 0.8
+version: 0.9
 estado: en-progreso
-fase: 3-completada
+fase: 3.5-pendiente
 ---
 
 > [!summary] Resumen
@@ -20,7 +20,7 @@ Fundamentos técnicos antes de seguir construyendo. Sin esto, cada feature nueva
 - [x] **Variable `--texto-boton`** en `themes.css` — los botones usan `color: #fff` hardcodeado
 - [x] **Refactor content script**: `extraerMarkdown()` devuelve `{bloques, metadata}` en vez de string plano
 - [x] **`BarraProgreso` portable**: su CSS se mueve a `componentes/barra-progreso.css`
-- [ ] **Eliminación de código legacy**: auditoría completa de todo el proyecto para detectar variables, funciones, parámetros, bloques condicionales y alias de compatibilidad que hayan quedado huérfanos tras los refactors. Eliminarlos cuando sea seguro. Incluye: alias `t` → `traducir` si ya ningún código usa `t`, funciones sin llamar, parámetros sin uso, compatibilidad hacia atrás ya innecesaria.
+- [x] **Eliminación de código legacy**: auditoría completa de todo el proyecto para detectar variables, funciones, parámetros, bloques condicionales y alias de compatibilidad que hayan quedado huérfanos tras los refactors. Eliminarlos cuando sea seguro. Incluye: alias `t` → `traducir` si ya ningún código usa `t`, funciones sin llamar, parámetros sin uso, compatibilidad hacia atrás ya innecesaria.
 
 ---
 
@@ -70,6 +70,43 @@ Página de opciones expandida con todas las preferencias del usuario.
 - [x] **Service worker**: mensajes CRUD de configuración (`obtenerConfiguracion`, `guardarConfiguracion`, `restablecerConfiguracion`)
 - [x] **Popup y editor**: lectura de configuración al abrirse, aplicación del tema y traducción correctos
 - [x] **Frontmatter YAML** en captura rápida (popup y atajo de teclado) y en editor de bloques
+
+---
+
+## Fase 3.5 — Seguridad y Hardening
+
+Refuerzo de la postura de seguridad de la extensión contra abusos, inyección de código y ataques de supply-chain. Resultado de auditoría de seguridad (junio 2026).
+
+### 3.5.1 — Validación de mensajes y orígenes
+
+- [ ] **Verificar `sender` en `onMessage`** (`trabajador-fondo.js`): validar que los mensajes provienen de la extensión (popup, editor, options), no de content scripts externos. Usar `remitente.url` con patrón `chrome-extension://` o comparar `remitente.id` contra pestañas internas conocidas
+- [ ] **Filtrar acciones por contexto**: solo el popup y editor deben poder ejecutar `guardarConfiguracion` / `restablecerConfiguracion`; el content script solo debe poder responder a `extraerMarkdown`
+- [ ] **Token interno de sesión**: generar un token aleatorio al iniciar el service worker y exigirlo en mensajes sensibles (guardado, configuración)
+
+### 3.5.2 — Protección contra path traversal
+
+- [ ] **Validar subcarpeta** (`trabajador-fondo.js:32`): rechazar partes de la ruta que contengan `..`, `~`, o caracteres especiales del sistema de archivos
+- [ ] **Sanitizar nombre de archivo** (`base-datos.js:49`): limitar estrictamente a `[a-z0-9áéíóúñü\s-]` + extensión; rechazar nombres vacíos o que empiecen por punto
+- [ ] **Límite de longitud de ruta**: evitar acumulación de subcarpetas anidadas que excedan límites del sistema de archivos
+
+### 3.5.3 — Sanitización de contenido extraído
+
+- [ ] **Filtrar URIs peligrosas en `extractor-multimedia.js`**: validar que `src` de imágenes no contenga `javascript:`, `data:text/html`, o `vbscript:` antes de incluirlo en markdown
+- [ ] **Sanitizar `title`/`src` de iframes** (`extractor-iframes.js:157-158`): escapar caracteres markdown antes de interpolar en el string de salida
+- [ ] **Sanitizar campos YAML** (`base-datos.js:66-126`): usar `escaparValorYaml()` de forma consistente en TODOS los campos del frontmatter, no solo algunos. Escapar saltos de línea, dos puntos sin comillas, y caracteres YAML reservados
+- [ ] **Validar URLs de metadatos**: verificar que `url_origen`, `imagen_destacada` y demás URLs sean `http://` o `https://` antes de incluirlas
+
+### 3.5.4 — CSP y manifest
+
+- [ ] **Declarar `content_security_policy` explícito** en `manifest.json`: reforzar las restricciones por defecto de MV3
+- [ ] **Revisar `host_permissions`**: documentar por qué `<all_urls>` es necesario; considerar si se puede acotar en el futuro
+- [ ] **Auditar `web_accessible_resources`**: si se añaden en el futuro, asegurar que no expongan archivos internos a sitios web
+
+### 3.5.5 — Almacenamiento seguro
+
+- [ ] **Cifrar datos sensibles en `chrome.storage`**: si en el futuro se guardan tokens o credenciales, usar cifrado antes de almacenar
+- [ ] **Validar integridad de configuración**: al leer de `chrome.storage.sync`, verificar que los campos tienen tipos esperados (string, boolean, array) antes de usarlos
+- [ ] **Límites de tamaño**: rechazar configuraciones o contenido que exceda límites razonables (previene abuso de almacenamiento)
 
 ---
 
@@ -184,6 +221,7 @@ Implementar el schema completo definido en `docs/REF - WEB-CLIPPER.md`. La exten
 - [ ] **Compatibilidad hacia atrás (parser K1)**: debe aceptar documentos legacy sin frontmatter o con solo `fecha:`. La extensión **no debe** generar ese formato legacy
 - [ ] **Sanitización de `titulo`**: convertir a texto plano (quitar emojis, saltos de línea, HTML entities)
 - [ ] **Escape de caracteres especiales Markdown** en títulos y metadatos (barras, pipes, corchetes)
+- [ ] **Sanitización YAML completa** (ver §3.5.3): usar `escaparValorYaml()` en todos los campos del frontmatter
 
 **Schema completo de ejemplo (lo que genera la extensión):**
 ```yaml

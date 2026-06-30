@@ -40,5 +40,3 @@ function traducir(clave, sustituciones) {
 
   return clave;
 }
-
-var t = traducir;

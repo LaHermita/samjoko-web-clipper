@@ -1,5 +1,4 @@
 if (typeof window.traducir !== 'function') { window.traducir = function (c) { return c; }; }
-var t = window.traducir;
 
 var CLAVE_ONBOARDING = 'onboardingCompletado';
 

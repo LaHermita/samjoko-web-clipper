@@ -2,9 +2,7 @@ const CONFIG_PREDETERMINADA = Object.freeze({
   idioma: 'es',
   tema: 'samjoko',
   subcarpeta: '',
-  usarMetadatosFrontales: true,
-  elementosExcluir: [],
-  elementosIncluir: []
+  usarMetadatosFrontales: true
 });
 
 const CLAVE_CONFIG = 'configuracion';
@@ -31,8 +29,7 @@ async function restablecerConfiguracion() {
   return { ...CONFIG_PREDETERMINADA };
 }
 
-var tipoDocumento = typeof document !== 'undefined' ? document : null;
-if (tipoDocumento && chrome.storage) {
+if (typeof document !== 'undefined' && chrome.storage) {
   chrome.storage.onChanged.addListener(function (cambios, area) {
     if (area === 'sync' && cambios[CLAVE_CONFIG]) {
       var nuevaConfig = cambios[CLAVE_CONFIG].newValue || CONFIG_PREDETERMINADA;

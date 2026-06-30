@@ -1,5 +1,4 @@
 if (typeof window.traducir !== 'function') { window.traducir = function (c) { return c; }; }
-var t = window.traducir;
 
 const zonaProgreso = document.getElementById('zonaProgreso');
 const barra = new BarraProgreso(zonaProgreso);
@@ -102,7 +101,6 @@ async function extraerContenido(pestania) {
         'componentes/extraccion/extractor-citas.js',
         'componentes/extraccion/extractor-multimedia.js',
         'componentes/extraccion/extractor-iframes.js',
-        'componentes/extraccion/extractor-enlaces.js',
         'extractor-contenido.js'
       ]
     });

@@ -106,6 +106,7 @@ fuentes:
 - [ ] Almacenar datos personales o sensibles de forma segura y solo el tiempo necesario.
 - [ ] Informar sobre vulnerabilidades de seguridad al equipo de Chrome (https://www.google.com/about/appsecurity/ddprp/).
 - [ ] **Datos almacenados localmente**: el usuario elige la carpeta de destino mediante File System Access API. La extensión no tiene acceso a archivos fuera de la carpeta que el usuario selecciona explícitamente.
+- [ ] **Hardening de seguridad**: completar fase 3.5 del Roadmap (validación de mensajes, protección contra path traversal, sanitización de contenido extraído, CSP explícito). Ref: `docs/PROY - Roadmap.md §3.5`.
 
 ## 8. Contenido prohibido y malware
 
@@ -350,6 +351,7 @@ responder(configuracion);
 | 10 | §15 Código | `console.log` en `trabajador-fondo.js:49` — considerar eliminar o usar `chrome.runtime/logger` para producción. | No es incumplimiento, pero Google revisa el código. |
 | 11 | §7 Seguridad | No hay mecanismo para informar vulnerabilidades. | Crear dirección de contacto para seguridad (puede ser la misma de soporte). |
 | 12 | §14 Metadatos | La versión en `manifest.json` (0.1.0) no coincide con la del README badge (0.2.0). | Alinear antes de publicar. |
+| 13 | §7 Seguridad | **Hardening de seguridad (Fase 3.5 del Roadmap)**: validación de orígenes de mensajes, protección contra path traversal, sanitización de URIs en extractores, CSP explícito. | Ref: `docs/PROY - Roadmap.md §3.5`. Recomendado antes de publicar en Chrome Web Store. |
 
 ---
 

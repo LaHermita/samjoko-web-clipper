@@ -149,7 +149,6 @@ chrome.commands.onCommand.addListener(async (comando) => {
             'componentes/extraccion/extractor-citas.js',
             'componentes/extraccion/extractor-multimedia.js',
             'componentes/extraccion/extractor-iframes.js',
-            'componentes/extraccion/extractor-enlaces.js',
             'extractor-contenido.js'
           ]
         });
