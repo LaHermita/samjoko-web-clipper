@@ -1,6 +1,7 @@
 const NOMBRE_BASE_DE_DATOS = 'samjoko-nav';
 const VERSION_BASE_DE_DATOS = 1;
 const ALMACEN_DIRECTORIO = 'directorio';
+const LONGITUD_MAXIMA_RUTA = 200;
 
 function abrirBase() {
   return new Promise((resolver, rechazar) => {
@@ -47,13 +48,23 @@ async function verificarPermiso(manejador) {
 }
 
 function obtenerNombreDesdeTitulo(titulo) {
-  const nombreLimpio = titulo
+  if (!titulo || titulo.trim().length === 0) {
+    return 'SAM - ' + chrome.i18n.getMessage('fallbackTituloArchivo');
+  }
+  var nombreLimpio = titulo
     .toLowerCase()
-    .replace(/[^a-z0-9áéíóúñü\s]/g, '')
+    .replace(/[^a-z0-9áéíóúñü\s-]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
-    .substring(0, 60) || chrome.i18n.getMessage('fallbackTituloArchivo');
-  return `SAM - ${nombreLimpio}`;
+    .substring(0, 60);
+  if (!nombreLimpio || nombreLimpio === '' || nombreLimpio.startsWith('.')) {
+    nombreLimpio = chrome.i18n.getMessage('fallbackTituloArchivo');
+  }
+  var nombreFinal = 'SAM - ' + nombreLimpio;
+  if (nombreFinal.length + '.md'.length > LONGITUD_MAXIMA_RUTA) {
+    nombreFinal = nombreFinal.substring(0, LONGITUD_MAXIMA_RUTA - '.md'.length);
+  }
+  return nombreFinal;
 }
 
 function escaparValorYaml(valor) {
@@ -63,17 +74,21 @@ function escaparValorYaml(valor) {
   return String(valor);
 }
 
+function esUrlSegura(url) {
+  if (!url) return false;
+  return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
+}
+
 function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales) {
   if (!usarMetadatosFrontales) return '';
 
   var fechaCaptura = new Date().toISOString().split('T')[0];
   var lineas = ['---'];
 
-  lineas.push('url_origen: ' + (metadata.urlOrigen || metadata.url || ''));
+  lineas.push('url_origen: ' + escaparValorYaml(metadata.urlOrigen || metadata.url || ''));
   lineas.push('fecha_captura: ' + fechaCaptura);
 
-  var titulo = (metadata.titulo || '').replace(/"/g, '\\"');
-  lineas.push('titulo: "' + titulo + '"');
+  lineas.push('titulo: ' + escaparValorYaml(metadata.titulo || ''));
 
   lineas.push('tipo: fuente');
 
@@ -82,7 +97,7 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   }
 
   if (metadata.fechaPublicacion || metadata.fecha) {
-    lineas.push('fecha_publicacion: ' + (metadata.fechaPublicacion || metadata.fecha));
+    lineas.push('fecha_publicacion: ' + escaparValorYaml(metadata.fechaPublicacion || metadata.fecha));
   }
 
   var tags = metadata.tags || metadata.etiquetas;
@@ -96,7 +111,7 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   }
 
   if (metadata.idioma) {
-    lineas.push('idioma: ' + metadata.idioma);
+    lineas.push('idioma: ' + escaparValorYaml(metadata.idioma));
   }
 
   if (metadata.sitioNombre) {
@@ -104,10 +119,10 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   }
 
   if (metadata.tipoContenido) {
-    lineas.push('tipo_contenido: ' + metadata.tipoContenido);
+    lineas.push('tipo_contenido: ' + escaparValorYaml(metadata.tipoContenido));
   }
 
-  if (metadata.imagenDestacada) {
+  if (metadata.imagenDestacada && esUrlSegura(metadata.imagenDestacada)) {
     lineas.push('imagen_destacada: ' + escaparValorYaml(metadata.imagenDestacada));
   }
 

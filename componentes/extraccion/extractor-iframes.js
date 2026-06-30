@@ -153,9 +153,11 @@
 
         var src = elemento.getAttribute('src') || '';
         var tituloIframe = elemento.getAttribute('title') || '';
-        var encabezado = tituloIframe
-          ? '### «' + tituloIframe + '» (iframe)\n\n'
-          : '### (Contenido de iframe' + (src ? ': ' + src : '') + ')\n\n';
+        var srcSanitizada = src.replace(/[\\`*_{}[\]()#+\-.!|<>]/g, '');
+        var tituloSanitizado = tituloIframe.replace(/[\\`*_{}[\]()#+\-.!|<>]/g, '');
+        var encabezado = tituloSanitizado
+          ? '### «' + tituloSanitizado + '» (iframe)\n\n'
+          : '### (Contenido de iframe' + (srcSanitizada ? ': ' + srcSanitizada : '') + ')\n\n';
 
         return {
           md: encabezado + textoIframe,

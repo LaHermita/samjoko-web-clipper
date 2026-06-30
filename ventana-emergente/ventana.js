@@ -190,10 +190,12 @@ async function guardarConNotas() {
     barra.establecerTexto(traducir('barraProgresoGuardando'));
     barra.mostrar('indeterminado', traducir('barraProgresoGuardando'));
 
+    var tokenResultado = await chrome.storage.session.get('tokenSesion');
     var resultado = await chrome.runtime.sendMessage({
       accion: 'guardarArchivo',
       contenido: contenidoFinal,
-      nombreArchivo: nombreBase
+      nombreArchivo: nombreBase,
+      tokenSesion: tokenResultado.tokenSesion || ''
     });
 
     barra.ocultar();

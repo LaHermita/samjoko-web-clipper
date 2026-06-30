@@ -142,7 +142,8 @@ async function inicializar() {
     try {
       var manejador = await window.showDirectoryPicker({ mode: 'readwrite' });
       await guardarDirectorio(manejador);
-      await chrome.runtime.sendMessage({ accion: 'establecerDirectorio' });
+      var resultadoToken = await chrome.storage.session.get('tokenSesion');
+      await chrome.runtime.sendMessage({ accion: 'establecerDirectorio', tokenSesion: resultadoToken.tokenSesion || '' });
       await actualizarInfoCarpeta();
       mostrarToast(traducir('mensajeCarpetaSeleccionada', manejador.name), 'exito');
     } catch (error) {
@@ -153,7 +154,8 @@ async function inicializar() {
   });
 
   botonLimpiar.addEventListener('click', async function () {
-    await chrome.runtime.sendMessage({ accion: 'limpiarDirectorio' });
+    var resultadoToken = await chrome.storage.session.get('tokenSesion');
+    await chrome.runtime.sendMessage({ accion: 'limpiarDirectorio', tokenSesion: resultadoToken.tokenSesion || '' });
     await actualizarInfoCarpeta();
     mostrarToast(traducir('mensajeCarpetaEliminada'), 'info');
   });

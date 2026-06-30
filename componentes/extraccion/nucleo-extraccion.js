@@ -181,6 +181,9 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
         imagenDestacada = base.origin + imagenDestacada;
       } catch (e) {}
     }
+    if (imagenDestacada && imagenDestacada.indexOf('http://') !== 0 && imagenDestacada.indexOf('https://') !== 0) {
+      imagenDestacada = null;
+    }
 
     return {
       titulo: titulo,

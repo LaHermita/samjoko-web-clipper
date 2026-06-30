@@ -494,10 +494,12 @@ async function guardarEnCarpeta() {
     var markdownFinal = regenerarMarkdown();
 
     barra.establecerTexto(traducir('barraProgresoGuardando'));
+    var tokenResultado = await chrome.storage.session.get('tokenSesion');
     var resultado = await chrome.runtime.sendMessage({
       accion: 'guardarArchivo',
       contenido: markdownFinal,
-      nombreArchivo: nombreBase
+      nombreArchivo: nombreBase,
+      tokenSesion: tokenResultado.tokenSesion || ''
     });
 
     barra.ocultar();

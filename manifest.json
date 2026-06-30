@@ -11,7 +11,12 @@
     "notifications",
     "sidePanel"
   ],
-  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "side_panel": {
     "default_path": "editor-bloques/editor.html"
   },

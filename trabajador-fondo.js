@@ -1,10 +1,44 @@
 importScripts('base-datos.js', 'componentes/configuracion.js');
 
+const ID_EXTENSION = chrome.runtime.id;
+const ACCIONES_SENSIBLES = [
+  'guardarArchivo',
+  'guardarConfiguracion',
+  'restablecerConfiguracion',
+  'establecerDirectorio',
+  'limpiarDirectorio'
+];
+
 let manejadorDirectorio = null;
 let promesaInicializacion;
+let tokenSesion = '';
+
+function generarToken(longitud) {
+  var array = new Uint8Array(Math.ceil(longitud / 2));
+  crypto.getRandomValues(array);
+  return Array.from(array, function(b) {
+    return b.toString(16).padStart(2, '0');
+  }).join('').substring(0, longitud);
+}
+
+function esRemitenteExtension(remitente) {
+  return remitente && remitente.id === ID_EXTENSION;
+}
+
+function esPaginaInterna(remitente) {
+  if (!remitente || !remitente.url) return false;
+  try {
+    var url = new URL(remitente.url);
+    return url.protocol === 'chrome-extension:' && url.hostname === ID_EXTENSION;
+  } catch (e) {
+    return false;
+  }
+}
 
 function inicializar() {
   promesaInicializacion = cargarDirectorio().catch(() => {});
+  tokenSesion = generarToken(32);
+  chrome.storage.session.set({ tokenSesion: tokenSesion });
 }
 
 async function cargarDirectorio() {
@@ -31,6 +65,9 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
   if (configuracion.subcarpeta) {
     const partes = configuracion.subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
     for (const parte of partes) {
+      if (/^\.\.?$/.test(parte) || /[~<>:"|?*]/.test(parte) || parte.length > 100 || parte.length === 0) {
+        throw new Error('Subcarpeta invalida: ' + parte);
+      }
       directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
     }
   }
@@ -51,6 +88,13 @@ chrome.runtime.onInstalled.addListener((detalles) => {
 });
 
 chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
+  if (!esRemitenteExtension(remitente)) return;
+
+  if (ACCIONES_SENSIBLES.includes(mensaje.accion)) {
+    if (!esPaginaInterna(remitente)) return;
+    if (mensaje.tokenSesion !== tokenSesion) return;
+  }
+
   if (mensaje.accion === 'establecerDirectorio') {
     (async () => {
       await cargarDirectorio();

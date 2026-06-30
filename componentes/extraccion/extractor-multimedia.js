@@ -12,6 +12,8 @@
         var src = elemento.getAttribute('src') || '';
         var alt = elemento.getAttribute('alt') || '';
         if (!src) return null;
+        var srcNormalizada = src.toLowerCase();
+        if (srcNormalizada.indexOf('javascript:') === 0 || srcNormalizada.indexOf('vbscript:') === 0 || srcNormalizada.indexOf('data:text/html') === 0) return null;
         if (src.indexOf('data:') === 0) {
           if (alt) return { md: alt, tipo: 'text' };
           return null;
@@ -31,6 +33,8 @@
             if (figcaption) return { md: ns.colapsarEspacios(figcaption.textContent), tipo: 'text' };
             return null;
           }
+          var srcNormalizada = src.toLowerCase();
+          if (srcNormalizada.indexOf('javascript:') === 0 || srcNormalizada.indexOf('vbscript:') === 0 || srcNormalizada.indexOf('data:text/html') === 0) return null;
           if (src.indexOf('data:') === 0) {
             if (figcaption) return { md: ns.colapsarEspacios(figcaption.textContent), tipo: 'text' };
             if (alt) return { md: alt, tipo: 'text' };
