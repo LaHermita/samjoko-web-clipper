@@ -41,6 +41,8 @@ async function inicializarInternacionalizacion() {
 
   etiquetaNotasRapidas.textContent = traducir('etiquetaNotasPersonales');
   notasRapidas.placeholder = traducir('placeholderNotasPersonales');
+  document.getElementById('etiquetaInputTags').textContent = traducir('etiquetaTags');
+  document.getElementById('inputTags').placeholder = traducir('placeholderTags');
   document.getElementById('botonGuardarNotas').textContent = traducir('botonGuardar');
   document.getElementById('botonCancelarNotas').textContent = traducir('botonCancelar');
 
@@ -72,11 +74,35 @@ inicializarInternacionalizacion().then(function () {
   }
 });
 
-function mostrarToast(texto, tipo) {
+function mostrarToast(texto, tipo, markdown) {
   tipo = tipo || 'exito';
-  const toast = document.createElement('div');
+  var toast = document.createElement('div');
   toast.className = 'toast toast-' + tipo;
-  toast.textContent = texto;
+
+  if (markdown) {
+    var palabras = markdown.split(/\s+/).filter(Boolean).length;
+    var resumen = texto + ' · ' + palabras + ' palabras';
+    toast.textContent = resumen;
+    toast.className += ' toast-expandible toast-compacto';
+    toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+
+    toast.addEventListener('click', function () {
+      if (toast.classList.contains('toast-compacto')) {
+        toast.classList.remove('toast-compacto');
+        toast.classList.add('toast-expandido');
+        toast.textContent = texto + '\n\n' + markdown.substring(0, 500) + (markdown.length > 500 ? '\n...' : '');
+        toast.setAttribute('aria-label', 'Contenido de la captura. Haz clic para colapsar.');
+      } else {
+        toast.classList.remove('toast-expandido');
+        toast.classList.add('toast-compacto');
+        toast.textContent = resumen;
+        toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+      }
+    });
+  } else {
+    toast.textContent = texto;
+  }
+
   zonaToast.appendChild(toast);
 
   requestAnimationFrame(function () {
@@ -85,12 +111,13 @@ function mostrarToast(texto, tipo) {
     });
   });
 
+  var tiempo = markdown ? 8000 : 3000;
   setTimeout(function () {
     toast.classList.remove('toast-visible');
     setTimeout(function () {
       toast.remove();
     }, 250);
-  }, 3000);
+  }, tiempo);
 }
 
 async function extraerContenido(pestania) {
@@ -139,6 +166,9 @@ async function capturaRapida() {
     }
 
     var tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
+
+    var tagsAuto = extraido.metadata.tags || extraido.metadata.etiquetas || [];
+    document.getElementById('inputTags').value = tagsAuto.join(', ');
 
     zonaNotas.classList.remove('oculto');
     document.getElementById('accionesNotas').classList.remove('oculto');
@@ -190,10 +220,15 @@ async function guardarConNotas() {
 
     var nombreBase = obtenerNombreDesdeTitulo(datos.tituloPagina) + '.md';
     var notas = notasRapidas.value.trim();
+    var textoTags = document.getElementById('inputTags').value.trim();
+    var tagsUsuario = textoTags ? textoTags.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : null;
 
     var configuracionVentanaEmergente = await obtenerConfiguracion();
-    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas, configuracionVentanaEmergente.camposFrontmatter);
+    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas, configuracionVentanaEmergente.camposFrontmatter, tagsUsuario);
     var contenidoFinal = metadatosFrontales + datos.markdown;
+    if (configuracionVentanaEmergente.ajusteLinea && configuracionVentanaEmergente.ajusteLinea !== 'ninguno') {
+      contenidoFinal = ajustarTexto(contenidoFinal, configuracionVentanaEmergente.ajusteLinea);
+    }
 
     barra.establecerTexto(traducir('barraProgresoGuardando'));
     barra.mostrar('indeterminado', traducir('barraProgresoGuardando'));
@@ -212,7 +247,7 @@ async function guardarConNotas() {
       mostrarToast(resultado.mensaje || traducir('errorGuardado', ''), 'error');
       botonGuardar.disabled = false;
     } else {
-      mostrarToast(traducir('mensajeGuardadoComo', resultado.nombreArchivo), 'exito');
+      mostrarToast(traducir('mensajeGuardadoComo', resultado.nombreArchivo), 'exito', contenidoFinal);
       setTimeout(function () {
         window.close();
       }, 1200);
@@ -229,6 +264,7 @@ function cancelarNotas() {
   document.getElementById('accionesNotas').classList.add('oculto');
   botonCapturaRapida.disabled = false;
   notasRapidas.value = '';
+  document.getElementById('inputTags').value = '';
   delete zonaNotas._datosPendientes;
 }
 

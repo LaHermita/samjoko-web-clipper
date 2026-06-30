@@ -289,6 +289,12 @@
   "placeholderNotasPersonales": {
     "message": "¿Por qué guardas esto?"
   },
+  "etiquetaTags": {
+    "message": "Etiquetas (separadas por comas)"
+  },
+  "placeholderTags": {
+    "message": "productividad, javascript, tutorial"
+  },
   "etiquetaIdioma": {
     "message": "Idioma:"
   },
@@ -362,6 +368,12 @@
       "actual": { "content": "$1", "example": "1" },
       "total": { "content": "$2", "example": "3" }
     }
+  },
+  "etiquetaAjusteLinea": {
+    "message": "Ajuste de línea"
+  },
+  "ajusteLineaNinguno": {
+    "message": "Ninguno (sin ajuste)"
   },
   "textoAtajosTeclado": {
     "message": "Atajos de teclado: Ctrl+Shift+K (abrir popup), Ctrl+Shift+S (captura rápida)"

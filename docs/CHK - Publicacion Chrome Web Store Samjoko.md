@@ -332,15 +332,15 @@ responder(configuracion);
 
 | # | Sección CHK | Pendiente | Estado |
 |---|------------|-----------|--------|
-| 1 | §2 Política de privacidad | **Crear política de privacidad** y publicarla en un sitio web propio (no solo en el README). Debe divulgar: datos recopilados (contenido de página + metadatos), que todo es local, que no se envían datos a terceros, que el usuario tiene control total. | **NO EXISTE** |
-| 2 | §2 Política de privacidad | **Publicar la política** en un dominio propio accesible públicamente (ej. `https://samjoko.dev/privacidad` o similar). | **NO EXISTE** |
-| 3 | §4 Limited Use | Incluir declaración `"The use of information received from Google APIs will adhere to the Chrome Web Store User Data Policy, including the Limited Use requirements."` en un sitio web propio. | **PENDIENTE** |
+| 1 | §2 Política de privacidad | **Crear política de privacidad** y publicarla en un sitio web propio (no solo en el README). Debe divulgar: datos recopilados (contenido de página + metadatos), que todo es local, que no se envían datos a terceros, que el usuario tiene control total. | ✅ CREADO: `docs/LEGAL - Politica de Privacidad.md`. Pendiente de publicar en sitio web propio. |
+| 2 | §2 Política de privacidad | **Publicar la política** en un dominio propio accesible públicamente (ej. `https://samjoko.dev/privacidad` o similar). | **PENDIENTE** (requiere dominio propio) |
+| 3 | §4 Limited Use | Incluir declaración `"The use of information received from Google APIs will adhere to the Chrome Web Store User Data Policy, including the Limited Use requirements."` en un sitio web propio. | ✅ INCLUIDA en la política de privacidad. Pendiente de publicar. |
 | 4 | §6 Dashboard | Completar los campos de privacidad en el Developer Dashboard al publicar. | **PENDIENTE** (requiere cuenta de desarrollador) |
 | 5 | §14 Metadatos | Preparar descripción, icono y capturas de pantalla para el listado. | **PENDIENTE** |
 | 6 | §19 Propiedad intelectual | Verificar que "Samjoko" y su iconografía no infringen marcas registradas de terceros. | **PENDIENTE** |
 | 7 | §20 Soporte | Definir y publicar canal de soporte (email, GitHub Issues, formulario). Actualmente solo hay `ko-fi.com/harpopan` en el pie de opciones. | **PENDIENTE** |
 | 8 | §7 Seguridad | **Hardening de seguridad (Fase 3.5) completado**: validación de orígenes, path traversal, sanitización URIs, CSP explícito, validación de tipos. | ✅ Verificado. Ref: Roadmap §3.5. |
-| 9 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | **PENDIENTE** |
+| 9 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | ✅ CORREGIDO |
 | 10 | §4.5 Accesibilidad | Auditoría de accesibilidad completada (Fase 4.5): landmarks ARIA, `aria-live`, teclado, contraste. | ✅ Verificado. Ref: `docs/CHK - Accesibilidad.md`. |
 
 ---
@@ -351,8 +351,8 @@ responder(configuracion);
 |---|------------|-----------|-------|
 | 11 | §1 Registro | Crear cuenta de desarrollador y pagar Registration Fee. | Requisito previo a publicar. |
 | 12 | §25 Pruebas | Testear la extensión completa (captura rápida, editor, temas, idioma, subcarpetas). | Prueba funcional completa antes de enviar. |
-| 13 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | Google revisa el código. |
-| 14 | §7 Seguridad | No hay mecanismo para informar vulnerabilidades. | Crear dirección de contacto para seguridad. |
+| 13 | §15 Código | `console.log` en `trabajador-fondo.js:49` — revisar para producción. | ✅ CORREGIDO |
+| 14 | §7 Seguridad | No hay mecanismo para informar vulnerabilidades. Ya hay email y GitHub Issues en la política de privacidad. | ✅ CUBIERTO |
 
 ---
 

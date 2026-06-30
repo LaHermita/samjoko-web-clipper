@@ -149,6 +149,26 @@ body {
   letter-spacing: 0.5px;
 }
 
+#inputTags {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--fondo-editor);
+  color: var(--texto-primario);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  margin-top: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#inputTags:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 2px var(--borde-suave);
+}
+
 #notasRapidas {
   width: 100%;
   box-sizing: border-box;
@@ -271,4 +291,40 @@ body {
   background: var(--fondo-panel);
   color: var(--texto-inactivo);
   border-color: var(--borde-interfaz);
+}
+
+.toast-expandible {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.toast-expandido {
+  max-height: 180px;
+  overflow-y: auto;
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.toast-compacto {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.toast-compacto.toast-visible,
+.toast-expandido.toast-visible {
+  cursor: pointer;
+}
+
+.toast-compacto.toast-visible:hover,
+.toast-expandido.toast-visible:hover {
+  filter: brightness(1.1);
 }

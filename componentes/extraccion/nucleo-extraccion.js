@@ -158,7 +158,7 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     var textoCuerpo = ns.extraerTextoCuerpo(documento);
     var palabras = textoCuerpo.split(/\s+/).filter(Boolean).length;
 
-    var urlOrigen = urlOrigenExterno || documento.URL || '';
+    var urlOrigen = ns.limpiarUrl(urlOrigenExterno || documento.URL || '');
 
     var idiomaMeta = (documento.documentElement.getAttribute('lang') || '').toLowerCase();
     var idioma = idiomaMeta && /^[a-z]{2}(-[a-z]{2})?$/.test(idiomaMeta) ? idiomaMeta.substring(0, 2) : null;
@@ -184,6 +184,7 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     if (imagenDestacada && imagenDestacada.indexOf('http://') !== 0 && imagenDestacada.indexOf('https://') !== 0) {
       imagenDestacada = null;
     }
+    if (imagenDestacada) imagenDestacada = ns.limpiarUrl(imagenDestacada);
 
     return {
       titulo: titulo,
@@ -213,6 +214,25 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     };
   };
 
+  ns.limpiarUrl = function(url) {
+    if (!url) return url;
+    try {
+      var u = new URL(url, window.location.origin);
+      var parametrosIgnorar = /^(utm_|fbclid|gclid|mc_cid|mc_eid|ref|source|ref_src|ref_url)/i;
+      var claves = Array.from(u.searchParams.keys());
+      var cambio = false;
+      for (var i = 0; i < claves.length; i++) {
+        if (parametrosIgnorar.test(claves[i])) {
+          u.searchParams.delete(claves[i]);
+          cambio = true;
+        }
+      }
+      return cambio ? u.toString() : url;
+    } catch (e) {
+      return url;
+    }
+  };
+
   ns.extraerEnlacesDeBloque = function(elemento) {
     var enlaces = [];
     var elementosEnlace = elemento.querySelectorAll('a[href]');
@@ -220,7 +240,7 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       var a = elementosEnlace[j];
       var href = a.getAttribute('href');
       if (href && href.indexOf('javascript:') !== 0 && href.indexOf('#') !== 0) {
-        enlaces.push({ texto: ns.colapsarEspacios(a.textContent), url: href });
+        enlaces.push({ texto: ns.colapsarEspacios(a.textContent), url: ns.limpiarUrl(href) });
       }
     }
     return enlaces;
@@ -268,6 +288,34 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       enlaces: enlacesFormateados,
       markdown: encabezado + resultado.trim() + seccionEnlaces + fuente
     };
+  };
+
+  ns.normalizarJerarquiaEncabezados = function(bloques) {
+    var nivelMinimo = 6;
+    var tieneEncabezados = false;
+
+    for (var i = 0; i < bloques.length; i++) {
+      if (bloques[i].tipo === 'heading' && bloques[i].nivel) {
+        if (bloques[i].nivel < nivelMinimo) nivelMinimo = bloques[i].nivel;
+        tieneEncabezados = true;
+      }
+    }
+
+    if (!tieneEncabezados || nivelMinimo <= 1) return bloques;
+
+    var desplazamiento = nivelMinimo - 1;
+
+    for (var i = 0; i < bloques.length; i++) {
+      var bloque = bloques[i];
+      if (bloque.tipo === 'heading' && bloque.nivel) {
+        bloque.nivel -= desplazamiento;
+        var prefijo = '';
+        for (var n = 0; n < bloque.nivel; n++) prefijo += '#';
+        bloque.texto = prefijo + ' ' + (bloque.contenido || '');
+      }
+    }
+
+    return bloques;
   };
 
   ns.extraer = function(documento, opciones) {
@@ -375,6 +423,8 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
       bloques.push(bloque);
     }
+
+    bloques = ns.normalizarJerarquiaEncabezados(bloques);
 
     return ns.ensamblarMarkdown(bloques, metadata, enlacesAcumulados);
   };

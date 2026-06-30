@@ -185,6 +185,31 @@ body {
   border-color: var(--color-acento);
 }
 
+#etiquetaTagsEditor {
+  display: block;
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+#inputTagsEditor {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--fondo-editor);
+  color: var(--texto-primario);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+#inputTagsEditor:focus {
+  outline: none;
+  border-color: var(--color-acento);
+}
+
 #zonaVacia {
   display: flex;
   flex-direction: column;

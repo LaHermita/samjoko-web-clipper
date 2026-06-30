@@ -21,6 +21,8 @@ var etiquetaTiempoLectura = document.getElementById('etiquetaTiempoLectura');
 var zonaNotasPersonales = document.getElementById('zonaNotasPersonales');
 var notasPersonalesInput = document.getElementById('notasPersonalesInput');
 var etiquetaNotas = document.getElementById('etiquetaNotas');
+var inputTagsEditor = document.getElementById('inputTagsEditor');
+var etiquetaTagsEditor = document.getElementById('etiquetaTagsEditor');
 
 var zonaVacia = document.getElementById('zonaVacia');
 var textoVacio = document.getElementById('textoVacio');
@@ -172,8 +174,10 @@ function regenerarMarkdown() {
   var partes = [];
   var usarMetadatosFrontales = configuracionEditor ? configuracionEditor.usarMetadatosFrontales : false;
   var notas = notasPersonalesInput ? notasPersonalesInput.value.trim() : '';
+  var textoTags = inputTagsEditor ? inputTagsEditor.value.trim() : '';
+  var tagsUsuario = textoTags ? textoTags.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : null;
 
-  var metadatosFrontales = generarMetadatosFrontales(metadataPagina, usarMetadatosFrontales, notas, configuracionEditor ? configuracionEditor.camposFrontmatter : null);
+  var metadatosFrontales = generarMetadatosFrontales(metadataPagina, usarMetadatosFrontales, notas, configuracionEditor ? configuracionEditor.camposFrontmatter : null, tagsUsuario);
   if (metadatosFrontales) partes.push(metadatosFrontales);
 
   if (metadataPagina && metadataPagina.titulo) {
@@ -193,7 +197,11 @@ function regenerarMarkdown() {
     partes.push('*' + traducir('seccionFuente') + ': ' + metadataPagina.url + '*');
   }
 
-  return partes.join('\n');
+  var md = partes.join('\n');
+  if (configuracionEditor && configuracionEditor.ajusteLinea && configuracionEditor.ajusteLinea !== 'ninguno') {
+    md = ajustarTexto(md, configuracionEditor.ajusteLinea);
+  }
+  return md;
 }
 
 function actualizarPrevia() {
@@ -386,7 +394,12 @@ function mostrarMetadata() {
     metaDetalles.classList.add('oculto');
   }
 
+  var tagsAuto = metadataPagina.tags || metadataPagina.etiquetas || [];
+  inputTagsEditor.value = tagsAuto.join(', ');
+
   etiquetaNotas.textContent = traducir('etiquetaNotasPersonales');
+  etiquetaTagsEditor.textContent = traducir('etiquetaTags');
+  inputTagsEditor.placeholder = traducir('placeholderTags');
   zonaNotasPersonales.classList.remove('oculto');
 
   panelMetadata.classList.remove('oculto');

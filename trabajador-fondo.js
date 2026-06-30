@@ -83,7 +83,6 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
 
 chrome.runtime.onInstalled.addListener((detalles) => {
   if (detalles.reason === 'install') {
-    console.log('Samjoko Web Clipper instalada');
   }
 });
 
@@ -233,7 +232,10 @@ chrome.commands.onCommand.addListener(async (comando) => {
     const tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
     const configuracionTrabajador = await obtenerConfiguracion();
     const metadatosFrontales = generarMetadatosFrontales(extraido.metadata, configuracionTrabajador.usarMetadatosFrontales, '', configuracionTrabajador.camposFrontmatter);
-    const contenidoFinal = metadatosFrontales + extraido.markdown;
+    var contenidoFinal = metadatosFrontales + extraido.markdown;
+    if (configuracionTrabajador.ajusteLinea && configuracionTrabajador.ajusteLinea !== 'ninguno') {
+      contenidoFinal = ajustarTexto(contenidoFinal, configuracionTrabajador.ajusteLinea);
+    }
     const nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
     const nombreGuardado = await guardarArchivoEnCarpeta(contenidoFinal, nombreBase);
 

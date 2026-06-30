@@ -286,6 +286,12 @@
   "placeholderNotasPersonales": {
     "message": "Why are you saving this?"
   },
+  "etiquetaTags": {
+    "message": "Tags (comma separated)"
+  },
+  "placeholderTags": {
+    "message": "productivity, javascript, tutorial"
+  },
   "etiquetaIdioma": {
     "message": "Language:"
   },
@@ -359,6 +365,12 @@
       "actual": { "content": "$1", "example": "1" },
       "total": { "content": "$2", "example": "3" }
     }
+  },
+  "etiquetaAjusteLinea": {
+    "message": "Line wrap"
+  },
+  "ajusteLineaNinguno": {
+    "message": "None (no wrap)"
   },
   "textoAtajosTeclado": {
     "message": "Keyboard shortcuts: Ctrl+Shift+K (open popup), Ctrl+Shift+S (quick capture)"

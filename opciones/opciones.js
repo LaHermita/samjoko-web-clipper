@@ -6,6 +6,7 @@ var zonaToast = document.getElementById('zonaToast');
 
 var selectorIdioma = document.getElementById('selectorIdioma');
 var selectorTema = document.getElementById('selectorTema');
+var selectorAjusteLinea = document.getElementById('selectorAjusteLinea');
 var entradaSubcarpeta = document.getElementById('entradaSubcarpeta');
 var interruptorMetadatosFrontales = document.getElementById('interruptorMetadatosFrontales');
 var zonaCamposFrontmatter = document.getElementById('camposFrontmatter');
@@ -79,6 +80,8 @@ function inicializarInternacionalizacionConConfiguracion(config) {
 
   document.getElementById('etiquetaIdioma').textContent = traducir('etiquetaIdioma');
   document.getElementById('etiquetaTema').textContent = traducir('etiquetaTema');
+  document.getElementById('etiquetaAjusteLinea').textContent = traducir('etiquetaAjusteLinea');
+  selectorAjusteLinea.options[0].textContent = traducir('ajusteLineaNinguno');
 
   document.getElementById('descripcionCarpeta').textContent = traducir('descripcionCarpeta');
   document.querySelector('#botonSeleccionar span').textContent = traducir('botonSeleccionar');
@@ -141,6 +144,7 @@ function sincronizarCamposFrontmatter(config) {
 function sincronizarInterfaz(config) {
   selectorIdioma.value = config.idioma || 'es';
   selectorTema.value = config.tema || 'samjoko';
+  selectorAjusteLinea.value = config.ajusteLinea || 'ninguno';
   entradaSubcarpeta.value = config.subcarpeta || '';
   interruptorMetadatosFrontales.checked = config.usarMetadatosFrontales !== false;
   sincronizarCamposFrontmatter(config);
@@ -191,6 +195,10 @@ async function inicializar() {
 
   selectorTema.addEventListener('change', function () {
     guardarCampo('tema', selectorTema.value);
+  });
+
+  selectorAjusteLinea.addEventListener('change', function () {
+    guardarCampo('ajusteLinea', selectorAjusteLinea.value);
   });
 
   entradaSubcarpeta.addEventListener('change', function () {

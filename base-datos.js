@@ -79,7 +79,7 @@ function esUrlSegura(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 }
 
-function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales, camposFrontmatter) {
+function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPersonales, camposFrontmatter, tagsUsuario) {
   if (!usarMetadatosFrontales) return '';
   if (!camposFrontmatter) camposFrontmatter = {};
 
@@ -115,7 +115,7 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   }
 
   if (debeIncluir('tags')) {
-    var tags = metadata.tags || metadata.etiquetas;
+    var tags = tagsUsuario || metadata.tags || metadata.etiquetas;
     if (tags && tags.length > 0) {
       var tagsStr = tags.map(function (t) { return escaparValorYaml(t); }).join(', ');
       lineas.push('tags: [' + tagsStr + ']');
@@ -157,6 +157,32 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   lineas.push('---');
   lineas.push('');
   return lineas.join('\n');
+}
+
+async function ajustarTexto(texto, ancho) {
+  if (!ancho || ancho === 'ninguno') return texto;
+  var maxCol = parseInt(ancho, 10);
+  if (!maxCol || maxCol < 40) return texto;
+
+  return texto.split('\n\n').map(function(parrafo) {
+    if (parrafo.startsWith('```') || parrafo.startsWith('|') || parrafo.startsWith('> ')) {
+      return parrafo;
+    }
+    var palabras = parrafo.split(/\s+/);
+    var lineas = [];
+    var lineaActual = '';
+    for (var i = 0; i < palabras.length; i++) {
+      var conPalabra = lineaActual ? lineaActual + ' ' + palabras[i] : palabras[i];
+      if (conPalabra.length > maxCol && lineaActual) {
+        lineas.push(lineaActual);
+        lineaActual = palabras[i];
+      } else {
+        lineaActual = conPalabra;
+      }
+    }
+    if (lineaActual) lineas.push(lineaActual);
+    return lineas.join('\n');
+  }).join('\n\n');
 }
 
 async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {

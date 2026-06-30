@@ -3,7 +3,8 @@ var ESQUEMA_CONFIG = {
   tema: 'string',
   subcarpeta: 'string',
   usarMetadatosFrontales: 'boolean',
-  camposFrontmatter: 'object'
+  camposFrontmatter: 'object',
+  ajusteLinea: 'string'
 };
 
 var TAMANO_MAXIMO_CONFIG = 10240;
@@ -31,7 +32,8 @@ const CONFIG_PREDETERMINADA = Object.freeze({
   tema: 'samjoko',
   subcarpeta: '',
   usarMetadatosFrontales: true,
-  camposFrontmatter: { ...CAMPOS_FRONTMATTER_PREDETERMINADOS }
+  camposFrontmatter: { ...CAMPOS_FRONTMATTER_PREDETERMINADOS },
+  ajusteLinea: 'ninguno'
 });
 
 const CLAVE_CONFIG = 'configuracion';
