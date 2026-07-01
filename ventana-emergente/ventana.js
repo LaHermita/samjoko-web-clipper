@@ -47,6 +47,7 @@ async function inicializarInternacionalizacion() {
   document.getElementById('botonCancelarNotas').textContent = traducir('botonCancelar');
 
   actualizarInfoCarpeta();
+  comprobarActualizacionPopup();
 }
 
 async function actualizarInfoCarpeta() {
@@ -266,6 +267,19 @@ function cancelarNotas() {
   notasRapidas.value = '';
   document.getElementById('inputTags').value = '';
   delete zonaNotas._datosPendientes;
+}
+
+async function comprobarActualizacionPopup() {
+  try {
+    var respuesta = await chrome.runtime.sendMessage({ accion: 'comprobarActualizacion' });
+    if (respuesta && respuesta.hayActualizacion) {
+      var aviso = document.createElement('div');
+      aviso.id = 'avisoActualizacion';
+      aviso.setAttribute('role', 'alert');
+      aviso.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="vertical-align:middle;margin-right:4px" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>' + traducir('avisoActualizacion', respuesta.versionRemota);
+      document.getElementById('encabezadoPopup').insertAdjacentElement('afterend', aviso);
+    }
+  } catch (errorIgnorado) {}
 }
 
 botonCapturaRapida.addEventListener('click', capturaRapida);

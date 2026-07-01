@@ -102,6 +102,22 @@ body {
   color: var(--texto-inactivo);
 }
 
+#avisoActualizacion {
+  text-align: center;
+  font-size: 11px;
+  color: var(--estado-info);
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  background: var(--fondo-editor);
+  border: 1px solid var(--estado-info);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: var(--sombra-caja);
+}
+
 #infoCarpeta {
   text-align: center;
   font-size: 11px;

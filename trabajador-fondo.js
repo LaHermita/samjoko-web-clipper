@@ -1,6 +1,9 @@
 importScripts('base-datos.js', 'componentes/configuracion.js');
 
 const ID_EXTENSION = chrome.runtime.id;
+const URL_MANIFEST_REMOTO = 'https://raw.githubusercontent.com/LaHermita/samjoko-web-clipper/main/manifest.json';
+const CLAVE_ALMACENAMIENTO_VERSION = 'versionRemota';
+const INTERVALO_COMPROBACION = 86400000;
 const ACCIONES_SENSIBLES = [
   'guardarArchivo',
   'guardarConfiguracion',
@@ -19,6 +22,41 @@ function generarToken(longitud) {
   return Array.from(array, function(b) {
     return b.toString(16).padStart(2, '0');
   }).join('').substring(0, longitud);
+}
+
+function compararVersiones(a, b) {
+  var partesA = a.split('.').map(Number);
+  var partesB = b.split('.').map(Number);
+  for (var i = 0; i < Math.max(partesA.length, partesB.length); i++) {
+    var numA = partesA[i] || 0;
+    var numB = partesB[i] || 0;
+    if (numA > numB) return 1;
+    if (numA < numB) return -1;
+  }
+  return 0;
+}
+
+async function obtenerVersionRemota() {
+  var respuesta = await fetch(URL_MANIFEST_REMOTO);
+  var manifiesto = await respuesta.json();
+  return manifiesto.version;
+}
+
+async function comprobarActualizacion() {
+  try {
+    var versionRemota = await obtenerVersionRemota();
+    var versionActual = chrome.runtime.getManifest().version;
+    var resultado = {
+      versionActual: versionActual,
+      versionRemota: versionRemota,
+      hayActualizacion: compararVersiones(versionRemota, versionActual) > 0,
+      ultimaComprobacion: Date.now()
+    };
+    await chrome.storage.local.set({ [CLAVE_ALMACENAMIENTO_VERSION]: resultado });
+    return resultado;
+  } catch (error) {
+    return null;
+  }
 }
 
 function esRemitenteExtension(remitente) {
@@ -81,8 +119,9 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
   return nombreUnico;
 }
 
-chrome.runtime.onInstalled.addListener((detalles) => {
-  if (detalles.reason === 'install') {
+chrome.runtime.onInstalled.addListener(function(detalles) {
+  if (detalles.reason === 'install' || detalles.reason === 'update') {
+    comprobarActualizacion();
   }
 });
 
@@ -92,6 +131,21 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
   if (ACCIONES_SENSIBLES.includes(mensaje.accion)) {
     if (!esPaginaInterna(remitente)) return;
     if (mensaje.tokenSesion !== tokenSesion) return;
+  }
+
+  if (mensaje.accion === 'comprobarActualizacion') {
+    (async () => {
+      var almacenado = await chrome.storage.local.get(CLAVE_ALMACENAMIENTO_VERSION);
+      var datos = almacenado[CLAVE_ALMACENAMIENTO_VERSION];
+
+      if (datos && datos.ultimaComprobacion && Date.now() - datos.ultimaComprobacion < INTERVALO_COMPROBACION) {
+        responder(datos);
+      } else {
+        var resultado = await comprobarActualizacion();
+        responder(resultado || { hayActualizacion: false });
+      }
+    })();
+    return true;
   }
 
   if (mensaje.accion === 'establecerDirectorio') {
