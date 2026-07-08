@@ -1,8 +1,9 @@
 ---
-version: 1.0
+version: 1.1
 fecha: 2026-07-07
-estado: ACTIVO
-descripcion: Análisis y brainstorming de mejoras en detección/captura de contenido, y opciones de compatibilidad con Brave. Documento fuente para integrar bloques en el ROADMAP y guías del proyecto.
+fecha_decision: 2026-07-08
+estado: DECIDIDO
+descripcion: Análisis y brainstorming de mejoras en detección/captura de contenido, y opciones de compatibilidad con Brave. **Todas las propuestas integradas en ROADMAP v1.1 (Fases 5.9–5.16).** Incluye línea nueva de captura de chats IA.
 tipo: Exploración
 origen: conversación de análisis del proyecto (2026-07-07)
 ---
@@ -517,9 +518,51 @@ El editor de bloques usa la Side Panel API de Chrome. En versiones recientes de 
 
 ## Referencias
 
-- `docs/PROY - Roadmap.md` — fases 5, 5.5, 5.6, 6
+- `docs/PROY - Roadmap.md` — fases 5, 5.5, 5.6, 5.9–5.16, 6
 - `docs/REF - WEB-CLIPPER.md` — schema frontmatter Vivero
 - `docs/IDEA - Obsidian Boveda Vision.md` — visión bóveda y tags por dominio
 - [Brave blog — Manifest V3](https://brave.com/blog/brave-shields-manifest-v3/)
 - [Brave — File System Access API (flag)](https://github.com/brave/brave-browser/issues/18979)
 - [Brave — Side Panel API (regresiones corregidas)](https://github.com/brave/brave-browser/issues/32132)
+
+---
+
+## Decisiones tomadas (2026-07-08)
+
+Todas las propuestas de este documento han sido integradas en el ROADMAP v1.1 como sub-fases 5.9–5.16.
+
+| Propuesta | ROADMAP | Decisión |
+|-----------|---------|----------|
+| Extractor inline recursivo | **5.9** | Integrar ahora |
+| Anti-duplicación DOM | **5.10** | Integrar ahora |
+| Detección inteligente raíz | **5.11** | Integrar ahora (niveles 1+2+3) |
+| Metadatos enriquecidos | **5.12** | Integrar ahora |
+| Multimedia/lazy images | **5.13** | Integrar ahora |
+| Code inline vs bloque | **5.14** | Integrar ahora |
+| Captura de chats IA | **5.15** | **Prioridad alta** — nueva línea |
+| Compatibilidad Brave | **5.16** | Integrar ahora |
+
+### Nueva línea: Chats IA
+
+Se crea `extractor-chats-ia.js` como extractor dedicado para conversaciones con IA. Platforms objetivo: ChatGPT, Gemini, Claude, Copilot. El extractor detecta patrones de chat, preserva código, filtra UI del chat y añade etiquetas de rol.
+
+### Quick wins confirmados (1–2 sprints)
+
+1. `extractor-inline.js` + integración en extractores de bloque
+2. Anti-duplicación en recorrido DOM (walker)
+3. `detectarRaizContenido()` con heurísticas + scoring
+4. Canonical URL + `<time>` + JSON-LD `@graph`
+5. Lazy images + filtrado decorativos
+
+### Proyectos medianos
+
+6. Readability.js embebido como fallback
+7. `extractor-chats-ia.js` (plataformas principales)
+8. Reglas por dominio en `assets/reglas-sitio.json`
+9. Compatibilidad Brave (docs + detección FSA)
+
+### Largo plazo
+
+10. Wikilinks + plantillas Templater
+11. CompromiseJS / NLP local
+12. Selección manual por clic (Fase 6)

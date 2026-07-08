@@ -1,7 +1,7 @@
 ---
-version: 1.0
+version: 1.1
 estado: en-progreso
-fase: 4-completada, 4.5-completada, 5.1-completada, 5.2-mejoras, 5.3-tablas, 5.4-completada, 5.8-limpieza
+fase: 4-completada, 4.5-completada, 5.1-completada, 5.2-mejoras, 5.3-tablas, 5.4-completada, 5.8-limpieza, 5.9-pendiente, 5.10-pendiente, 5.11-pendiente, 5.12-pendiente, 5.13-pendiente, 5.14-pendiente, 5.15-pendiente, 5.16-pendiente
 ---
 
 > [!summary] Resumen
@@ -319,6 +319,108 @@ Campos que genera el pipeline NLP (Vivero, no la extensión). Ref: `docs/REF - W
 - [x] **Sanitización de URLs**: eliminar parámetros de tracking (`utm_*`, `fbclid`, `ref=*`)
 - [x] **Opciones de wrapping**: hard-wrap (80/120 columnas) vs soft-wrap configurable
 - [x] **Normalización de espacios**: colapsar espacios múltiples, eliminar espacios al final de línea
+
+### 5.9 — Formato inline en Markdown
+
+Preservar formato inline (`**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces](url)`) que actualmente se pierde al usar `textContent` plano.
+
+- [ ] **Extractor inline recursivo** (`componentes/extraccion/extractor-inline.js`): función `extraerInline(elemento)` que recorra nodos DOM hijos y genere Markdown inline:
+  - `<strong>` / `<b>` → `**texto**`
+  - `<em>` / `<i>` → `*texto*`
+  - `<code>` → `` `texto` `` (sin fenced block)
+  - `<a href="url">` → `[texto](url)`
+  - `<sub>` → `~texto~` / `<sup>` → `^texto^`
+- [ ] **Integrar en extractores de bloque**: `extractor-texto.js`, `extractor-listas.js`, `extractor-citas.js` usan `extraerInline()` en lugar de `textContent`
+- [ ] **Pruebas manuales**: Wikipedia, Medium, documentación técnica con enlaces y código inline
+
+> **Fuente**: LAB §1 — Pérdida de formato inline
+
+### 5.10 — Anti-duplicación en recorrido DOM
+
+Evitar que nodos anidados se capturen más de una vez (ej: `<p>` dentro de `<blockquote>`).
+
+- [ ] **Recorrido en profundidad**: sustituir o complementar `querySelectorAll` plano en `nucleo-extraccion.js` por walker que marque nodos ya procesados
+- [ ] **Exclusión de descendientes**: no procesar hijos de bloques ya convertidos (`blockquote`, `pre`, `table`, `figure`, `ul`, `ol`)
+- [ ] **Pruebas de regresión**: blockquotes anidados, listas dentro de citas, figuras con caption, código en párrafos
+
+> **Fuente**: LAB §2 — Duplicación y orden del DOM
+
+### 5.11 — Detección inteligente de contenido principal
+
+Mejorar la selección de raíz más allá de `<article>`.
+
+- [ ] **Función `detectarRaizContenido(documento)`** en `nucleo-extraccion.js` con cascada:
+  1. `<article>` (si existe)
+  2. `main`, `[role="main"]`, `.entry-content`, `.post-content`, `#content`
+  3. **Scoring de candidatos**: puntuar contenedores por densidad de texto, ratio párrafos/enlaces, presencia de H1
+  4. Fallback a `document.body`
+- [ ] **Reglas por dominio** (nivel 3): archivo `assets/reglas-sitio.json` mantenible para sitios frecuentes
+- [ ] **Readability.js embebido** (nivel 4, opcional): fallback cuando heurísticas fallen (~30-45 KB)
+
+> **Fuente**: LAB §3 — Detección de contenido principal
+
+### 5.12 — Metadatos enriquecidos (sin NLP)
+
+Ampliar `extraerMetadatos()` sin dependencias externas.
+
+- [ ] **`url_origen` canónica**: extraer de `<link rel="canonical">` con fallback a `document.URL`
+- [ ] **`fecha_publicacion` desde `<time>`**: elementos `<time datetime="...">` en el artículo
+- [ ] **JSON-LD `@graph`**: parsear múltiples scripts y grafos anidados (no solo el primer `<script type="application/ld+json">`)
+- [ ] **Twitter Cards**: `twitter:title`, `twitter:description`, `twitter:image` como fallback de OpenGraph
+- [ ] **Detección idioma heurística**: ratio de palabras frecuentes es/en como fallback de `<html lang>`
+
+> **Fuente**: LAB §4 — Metadatos incompletos
+
+### 5.13 — Multimedia e imágenes
+
+Resolver URLs relativas, lazy-load y filtrar ruido visual.
+
+- [ ] **Resolver URLs relativas** en cuerpo Markdown (no solo metadatos): relativizar contra `document.baseURI`
+- [ ] **Soporte lazy-load**: leer `data-src`, `data-lazy-src`, primer valor de `srcset`
+- [ ] **Filtrar imágenes decorativas**: `alt=""`, dimensiones 1×1, patrones de tracking
+- [ ] **Placeholder para embeds cross-origin**: YouTube, Twitter/X, Gist con bloque semántico `> [!embed] URL`
+- [ ] **Descarga local de imágenes** (futuro): opción en configuración para guardar assets en subcarpeta
+
+> **Fuente**: LAB §5 — Multimedia e imágenes
+
+### 5.14 — Código inline vs bloque
+
+Distinguir `<code>` suelto de `<code>` dentro de `<pre>`.
+
+- [ ] **Distinguir inline de bloque**: en `extractor-codigo.js`, solo generar fenced block si `elemento.closest('pre')` existe; si no, generar `` `texto` ``
+- [ ] **Tablas layout**: detectar tablas de presentación (`role="presentation"`) y omitir o degradar
+
+> **Fuente**: LAB §6 — Código y tablas
+
+### 5.15 — Captura de conversaciones IA (chats)
+
+Extractor especializado para conversaciones con IA: Gemini, ChatGPT, Claude, Copilot y similares. La extensión ya funciona decentemente con estos sitios gracias al `<article>` detection y el extractor de iframes recursivo, pero se pierde formato inline, se duplican bloques de código y se cuela UI del chat.
+
+**Plataformas objetivo**: ChatGPT (chatgpt.com), Gemini (gemini.google.com), Claude (claude.ai), Copilot (copilot.microsoft.com), y cualquier chat IA que use estructura conversacional semántica.
+
+- [ ] **Extractor `extractor-chats-ia.js`** (`componentes/extraccion/`):
+  - Detectar patrones de chat: `[data-message-author-role]`, `.message-content`, `.conversation-turn`, `[data-testid*="message"]`
+  - Etiquetas: `div, article, section` (solo cuando contenga patrones de chat detectados)
+  - `esAplicable()`: verificar que el elemento o su padre contenga marcadores de chat IA
+- [ ] **Preservación de código**: bloques ` ``` ` generados por el chat se capturan con lenguaje detectado (`data-language`, clases `language-*`)
+- [ ] **Filtrado de UI del chat**: excluir botones "copiar código", votos (👍👎), thinking/reasoning expandible (`<details>`, `.thinking`), indicators de "escribiendo..."
+- [ ] **Etiquetas de rol en Markdown**: `**Usuario**` / `**Asistente**` antes de cada bloque de mensaje
+- [ ] **Metadatos extra**: `tipo_contenido: conversacion_ia`, `modelo` (si se detecta del DOM o URL), `plataforma` (chatgpt/gemini/claude/copilot)
+- [ ] **Pruebas manuales**: capturar conversaciones reales en cada plataforma, verificar preservación de código y formato
+
+> **Fuente**: Análisis de comportamiento de la extensión con chats IA (2026-07-08)
+
+### 5.16 — Compatibilidad Brave
+
+La extensión funciona en Brave (basado en Chromium, MV3) con un solo `manifest.json`. La principal diferencia es la File System Access API desactivada por defecto.
+
+- [ ] **Probar extensión en Brave stable**: popup, side panel, captura rápida, guardado FSA
+- [ ] **Detección de FSA no disponible**: aviso en opciones y popup cuando `typeof window.showDirectoryPicker === 'undefined'`
+- [ ] **Aviso específico Brave**: instrucciones del flag `brave://flags/#file-system-access-api`
+- [ ] **Fallback UX**: destacar Copiar/Descargar cuando guardado en carpeta no esté disponible
+- [ ] **Documentación**: sección Brave en README + `docs/GUIA - Instalacion Brave.md`
+
+> **Fuente**: LAB Parte 2 — Compatibilidad con Brave
 
 ---
 
