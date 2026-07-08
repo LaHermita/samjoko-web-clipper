@@ -100,9 +100,74 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       .trim();
   };
 
-  ns.extraerTextoCuerpo = function(documento) {
+  ns.detectarRaizContenido = function(documento) {
     var articulo = documento.querySelector('article');
-    var raiz = articulo || documento.body;
+    if (articulo) return articulo;
+
+    var semantico = documento.querySelector('main, [role="main"], [role="document"]');
+    if (semantico) return semantico;
+
+    var idClase = documento.querySelector(
+      '.entry-content, .post-content, .content-area, .article-body, .post-body, ' +
+      '#content, #main-content, #primary, #post-content, .content__main, ' +
+      '[itemprop="articleBody"]'
+    );
+    if (idClase) return idClase;
+
+    var mejorPuntaje = 0;
+    var mejorCandidato = null;
+    var candidatos = documento.body.querySelectorAll('div, section');
+
+    for (var i = 0; i < candidatos.length; i++) {
+      var el = candidatos[i];
+      if (el.closest('nav, footer, header, aside, script, style')) continue;
+      var puntos = ns.puntuarCandidato(el);
+      if (puntos > mejorPuntaje) {
+        mejorPuntaje = puntos;
+        mejorCandidato = el;
+      }
+    }
+
+    if (mejorCandidato && mejorPuntaje >= 20) return mejorCandidato;
+
+    return documento.body;
+  };
+
+  ns.puntuarCandidato = function(elemento) {
+    var texto = elemento.textContent.trim();
+    if (texto.length < 300) return 0;
+
+    var puntos = 0;
+
+    puntos += Math.min(30, Math.floor(texto.length / 200));
+
+    var h1 = elemento.querySelectorAll('h1').length;
+    var h2 = elemento.querySelectorAll('h2').length;
+    var h3 = elemento.querySelectorAll('h3').length;
+    puntos += Math.min(20, h1 * 8 + h2 * 4 + h3 * 2);
+
+    var parrafos = elemento.querySelectorAll('p').length;
+    puntos += Math.min(15, parrafos * 2);
+
+    var enlaces = elemento.querySelectorAll('a[href]');
+    var textoEnlaces = '';
+    for (var i = 0; i < enlaces.length; i++) {
+      textoEnlaces += enlaces[i].textContent;
+    }
+    var ratio = texto.length > 0 ? textoEnlaces.length / texto.length : 0;
+    if (ratio > 0.5) puntos -= 25;
+    else if (ratio > 0.3) puntos -= 10;
+
+    var idClases = ((elemento.className || '') + ' ' + (elemento.id || '')).toLowerCase();
+    if (/content|article|post|entry|main/i.test(idClases)) puntos += 10;
+    if (/page|wrap|container|body/i.test(idClases)) puntos += 3;
+    if (/sidebar|widget|comment|footer|header|nav|menu|banner/i.test(idClases)) puntos -= 30;
+
+    return Math.max(0, puntos);
+  };
+
+  ns.extraerTextoCuerpo = function(documento) {
+    var raiz = ns.detectarRaizContenido(documento);
     return raiz ? raiz.textContent : '';
   };
 
@@ -122,6 +187,29 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       'videoobject': 'video'
     };
     return mapa[tipo] || null;
+  };
+
+  ns.heuristicaIdioma = function(texto) {
+    if (!texto) return null;
+    var palabras = texto.toLowerCase().split(/\s+/).filter(Boolean);
+    if (palabras.length < 30) return null;
+
+    var es = { de:1, la:1, que:1, el:1, en:1, los:1, se:1, las:1, por:1, con:1, para:1, una:1, del:1, como:1, mas:1, pero:1, sus:1, entre:1, este:1, esta:1, porque:1, tambien:1, donde:1, muy:1, sobre:1, hasta:1, desde:1, segun:1, cada:1, otro:1, esa:1, ese:1, ello:1, era:1, han:1, esta:1, estan:1, fue:1, son:1, ser:1, sido:1, tiene:1, tenia:1, podria:1, puede:1, debe:1, ano:1, parte:1, forma:1, contra:1, durante:1, antes:1, despues:1, luego:1, entonces:1, aqui:1, alli:1, siempre:1, nunca:1, mismo:1, toda:1, todo:1, bajo:1, ante:1, cabe:1, segun:1, hacia:1, mediante:1, sin:1, tras:1, vez:1, veces:1, ambos:1, tampoco:1, solo:1, ya:1, bien:1, aunque:1, mientras:1, pues:1, cual:1, quien:1, cuyo:1, cuanto:1, nada:1, algo:1, nadie:1, algun:1, alguna:1, ningun:1, ninguna:1, siempre:1, tambien:1, tampoco:1, incluso:1, asi:1, alla:1, aca:1, entonces:1, finalmente:1, primer:1, ultimo:1, gran:1, mayor:1, menor:1, propio:1, nuevo:1, mismo:1, otro:1 };
+
+    var en = { the:1, of:1, and:1, to:1, in:1, a:1, is:1, that:1, for:1, it:1, with:1, as:1, was:1, on:1, are:1, be:1, this:1, or:1, by:1, from:1, at:1, an:1, but:1, not:1, we:1, you:1, they:1, he:1, she:1, its:1, have:1, has:1, had:1, been:1, were:1, will:1, would:1, could:1, should:1, may:1, more:1, about:1, than:1, which:1, their:1, them:1, some:1, when:1, also:1, into:1, only:1, other:1, after:1, then:1, these:1, those:1, what:1, while:1, there:1, can:1, just:1, like:1, most:1, very:1, way:1, many:1, each:1, much:1, such:1, through:1, where:1, how:1, well:1, still:1, even:1, down:1, back:1, between:1, over:1, under:1, before:1, after:1, during:1, without:1, within:1, along:1, among:1, upon:1, about:1, around:1, above:1, below:1, whether:1, though:1, either:1, neither:1, than:1, then:1, else:1, off:1, out:1, up:1, here:1, there:1, because:1, been:1, being:1, having:1, doing:1, getting:1, make:1, made:1, take:1, took:1, given:1, using:1, used:1 };
+
+    var puntEs = 0;
+    var puntEn = 0;
+    for (var i = 0; i < palabras.length; i++) {
+      var p = palabras[i].replace(/[^a-z]/g, '');
+      if (!p) continue;
+      if (es[p]) puntEs++;
+      if (en[p]) puntEn++;
+    }
+
+    var total = puntEs + puntEn;
+    if (total < 5) return null;
+    return puntEs > puntEn * 1.5 ? 'es' : (puntEn > puntEs * 1.5 ? 'en' : null);
   };
 
   ns.extraerMetadatos = function(documento, urlOrigenExterno) {
@@ -147,21 +235,88 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
     var tipoOpenGraph = obtenerMeta(['og:type']);
     var tipoSchema = null;
-    var scriptJsonLd = documento.querySelector('script[type="application/ld+json"]');
-    if (scriptJsonLd) {
+    var jsonldFecha = null;
+    var jsonldAutor = null;
+    var jsonldImagen = null;
+    var jsonldDescripcion = null;
+    var jsonldTitulo = null;
+
+    var scriptsLd = documento.querySelectorAll('script[type="application/ld+json"]');
+    for (var s = 0; s < scriptsLd.length; s++) {
       try {
-        var datos = JSON.parse(scriptJsonLd.textContent);
-        tipoSchema = datos['@type'] || null;
+        var datos = JSON.parse(scriptsLd[s].textContent);
+        var elementos = datos['@graph'] ? datos['@graph'] : [datos];
+
+        for (var g = 0; g < elementos.length; g++) {
+          var item = elementos[g];
+          var tipo = item['@type'];
+          if (!tipo) continue;
+
+          var tipos = Array.isArray(tipo) ? tipo : [tipo];
+          var tipoStr = '';
+          for (var t = 0; t < tipos.length; t++) {
+            tipoStr += tipos[t].toLowerCase() + ' ';
+          }
+
+          if (!tipoSchema && /article|blogposting|newsarticle|tutorial|howto|documentation|techarticle|news/.test(tipoStr)) {
+            tipoSchema = tipos[0];
+          }
+
+          if (!jsonldFecha && item.datePublished) {
+            var fp = String(item.datePublished).split('T')[0];
+            if (/^\d{4}-\d{2}-\d{2}$/.test(fp)) jsonldFecha = fp;
+          }
+
+          if (!jsonldAutor && item.author) {
+            if (typeof item.author === 'string') jsonldAutor = item.author;
+            else if (item.author.name) jsonldAutor = item.author.name;
+          }
+
+          if (!jsonldImagen && item.image) {
+            if (typeof item.image === 'string') jsonldImagen = item.image;
+            else if (item.image.url) jsonldImagen = item.image.url;
+          }
+
+          if (!jsonldDescripcion && item.description) {
+            jsonldDescripcion = item.description;
+          }
+
+          if (!jsonldTitulo && (item.headline || item.name)) {
+            jsonldTitulo = item.headline || item.name;
+          }
+        }
       } catch (e) {}
+    }
+
+    var fechaDesdeMeta = obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']);
+    if (!fechaDesdeMeta) {
+      var timeEl = documento.querySelector('time[datetime]');
+      if (timeEl) {
+        var fechaTime = timeEl.getAttribute('datetime');
+        if (fechaTime) {
+          var soloFecha = fechaTime.split('T')[0];
+          if (/^\d{4}-\d{2}-\d{2}$/.test(soloFecha)) fechaDesdeMeta = soloFecha;
+        }
+      }
+    }
+    if (!fechaDesdeMeta && jsonldFecha) {
+      fechaDesdeMeta = jsonldFecha;
     }
 
     var textoCuerpo = ns.extraerTextoCuerpo(documento);
     var palabras = textoCuerpo.split(/\s+/).filter(Boolean).length;
 
-    var urlOrigen = ns.limpiarUrl(urlOrigenExterno || documento.URL || '');
+    var urlOrigen = (function() {
+      var canonico = documento.querySelector('link[rel="canonical"]');
+      if (canonico && canonico.href) return ns.limpiarUrl(canonico.href);
+      return ns.limpiarUrl(urlOrigenExterno || documento.URL || '');
+    })();
 
     var idiomaMeta = (documento.documentElement.getAttribute('lang') || '').toLowerCase();
     var idioma = idiomaMeta && /^[a-z]{2}(-[a-z]{2})?$/.test(idiomaMeta) ? idiomaMeta.substring(0, 2) : null;
+    if (!idioma) {
+      idioma = ns.heuristicaIdioma(textoCuerpo);
+    }
 
     var sitioNombre = obtenerMeta(['og:site_name']);
     if (!sitioNombre && urlOrigen) {
@@ -172,8 +327,14 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
     var imagenDestacada = obtenerMeta(['og:image']);
     if (!imagenDestacada) {
+      imagenDestacada = obtenerMeta(['twitter:image', 'twitter:image:src']);
+    }
+    if (!imagenDestacada) {
       var enlaceImagen = documento.querySelector('link[rel="image_src"]');
       if (enlaceImagen) imagenDestacada = enlaceImagen.getAttribute('href');
+    }
+    if (!imagenDestacada && jsonldImagen) {
+      imagenDestacada = jsonldImagen;
     }
     if (imagenDestacada && imagenDestacada.startsWith('/') && urlOrigen) {
       try {
@@ -187,18 +348,22 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     if (imagenDestacada) imagenDestacada = ns.limpiarUrl(imagenDestacada);
 
     return {
-      titulo: titulo,
+      titulo: jsonldTitulo && (!titulo || titulo.length < 3) ? ns.sanitizarTitulo(jsonldTitulo) : titulo,
       url: urlOrigen,
       urlOrigen: urlOrigen,
-      autor: obtenerMeta(['autor', 'article:author', 'twitter:creator']),
-      fecha: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
-      fechaPublicacion: obtenerMeta(['date', 'article:published_time', 'dc.date', 'citation_date']),
+      autor: (function() {
+        var a = obtenerMeta(['autor', 'article:author', 'twitter:creator']);
+        return a || jsonldAutor || null;
+      })(),
+      fecha: fechaDesdeMeta,
+      fechaPublicacion: fechaDesdeMeta,
       etiquetas: obtenerMetadatosMultiples('keywords').flatMap(function(k) {
         return k.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
       }),
       descripcion: (function() {
-        var desc = obtenerMeta(['description', 'og:description']);
+        var desc = obtenerMeta(['description', 'og:description', 'twitter:description']);
         if (desc) return desc.length > 200 ? desc.substring(0, 197) + '...' : desc;
+        if (jsonldDescripcion) return jsonldDescripcion.length > 200 ? jsonldDescripcion.substring(0, 197) + '...' : jsonldDescripcion;
         var primerParrafo = documento.querySelector('p');
         if (primerParrafo) {
           var texto = primerParrafo.textContent.trim();
@@ -322,8 +487,7 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     opciones = opciones || {};
     var urlExterna = opciones.urlOrigen || '';
 
-    var articulo = documento.querySelector('article');
-    var raiz = articulo || documento;
+    var raiz = ns.detectarRaizContenido(documento);
 
     var todasEtiquetas = [];
     for (var e = 0; e < ns.registroExtractores.length; e++) {
