@@ -151,6 +151,9 @@
   "errorSWPermisoDenegado": {
     "message": "Permiso denegado. Vuelve a seleccionar la carpeta en Opciones."
   },
+  "errorSWDirectorioInvalido": {
+    "message": "La carpeta guardada ya no existe o no es accesible. Abre Opciones y selecciónala de nuevo."
+  },
 
   "seccionEnlaces": {
     "message": "Enlaces"

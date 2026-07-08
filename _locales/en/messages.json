@@ -148,6 +148,9 @@
   "errorSWPermisoDenegado": {
     "message": "Permission denied. Re-select the folder in Options."
   },
+  "errorSWDirectorioInvalido": {
+    "message": "The saved folder no longer exists or is not accessible. Open Options and select it again."
+  },
 
   "seccionEnlaces": {
     "message": "Links"

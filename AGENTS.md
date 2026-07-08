@@ -92,6 +92,17 @@ Los documentos usan prefijo de tipo documental según la taxonomía V2:
 
 ---
 
+## Gestión de versión
+
+Al finalizar cada sesión de trabajo (cuando el usuario indique que ha terminado o se despidan), **subir la versión de la extensión** siguiendo estas reglas:
+
+1. **Leer la versión actual** de `manifest.json` (campo `version`).
+2. **Incrementar el número de revisión** (último dígito). Ejemplo: `0.4.1` → `0.4.2`.
+3. **Actualizar `manifest.json`** con la nueva versión.
+4. **La página de opciones** (`opciones/opciones.html`) muestra la versión junto al título de la extensión de forma automática (lee de `chrome.runtime.getManifest().version`), por lo que no requiere edición manual.
+
+---
+
 ## Alcance
 
 Estas reglas aplican a:

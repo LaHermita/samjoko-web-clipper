@@ -71,7 +71,8 @@ function llenarSelectores() {
 
 function inicializarInternacionalizacionConConfiguracion(config) {
   document.title = traducir('tituloOpciones');
-  document.querySelector('#infoMarca h1').textContent = traducir('nombreExtension');
+  var version = chrome.runtime.getManifest().version;
+  document.querySelector('#infoMarca h1').textContent = traducir('nombreExtension') + ' v' + version;
   document.getElementById('subtituloPagina').textContent = traducir('subtituloOpciones');
 
   document.querySelector('#cabeceraGeneral h3').textContent = traducir('seccionGeneral');

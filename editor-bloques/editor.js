@@ -451,6 +451,7 @@ async function cargarContenido() {
         target: { tabId: pestania.id },
         files: [
           'componentes/extraccion/nucleo-extraccion.js',
+          'componentes/extraccion/extractor-inline.js',
           'componentes/extraccion/extractor-texto.js',
           'componentes/extraccion/extractor-listas.js',
           'componentes/extraccion/extractor-codigo.js',

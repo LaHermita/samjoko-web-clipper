@@ -95,6 +95,7 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
   const tienePermiso = await verificarPermiso(manejadorDirectorio);
   if (!tienePermiso) {
     manejadorDirectorio = null;
+    await guardarDirectorio(null).catch(() => {});
     throw new Error(chrome.i18n.getMessage('errorSWPermisoDenegado'));
   }
 
@@ -106,17 +107,37 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
       if (/^\.\.?$/.test(parte) || /[~<>:"|?*]/.test(parte) || parte.length > 100 || parte.length === 0) {
         throw new Error('Subcarpeta invalida: ' + parte);
       }
-      directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
+      try {
+        directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
+      } catch (error) {
+        if (error && error.name === 'NotFoundError') {
+          return manejarDirectorioInvalido();
+        }
+        throw error;
+      }
     }
   }
 
-  const nombreUnico = await obtenerNombreArchivoUnico(directorioDestino, nombreArchivo);
-  const archivoHandle = await directorioDestino.getFileHandle(nombreUnico, { create: true });
-  const flujoEscritura = await archivoHandle.createWritable();
-  await flujoEscritura.write(contenido);
-  await flujoEscritura.close();
+  try {
+    const nombreUnico = await obtenerNombreArchivoUnico(directorioDestino, nombreArchivo);
+    const archivoHandle = await directorioDestino.getFileHandle(nombreUnico, { create: true });
+    const flujoEscritura = await archivoHandle.createWritable();
+    await flujoEscritura.write(contenido);
+    await flujoEscritura.close();
 
-  return nombreUnico;
+    return nombreUnico;
+  } catch (error) {
+    if (error && error.name === 'NotFoundError') {
+      return manejarDirectorioInvalido();
+    }
+    throw error;
+  }
+}
+
+async function manejarDirectorioInvalido() {
+  manejadorDirectorio = null;
+  await guardarDirectorio(null).catch(() => {});
+  throw new Error(chrome.i18n.getMessage('errorSWDirectorioInvalido'));
 }
 
 chrome.runtime.onInstalled.addListener(function(detalles) {
@@ -239,6 +260,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
           target: { tabId: pestania.id },
           files: [
             'componentes/extraccion/nucleo-extraccion.js',
+            'componentes/extraccion/extractor-inline.js',
             'componentes/extraccion/extractor-texto.js',
             'componentes/extraccion/extractor-listas.js',
             'componentes/extraccion/extractor-codigo.js',
