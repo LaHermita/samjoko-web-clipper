@@ -13,7 +13,7 @@
 
       var md = items.map(function(li, idx) {
         var prefijo = etiqueta === 'ol' ? (idx + 1) + '. ' : '- ';
-        return prefijo + ns.colapsarEspacios(li.textContent);
+        return prefijo + ns.extraerInline(li);
       }).join('\n');
 
       return { md: md, tipo: 'list' };
@@ -32,9 +32,9 @@
       for (var i = 0; i < hijos.length; i++) {
         var hijo = hijos[i];
         if (hijo.tagName === 'DT') {
-          terminoActual = ns.colapsarEspacios(hijo.textContent);
+          terminoActual = ns.extraerInline(hijo);
         } else if (hijo.tagName === 'DD' && terminoActual) {
-          var def = ns.colapsarEspacios(hijo.textContent);
+          var def = ns.extraerInline(hijo);
           grupos.push(terminoActual + '\n: ' + def);
           terminoActual = null;
         }

@@ -191,6 +191,8 @@ Obsérvese que `tags_auto` se añade sin tocar `tags`, y el resto de campos manu
 10. **`imagen_destacada`**: extraer de `<meta property="og:image">` o `<link rel="image_src" href="...">`. Validar que es URL absoluta (relativizar contra `url_origen` si es relativa). Omitir si no existe
 11. **`tiempo_lectura`**: calcular con el body del contenido extraído. Fórmula: `Math.ceil(bodyText.split(/\s+/).length / 238)`. Redondear a entero superior. Si no se puede calcular, omitir
 12. **`notas_personales`**: textarea en popup de captura. Si el usuario no escribe nada, omitir el campo entero. No sanitizar contenido (el usuario es el autor)
+13. **Formato inline preservado**: la extensión preserva formato inline del contenido original: `**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces](url)`, `~subíndice~`, `^superíndice^`. El extractor inline (`extractor-inline.js`) recorre recursivamente los nodos DOM y genera Markdown sin perder formato. Los bloques de código (`<pre><code>`) se generan como fenced blocks, mientras que el código inline (`<code>` suelto) se genera con backticks simples
+14. **Anti-duplicación**: el núcleo de extracción marca nodos procesados y excluye hijos de bloques ya convertidos (blockquote, pre, table, figure, ul, ol) para evitar contenido duplicado
 
 ---
 

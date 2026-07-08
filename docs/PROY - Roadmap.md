@@ -1,7 +1,7 @@
 ---
 version: 1.1
 estado: en-progreso
-fase: 4-completada, 4.5-completada, 5.1-completada, 5.2-mejoras, 5.3-tablas, 5.4-completada, 5.8-limpieza, 5.9-pendiente, 5.10-pendiente, 5.11-pendiente, 5.12-pendiente, 5.13-pendiente, 5.14-pendiente, 5.15-pendiente, 5.16-pendiente
+fase: 4-completada, 4.5-completada, 5.1-completada, 5.2-mejoras, 5.3-tablas, 5.4-completada, 5.8-completada, 5.9-completada, 5.10-completada, 5.11-pendiente, 5.12-pendiente, 5.13-pendiente, 5.14-completada, 5.15-pendiente, 5.16-pendiente
 ---
 
 > [!summary] Resumen
@@ -324,13 +324,13 @@ Campos que genera el pipeline NLP (Vivero, no la extensión). Ref: `docs/REF - W
 
 Preservar formato inline (`**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces](url)`) que actualmente se pierde al usar `textContent` plano.
 
-- [ ] **Extractor inline recursivo** (`componentes/extraccion/extractor-inline.js`): función `extraerInline(elemento)` que recorra nodos DOM hijos y genere Markdown inline:
+- [x] **Extractor inline recursivo** (`componentes/extraccion/extractor-inline.js`): función `extraerInline(elemento)` que recorra nodos DOM hijos y genere Markdown inline:
   - `<strong>` / `<b>` → `**texto**`
   - `<em>` / `<i>` → `*texto*`
   - `<code>` → `` `texto` `` (sin fenced block)
   - `<a href="url">` → `[texto](url)`
   - `<sub>` → `~texto~` / `<sup>` → `^texto^`
-- [ ] **Integrar en extractores de bloque**: `extractor-texto.js`, `extractor-listas.js`, `extractor-citas.js` usan `extraerInline()` en lugar de `textContent`
+- [x] **Integrar en extractores de bloque**: `extractor-texto.js`, `extractor-listas.js`, `extractor-citas.js` usan `extraerInline()` en lugar de `textContent`
 - [ ] **Pruebas manuales**: Wikipedia, Medium, documentación técnica con enlaces y código inline
 
 > **Fuente**: LAB §1 — Pérdida de formato inline
@@ -339,8 +339,8 @@ Preservar formato inline (`**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces
 
 Evitar que nodos anidados se capturen más de una vez (ej: `<p>` dentro de `<blockquote>`).
 
-- [ ] **Recorrido en profundidad**: sustituir o complementar `querySelectorAll` plano en `nucleo-extraccion.js` por walker que marque nodos ya procesados
-- [ ] **Exclusión de descendientes**: no procesar hijos de bloques ya convertidos (`blockquote`, `pre`, `table`, `figure`, `ul`, `ol`)
+- [x] **Recorrido en profundidad**: sustituir o complementar `querySelectorAll` plano en `nucleo-extraccion.js` por walker que marque nodos ya procesados
+- [x] **Exclusión de descendientes**: no procesar hijos de bloques ya convertidos (`blockquote`, `pre`, `table`, `figure`, `ul`, `ol`)
 - [ ] **Pruebas de regresión**: blockquotes anidados, listas dentro de citas, figuras con caption, código en párrafos
 
 > **Fuente**: LAB §2 — Duplicación y orden del DOM
@@ -387,7 +387,7 @@ Resolver URLs relativas, lazy-load y filtrar ruido visual.
 
 Distinguir `<code>` suelto de `<code>` dentro de `<pre>`.
 
-- [ ] **Distinguir inline de bloque**: en `extractor-codigo.js`, solo generar fenced block si `elemento.closest('pre')` existe; si no, generar `` `texto` ``
+- [x] **Distinguir inline de bloque**: en `extractor-codigo.js`, solo generar fenced block si `elemento.closest('pre')` existe; si no, generar `` `texto` ``
 - [ ] **Tablas layout**: detectar tablas de presentación (`role="presentation"`) y omitir o degradar
 
 > **Fuente**: LAB §6 — Código y tablas

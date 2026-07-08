@@ -49,6 +49,8 @@
 | Copia al portapapeles con un clic                                    | One-click copy to clipboard                                 |
 | Descarga como archivo `.md`                                          | Download as `.md` file                                      |
 | Guarda directamente en una carpeta local (File System Access API)    | Save directly to a local folder (File System Access API)    |
+| Formato inline preservado (negrita, cursiva, código, enlaces)       | Inline formatting preserved (bold, italic, code, links)     |
+| Anti-duplicación en recorrido DOM                                    | DOM traversal anti-duplication                              |
 | Accesibilidad: ARIA, teclado, lector de pantalla, contraste          | Accessibility: ARIA, keyboard, screen reader, contrast      |
 | Sin dependencias externas                                            | No external dependencies                                    |
 | Página de opciones integrada                                         | Built-in options page                                       |
@@ -109,6 +111,7 @@ samjoko-nav-extension/
 │   ├── onboarding.js/css      # Tutorial de primera instalación
 │   └── extraccion/            # Pipeline de extracción por tipos
 │       ├── nucleo-extraccion.js
+│       ├── extractor-inline.js
 │       ├── extractor-texto.js
 │       ├── extractor-listas.js
 │       ├── extractor-codigo.js

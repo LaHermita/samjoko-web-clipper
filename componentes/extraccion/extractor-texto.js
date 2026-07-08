@@ -11,11 +11,11 @@
       if (etiqueta.startsWith('h') && etiqueta.length === 2) {
         var nivel = parseInt(etiqueta[1]);
         var prefijo = '#'.repeat(nivel);
-        return { md: prefijo + ' ' + ns.colapsarEspacios(elemento.textContent), tipo: 'heading' };
+        return { md: prefijo + ' ' + ns.extraerInline(elemento), tipo: 'heading' };
       }
 
       if (etiqueta === 'p') {
-        return { md: ns.colapsarEspacios(elemento.textContent), tipo: 'text' };
+        return { md: ns.extraerInline(elemento), tipo: 'text' };
       }
 
       return null;

@@ -24,12 +24,12 @@
               var anidadas = procesarBlockquote(hijo, profundidad + 1);
               partes.push(anidadas);
             } else if (hijo.tagName === 'P') {
-              var textoP = ns.colapsarEspacios(hijo.textContent);
+              var textoP = ns.extraerInline(hijo);
               if (textoP) {
                 partes.push(prefijo + textoP);
               }
             } else {
-              var textoEl = ns.colapsarEspacios(hijo.textContent);
+              var textoEl = ns.extraerInline(hijo);
               if (textoEl) {
                 partes.push(prefijo + textoEl);
               }

@@ -349,9 +349,17 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
     var bloques = [];
     var enlacesAcumulados = [];
+    var nodosProcesados = new Set();
+
+    var bloquesContenedor = ['blockquote', 'pre', 'table', 'figure', 'ul', 'ol'];
 
     for (var i = 0; i < elementosFiltrados.length; i++) {
       var elemento = elementosFiltrados[i];
+
+      if (nodosProcesados.has(elemento)) continue;
+
+      if (elemento.closest && elemento.closest('[data-bloque-procesado]')) continue;
+
       var etiqueta = elemento.tagName.toLowerCase();
       var grupoActual = ns.obtenerGrupo(etiqueta);
 
@@ -378,7 +386,7 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
       if (!extractorEncontrado || !md) continue;
 
-      const textoPlano = elemento.textContent;
+      var textoPlano = elemento.textContent;
 
       if (!saltarVacio && ns.esTextoVacio(textoPlano)) continue;
 
@@ -422,6 +430,11 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       }
 
       bloques.push(bloque);
+
+      nodosProcesados.add(elemento);
+      if (bloquesContenedor.indexOf(etiqueta) !== -1) {
+        elemento.setAttribute('data-bloque-procesado', 'true');
+      }
     }
 
     bloques = ns.normalizarJerarquiaEncabezados(bloques);

@@ -28,7 +28,7 @@
         return { md: md, tipo: 'code' };
       }
 
-      return { md: '```\n' + elemento.textContent.trim() + '\n```', tipo: 'code' };
+      return { md: '`' + ns.colapsarEspacios(elemento.textContent) + '`', tipo: 'text' };
     }
   });
 })();
