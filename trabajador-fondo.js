@@ -1,4 +1,8 @@
-importScripts('base-datos.js', 'componentes/configuracion.js');
+// Chrome (service worker) carga las dependencias con importScripts;
+// Firefox (event page) las recibe del array background.scripts del manifest.
+if (typeof importScripts === 'function') {
+  importScripts('base-datos.js', 'componentes/configuracion.js');
+}
 
 const ID_EXTENSION = chrome.runtime.id;
 const URL_MANIFEST_REMOTO = 'https://raw.githubusercontent.com/LaHermita/samjoko-web-clipper/main/manifest.json';
@@ -15,6 +19,50 @@ const ACCIONES_SENSIBLES = [
 let manejadorDirectorio = null;
 let promesaInicializacion;
 let tokenSesion = '';
+
+// Firefox no soporta la File System Access API: en ese entorno se usa la Downloads API.
+const FSA_DISPONIBLE =
+  typeof FileSystemDirectoryHandle !== 'undefined' &&
+  typeof FileSystemFileHandle !== 'undefined';
+
+function obtenerPartesSubcarpeta(subcarpeta) {
+  if (!subcarpeta) return [];
+  return subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
+}
+
+function asegurarParteSubcarpetaValida(parte) {
+  if (/^\.\.?$/.test(parte) || /[~<>:"|?*]/.test(parte) || parte.length > 100 || parte.length === 0) {
+    throw new Error('Subcarpeta invalida: ' + parte);
+  }
+}
+
+async function descargarArchivo(contenido, nombreArchivo) {
+  const configuracion = await obtenerConfiguracion();
+  const partes = obtenerPartesSubcarpeta(configuracion.subcarpeta);
+  for (const parte of partes) {
+    asegurarParteSubcarpetaValida(parte);
+  }
+  const rutaRelativa = partes.length > 0 ? partes.join('/') + '/' + nombreArchivo : nombreArchivo;
+
+  const blob = new Blob([contenido], { type: 'text/markdown;charset=utf-8' });
+  const urlObjeto = URL.createObjectURL(blob);
+  try {
+    const idDescarga = await chrome.downloads.download({
+      url: urlObjeto,
+      filename: rutaRelativa,
+      saveAs: false,
+      conflictAction: 'uniquify'
+    });
+    if (typeof idDescarga !== 'number') {
+      throw new Error(chrome.i18n.getMessage('errorSWDescargaFallida'));
+    }
+    return nombreArchivo;
+  } finally {
+    setTimeout(function () {
+      URL.revokeObjectURL(urlObjeto);
+    }, 60000);
+  }
+}
 
 function generarToken(longitud) {
   var array = new Uint8Array(Math.ceil(longitud / 2));
@@ -88,6 +136,10 @@ async function cargarDirectorio() {
 }
 
 async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
+  if (!FSA_DISPONIBLE) {
+    return descargarArchivo(contenido, nombreArchivo);
+  }
+
   if (!manejadorDirectorio) {
     throw new Error(chrome.i18n.getMessage('errorSWCarpetaNoConfigurada'));
   }
@@ -102,11 +154,9 @@ async function guardarArchivoEnCarpeta(contenido, nombreArchivo) {
   let directorioDestino = manejadorDirectorio;
   const configuracion = await obtenerConfiguracion();
   if (configuracion.subcarpeta) {
-    const partes = configuracion.subcarpeta.replace(/\\/g, '/').split('/').filter(Boolean);
+    const partes = obtenerPartesSubcarpeta(configuracion.subcarpeta);
     for (const parte of partes) {
-      if (/^\.\.?$/.test(parte) || /[~<>:"|?*]/.test(parte) || parte.length > 100 || parte.length === 0) {
-        throw new Error('Subcarpeta invalida: ' + parte);
-      }
+      asegurarParteSubcarpetaValida(parte);
       try {
         directorioDestino = await directorioDestino.getDirectoryHandle(parte, { create: true });
       } catch (error) {
@@ -174,7 +224,8 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
       await cargarDirectorio();
       responder({
         tieneCarpeta: !!manejadorDirectorio,
-        nombre: manejadorDirectorio?.name || ''
+        nombre: manejadorDirectorio?.name || '',
+        usaModoDescarga: !FSA_DISPONIBLE
       });
     })();
     return true;
@@ -184,7 +235,7 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
     (async () => {
       manejadorDirectorio = null;
       await guardarDirectorio(null);
-      responder({ tieneCarpeta: false, nombre: '' });
+      responder({ tieneCarpeta: false, nombre: '', usaModoDescarga: !FSA_DISPONIBLE });
     })();
     return true;
   }
@@ -194,7 +245,8 @@ chrome.runtime.onMessage.addListener((mensaje, remitente, responder) => {
       await promesaInicializacion;
       responder({
         tieneCarpeta: !!manejadorDirectorio,
-        nombre: manejadorDirectorio?.name || ''
+        nombre: manejadorDirectorio?.name || '',
+        usaModoDescarga: !FSA_DISPONIBLE
       });
     })();
     return true;
@@ -295,7 +347,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
 
     await promesaInicializacion;
 
-    if (!manejadorDirectorio) {
+    if (FSA_DISPONIBLE && !manejadorDirectorio) {
       chrome.notifications.create('captura-rapida-error', {
         type: 'basic',
         iconUrl: 'assets/icons/Samjoko-Icono_LowP_128px.png',

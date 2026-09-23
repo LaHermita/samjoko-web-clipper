@@ -3,8 +3,8 @@ tipo: DOC
 tema: Política de Privacidad
 proyecto: Samjoko Web Clipper
 estado: borrador
-version: 1.0
-fecha: 2026-06-29
+version: 1.1
+fecha: 2026-09-23
 idiomas: [es, en]
 ---
 
@@ -16,7 +16,7 @@ idiomas: [es, en]
 
 ## Español
 
-Samjoko Web Clipper ("la extensión") es una extensión de navegador para Google Chrome desarrollada por HarpoPan. Esta política de privacidad describe cómo se maneja la información cuando utilizas la extensión.
+Samjoko Web Clipper ("la extensión") es una extensión de navegador para Chrome y Firefox desarrollada por HarpoPan. Esta política de privacidad describe cómo se maneja la información cuando utilizas la extensión.
 
 ### Resumen ejecutivo
 
@@ -48,8 +48,8 @@ El procesamiento es completamente local:
 
 1. Cuando haces clic en el botón de captura o usas el atajo de teclado, la extensión extrae el contenido de la pestaña activa.
 2. El contenido se convierte a formato Markdown en tu navegador.
-3. La extensión te solicita que selecciones una carpeta de destino en tu sistema de archivos mediante la File System Access API.
-4. El archivo Markdown se guarda directamente en la carpeta que tú elegiste.
+3. En Chrome, la extensión te solicita que selecciones una carpeta de destino en tu sistema de archivos mediante la File System Access API; el archivo Markdown se guarda directamente en la carpeta que tú elegiste.
+4. En Firefox, que no dispone de esa API, el archivo Markdown se guarda como descarga del navegador mediante la Downloads API.
 5. Los metadatos de configuración (idioma, tema, subcarpeta, preferencias) se almacenan localmente en `chrome.storage.sync` e IndexedDB.
 
 **En ningún momento los datos salen de tu navegador o de tu equipo.**
@@ -124,7 +124,7 @@ El uso de la información recibida de las APIs de Google se adherirá a la Polí
 
 ## English
 
-Samjoko Web Clipper ("the extension") is a browser extension for Google Chrome developed by HarpoPan. This privacy policy describes how information is handled when you use the extension.
+Samjoko Web Clipper ("the extension") is a browser extension for Chrome and Firefox developed by HarpoPan. This privacy policy describes how information is handled when you use the extension.
 
 ### Executive summary
 
@@ -156,8 +156,8 @@ Processing is entirely local:
 
 1. When you click the capture button or use the keyboard shortcut, the extension extracts content from the active tab.
 2. The content is converted to Markdown format in your browser.
-3. The extension prompts you to select a destination folder on your file system using the File System Access API.
-4. The Markdown file is saved directly to the folder you chose.
+3. On Chrome, the extension prompts you to select a destination folder on your file system using the File System Access API; the Markdown file is saved directly to the folder you chose.
+4. On Firefox, which does not provide that API, the Markdown file is saved as a browser download through the Downloads API.
 5. Configuration metadata (language, theme, subfolder, preferences) is stored locally in `chrome.storage.sync` and IndexedDB.
 
 **At no point do data leave your browser or your device.**

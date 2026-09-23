@@ -433,7 +433,20 @@ async function cargarContenido() {
 
   try {
     var resultadoConsulta = await chrome.tabs.query({ active: true, currentWindow: true });
-    var pestania = resultadoConsulta[0];
+    var pestania = resultadoConsulta && resultadoConsulta[0];
+
+    // El side panel de Chrome consulta siempre la pestaña activa; en pestaña normal (Firefox)
+    // la pestaña activa es el propio editor y hay que elegir una pestaña web.
+    if (pestania && pestania.url && pestania.url.indexOf('chrome-extension://') === 0) {
+      var pestaniasWeb = await chrome.tabs.query({ currentWindow: true, url: ['http://*/*', 'https://*/*'] });
+      var ultimaActivada = null;
+      for (var indiceWeb = 0; indiceWeb < pestaniasWeb.length; indiceWeb++) {
+        if (!ultimaActivada || (pestaniasWeb[indiceWeb].lastAccessed || 0) > (ultimaActivada.lastAccessed || 0)) {
+          ultimaActivada = pestaniasWeb[indiceWeb];
+        }
+      }
+      pestania = ultimaActivada || pestaniasWeb[0] || null;
+    }
 
     if (!pestania || !pestania.id) {
       barra.ocultar();
@@ -505,6 +518,11 @@ async function cargarContenido() {
 async function guardarEnCarpeta() {
   var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
 
+  if (verificacion && verificacion.usaModoDescarga) {
+    await guardarPorDescarga();
+    return;
+  }
+
   if (!verificacion.tieneCarpeta) {
     mostrarToast(traducir('errorSinCarpeta'), 'error');
     return;
@@ -541,6 +559,86 @@ async function guardarEnCarpeta() {
   }
 }
 
+function construirMarkdownDesdeCero() {
+  var usarMetadatosFrontales = configuracionEditor ? configuracionEditor.usarMetadatosFrontales : false;
+  var notas = notasPersonalesInput ? notasPersonalesInput.value.trim() : '';
+  var textoTags = inputTagsEditor ? inputTagsEditor.value.trim() : '';
+  var tagsUsuario = textoTags ? textoTags.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : null;
+
+  var metadatosFrontales = generarMetadatosFrontales(metadataPagina, usarMetadatosFrontales, notas, configuracionEditor ? configuracionEditor.camposFrontmatter : null, tagsUsuario);
+
+  var partes = [];
+  if (metadatosFrontales) partes.push(metadatosFrontales);
+
+  if (metadataPagina && metadataPagina.titulo) {
+    partes.push('# ' + metadataPagina.titulo);
+    partes.push('');
+  }
+
+  for (var i = 0; i < bloquesExtraidos.length; i++) {
+    if (bloquesExtraidos[i].estaIncluido) {
+      partes.push(bloquesExtraidos[i].texto);
+    }
+  }
+
+  if (metadataPagina && metadataPagina.url) {
+    partes.push('');
+    partes.push('---');
+    partes.push('*' + traducir('seccionFuente') + ': ' + metadataPagina.url + '*');
+  }
+
+  var md = partes.join('\n');
+  if (configuracionEditor && configuracionEditor.ajusteLinea && configuracionEditor.ajusteLinea !== 'ninguno') {
+    md = ajustarTexto(md, configuracionEditor.ajusteLinea);
+  }
+  return md;
+}
+
+async function guardarPorDescarga() {
+  var verificacion = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
+  if (verificacion && verificacion.usaModoDescarga) {
+    mostrarToast(traducir('avisoDescarga'), 'info');
+  }
+
+  botonGuardar.disabled = true;
+  try {
+    var nombreBase = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
+    var markdownFinal = regenerarMarkdown();
+    var blob = new Blob([markdownFinal], { type: 'text/markdown;charset=utf-8' });
+    var urlObjeto = URL.createObjectURL(blob);
+    try {
+      await chrome.downloads.download({
+        url: urlObjeto,
+        filename: nombreBase,
+        saveAs: false,
+        conflictAction: 'uniquify'
+      });
+      mostrarToast(traducir('mensajeDescargadoComo', nombreBase), 'exito');
+    } finally {
+      setTimeout(function () {
+        URL.revokeObjectURL(urlObjeto);
+      }, 60000);
+    }
+  } catch (error) {
+    mostrarToast(traducir('errorGuardado', error.message), 'error');
+  } finally {
+    botonGuardar.disabled = false;
+  }
+}
+
+function iniciarDescargaNativa() {
+  var nombreArchivoFinal = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
+  var markdownFinal = regenerarMarkdown();
+  var blob = new Blob([markdownFinal], { type: 'text/markdown' });
+  var url = URL.createObjectURL(blob);
+  var enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = nombreArchivoFinal;
+  enlace.click();
+  URL.revokeObjectURL(url);
+  mostrarToast(traducir('mensajeDescargadoComo', nombreArchivoFinal), 'exito');
+}
+
 botonGuardar.addEventListener('click', guardarEnCarpeta);
 
 botonCopiar.addEventListener('click', async function () {
@@ -552,18 +650,7 @@ botonCopiar.addEventListener('click', async function () {
   }
 });
 
-botonDescargar.addEventListener('click', function () {
-  var nombreArchivoFinal = obtenerNombreDesdeTitulo(tituloPagina) + '.md';
-  var markdownFinal = regenerarMarkdown();
-  var blob = new Blob([markdownFinal], { type: 'text/markdown' });
-  var url = URL.createObjectURL(blob);
-  var enlace = document.createElement('a');
-  enlace.href = url;
-  enlace.download = nombreArchivoFinal;
-  enlace.click();
-  URL.revokeObjectURL(url);
-  mostrarToast(traducir('mensajeDescargadoComo', nombreArchivoFinal), 'exito');
-});
+botonDescargar.addEventListener('click', iniciarDescargaNativa);
 
 botonSeleccionarTodos.addEventListener('click', alternarSeleccionTodos);
 botonReescanear.addEventListener('click', cargarContenido);

@@ -139,6 +139,12 @@ body {
   background: var(--fondo-activo);
 }
 
+#infoCarpeta.aviso {
+  color: var(--estado-info);
+  border-color: var(--estado-info);
+  background: var(--fondo-editor);
+}
+
 #infoCarpeta.error {
   color: var(--estado-error);
   border-color: var(--estado-error);

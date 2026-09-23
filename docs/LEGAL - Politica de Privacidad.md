@@ -2,13 +2,13 @@
 tipo: LEGAL
 tema: Política de Privacidad
 proyecto: Samjoko Web Clipper
-version: 1.0
-fecha: 2026-06-30
+version: 1.1
+fecha: 2026-09-23
 ---
 
 # Política de Privacidad de Samjoko Web Clipper
 
-**Última actualización**: 30 de junio de 2026
+**Última actualización**: 23 de septiembre de 2026
 
 ## 1. Introducción
 
@@ -70,14 +70,15 @@ La extensión solicita los siguientes permisos, cada uno con un propósito espec
 | `scripting` | Inyectar el extractor de contenido en la página activa |
 | `storage` | Guardar preferencias de configuración |
 | `notifications` | Mostrar confirmaciones de captura exitosa o errores |
-| `sidePanel` | Abrir el editor de bloques en el panel lateral |
+| `sidePanel` | Abrir el editor de bloques en el panel lateral (Chrome) |
+| `downloads` | Guardar las capturas como descargas en navegadores sin File System Access API (Firefox) |
 | `<all_urls>` | Poder extraer contenido de cualquier página web que el usuario visite (solo bajo demanda del usuario) |
 
 ## 8. Seguridad
 
 Todas las operaciones de la extensión ocurren localmente en tu dispositivo:
 - La extracción de contenido se realiza mediante scripts inyectados en la página activa.
-- El guardado usa la File System Access API, que requiere permiso explícito del usuario para cada carpeta.
+- El guardado usa la File System Access API (Chrome), que requiere permiso explícito del usuario para cada carpeta, o la Downloads API (Firefox), que guarda las capturas como descargas del navegador.
 - No hay transmisión de datos por red.
 
 ## 9. Cumplimiento con GDPR y otras regulaciones

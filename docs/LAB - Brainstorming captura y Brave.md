@@ -502,6 +502,9 @@ El editor de bloques usa la Side Panel API de Chrome. En versiones recientes de 
 - [ ] **Fallback UX**: destacar Copiar/Descargar cuando guardado en carpeta no esté disponible
 ```
 
+> [!note] Estado (2026-09-23)
+> La detección de FSA no disponible y el fallback de guardado ya están implementados (Downloads API en `trabajador-fondo.js`, avisos en popup y opciones). El listado anterior es la instantánea histórica integrada en el ROADMAP v1.1; el estado vigente está en `docs/PROY - Roadmap.md` §5.16.
+
 ---
 
 ### Resumen ejecutivo

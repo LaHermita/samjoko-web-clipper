@@ -425,3 +425,14 @@ body {
 .campo-checkbox-frontmatter input[type="checkbox"] {
   accent-color: var(--color-acento);
 }
+
+/* Aviso para navegadores sin File System Access API (Firefox, Brave con flag desactivado) */
+.aviso-modo-descarga {
+  font-size: 13px;
+  color: var(--estado-info);
+  background: var(--fondo-editor);
+  border: 1px solid var(--estado-info);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 14px 0;
+}

@@ -19,7 +19,7 @@
   <img alt="CSS3" src="https://img.shields.io/badge/CSS-Themes-1572b6?style=flat-square&logo=css3&logoColor=white">
   <img alt="IndexedDB" src="https://img.shields.io/badge/Storage-IndexedDB-7a9b5f?style=flat-square&logo=databricks&logoColor=white">
   <img alt="Licencia" src="https://img.shields.io/badge/Licencia-MIT-8c8986?style=flat-square">
-  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.1-d47a2c?style=flat-square">
+  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.4-d47a2c?style=flat-square">
 </p>
 
 ---
@@ -91,6 +91,23 @@ git clone https://github.com/usuario/samjoko-nav-extension.git
 # 4. Selecciona la carpeta del proyecto
 ```
 
+#### Firefox / For Firefox
+
+La extensión mantiene un único código base: el paquete Firefox (event page, `sidebar_action`, guardado por descargas) se genera con el script de empaquetado. Consulta [`docs/GUIA - Instalacion Firefox.md`](docs/GUIA%20-%20Instalacion%20Firefox.md) para la guía completa.
+
+```powershell
+# Genera dist-firefox/ con el manifest transformado para Firefox
+powershell -NoProfile -ExecutionPolicy Bypass -File empaquetar-firefox.ps1
+
+# Cargar en Firefox
+# 1. Abre about:debugging#/runtime/this-firefox
+# 2. Clic en «Cargar complemento temporal...»
+# 3. Selecciona dist-firefox/manifest.json
+```
+
+> [!NOTE]
+> Firefox no soporta la File System Access API: en ese navegador las capturas se descargan como archivos `.md` (Downloads API) en lugar de guardarse directamente en la carpeta de la bóveda.
+
 ---
 
 ## Arquitectura / Architecture
@@ -124,7 +141,8 @@ samjoko-nav-extension/
 ├── editor-bloques/            # Side panel (editor de bloques)
 ├── opciones/                  # Página de opciones
 ├── docs/                      # Documentación del proyecto
-├── trabajador-fondo.js        # Service worker
+├── empaquetar-firefox.ps1     # Script de empaquetado Firefox (genera dist-firefox/)
+├── trabajador-fondo.js        # Service worker (Chrome) / event page (Firefox)
 ├── extractor-contenido.js     # Content script (orquestador)
 └── base-datos.js              # IndexedDB + generación frontmatter
 ```
@@ -141,6 +159,7 @@ samjoko-nav-extension/
 | `notifications`  | Mostrar notificaciones del sistema al usar atajo de teclado |
 | `sidePanel`      | Abrir el editor de bloques en el panel lateral             |
 | `host: <all_urls>`| Permitir al panel lateral re-escanear al cambiar de página  |
+| `downloads`      | Guardar las capturas como descargas en navegadores sin File System Access API (Firefox) |
 
 La extensión **no recolecta, almacena ni transmite datos personales**. Todo el procesamiento ocurre localmente en tu navegador.
 
@@ -155,7 +174,8 @@ La extensión **no recolecta, almacena ni transmite datos personales**. Todo el 
 | **HTML5 / CSS3**                 | Interfaces del popup y opciones          |
 | **CSS Custom Properties**        | Sistema de 4 temas intercambiables       |
 | **IndexedDB**                    | Persistencia de configuraciones          |
-| **File System Access API**       | Escritura directa de archivos en disco   |
+| **File System Access API**       | Escritura directa de archivos en disco (Chrome)   |
+| **Downloads API**                | Guardado como descarga en navegadores sin FSA (Firefox)   |
 
 ---
 

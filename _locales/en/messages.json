@@ -383,5 +383,18 @@
   },
   "textoAtajosTeclado": {
     "message": "Keyboard shortcuts: Ctrl+Shift+K (open popup), Ctrl+Shift+S (quick capture)"
+  },
+
+  "mensajeModoDescarga": {
+    "message": "This browser cannot save to a folder: captures are downloaded as .md files"
+  },
+  "avisoDescarga": {
+    "message": "Saved as download (this browser cannot save to a folder)"
+  },
+  "avisoSinFSA": {
+    "message": "This browser cannot save to a folder (File System Access API not available). Captures are downloaded as .md files; use Copy or Download to bring them into your vault."
+  },
+  "errorSWDescargaFallida": {
+    "message": "Could not start the file download"
   }
 }

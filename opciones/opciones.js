@@ -11,6 +11,9 @@ var entradaSubcarpeta = document.getElementById('entradaSubcarpeta');
 var interruptorMetadatosFrontales = document.getElementById('interruptorMetadatosFrontales');
 var zonaCamposFrontmatter = document.getElementById('camposFrontmatter');
 var listaCamposFrontmatter = document.getElementById('listaCamposFrontmatter');
+var avisoModoDescarga = document.getElementById('avisoModoDescarga');
+
+var ES_FSA_DISPONIBLE = typeof window.showDirectoryPicker === 'function';
 
 var ETIQUETAS_CAMPOS = {
   url_origen: 'URL de origen',
@@ -180,6 +183,16 @@ async function guardarCampo(clave, valor) {
   mostrarToast(traducir('mensajeConfigGuardada'), 'exito');
 }
 
+function sincronizarAvisoModoDescarga() {
+  if (!avisoModoDescarga) return;
+  if (ES_FSA_DISPONIBLE) {
+    avisoModoDescarga.classList.add('oculto');
+    return;
+  }
+  avisoModoDescarga.textContent = traducir('avisoSinFSA');
+  avisoModoDescarga.classList.remove('oculto');
+}
+
 async function inicializar() {
   configuracionActual = await obtenerConfiguracion();
 
@@ -189,6 +202,7 @@ async function inicializar() {
   await cargarIdioma(configuracionActual.idioma);
   inicializarInternacionalizacionConConfiguracion(configuracionActual);
   sincronizarInterfaz(configuracionActual);
+  sincronizarAvisoModoDescarga();
 
   selectorIdioma.addEventListener('change', function () {
     guardarCampo('idioma', selectorIdioma.value);
@@ -216,6 +230,10 @@ async function inicializar() {
   });
 
   botonSeleccionar.addEventListener('click', async function () {
+    if (!ES_FSA_DISPONIBLE) {
+      mostrarToast(traducir('avisoSinFSA'), 'info');
+      return;
+    }
     try {
       var manejador = await window.showDirectoryPicker({ mode: 'readwrite' });
       await guardarDirectorio(manejador);

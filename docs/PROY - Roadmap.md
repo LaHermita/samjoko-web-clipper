@@ -171,16 +171,16 @@ Extractor especializado para conversaciones con IA: Gemini, ChatGPT, Claude, Cop
 La extensión funciona en Brave (basado en Chromium, MV3) con un solo `manifest.json`. La principal diferencia es la File System Access API desactivada por defecto.
 
 - [ ] **Probar extensión en Brave stable**: popup, side panel, captura rápida, guardado FSA
-- [ ] **Detección de FSA no disponible**: aviso en opciones y popup cuando `typeof window.showDirectoryPicker === 'undefined'`
+- [x] **Detección de FSA no disponible**: aviso en opciones (`#avisoModoDescarga`) y popup (`#infoCarpeta.aviso`) cuando `typeof window.showDirectoryPicker === 'undefined'`; el background enruta el guardado a la Downloads API (`FSA_DISPONIBLE` en `trabajador-fondo.js`)
 - [ ] **Aviso específico Brave**: instrucciones del flag `brave://flags/#file-system-access-api`
-- [ ] **Fallback UX**: destacar Copiar/Descargar cuando guardado en carpeta no esté disponible
+- [x] **Fallback UX**: guardar como descarga (Downloads API) en editor y popup, manteniendo Copiar/Descargar cuando guardado en carpeta no esté disponible
 - [ ] **Documentación**: sección Brave en README + `docs/GUIA - Instalacion Brave.md`
 
 ---
 
 ## Fase 6 — Madurez
 
-- [ ] Migrar a Firefox
+- [ ] Migrar a Firefox _(adaptación base implementada: paquete `dist-firefox/` vía `empaquetar-firefox.ps1`, background como event page, `sidebar_action`, guardado por Downloads API; ref: `docs/GUIA - Instalacion Firefox.md`. Pendiente: probar en Firefox real, firma para AMO)_
 - [ ] Seleccionar elementos específicos de la página (clic para elegir)
 - [ ] Vista previa del Markdown renderizado
 - [ ] Historial local de capturas

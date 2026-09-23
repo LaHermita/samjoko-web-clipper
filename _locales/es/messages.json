@@ -386,5 +386,18 @@
   },
   "textoAtajosTeclado": {
     "message": "Atajos de teclado: Ctrl+Shift+K (abrir popup), Ctrl+Shift+S (captura rápida)"
+  },
+
+  "mensajeModoDescarga": {
+    "message": "Este navegador no permite guardar en carpeta: las capturas se descargan como archivos .md"
+  },
+  "avisoDescarga": {
+    "message": "Guardado como descarga (este navegador no permite guardar en carpeta)"
+  },
+  "avisoSinFSA": {
+    "message": "Este navegador no permite guardar en carpeta (File System Access API no disponible). Las capturas se descargarán como archivos .md; usa Copiar o Descargar para llevarlas a tu bóveda."
+  },
+  "errorSWDescargaFallida": {
+    "message": "No se pudo iniciar la descarga del archivo"
   }
 }
