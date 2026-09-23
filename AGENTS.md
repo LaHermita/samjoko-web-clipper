@@ -6,7 +6,7 @@ Este proyecto sigue convenciones estrictas. Todo el código y documentación gen
 
 ## Documentos vinculados
 
-- [`docs/GUIA - CODING GUIDELINES.md`](docs/GUIA%20-%20CODING%20GUIDELINES.md) — Normas de estilo y nomenclatura del código.
+- [`docs/GUIA - CODING GUIDELINES.md`](docs/GUIA%20-%20CODING%20GUIDELINES.md) — Normas de estilo y nomenclatura del código (**fuente única** de las reglas de código; este documento es el resumen).
 - [`docs/META - Guideline oficial.md`](docs/META%20-%20Guideline%20oficial.md) — Taxonomía documental del proyecto.
 
 ---

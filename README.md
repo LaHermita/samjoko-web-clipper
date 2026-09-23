@@ -19,7 +19,7 @@
   <img alt="CSS3" src="https://img.shields.io/badge/CSS-Themes-1572b6?style=flat-square&logo=css3&logoColor=white">
   <img alt="IndexedDB" src="https://img.shields.io/badge/Storage-IndexedDB-7a9b5f?style=flat-square&logo=databricks&logoColor=white">
   <img alt="Licencia" src="https://img.shields.io/badge/Licencia-MIT-8c8986?style=flat-square">
-  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.4-d47a2c?style=flat-square">
+  <img alt="Versión" src="https://img.shields.io/badge/Versión-0.4.5-d47a2c?style=flat-square">
 </p>
 
 ---
@@ -82,7 +82,7 @@ El tema por defecto es **Samjoko**. Para cambiar de tema, modifica el atributo `
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/usuario/samjoko-nav-extension.git
+git clone https://github.com/LaHermita/samjoko-web-clipper.git
 
 # Cargar en Chrome
 # 1. Abre chrome://extensions
@@ -96,14 +96,27 @@ git clone https://github.com/usuario/samjoko-nav-extension.git
 La extensión mantiene un único código base: el paquete Firefox (event page, `sidebar_action`, guardado por descargas) se genera con el script de empaquetado. Consulta [`docs/GUIA - Instalacion Firefox.md`](docs/GUIA%20-%20Instalacion%20Firefox.md) para la guía completa.
 
 ```powershell
-# Genera dist-firefox/ con el manifest transformado para Firefox
+# Genera dist-firefox/ y dist-firefox.xpi con el manifest transformado para Firefox (Windows)
 powershell -NoProfile -ExecutionPolicy Bypass -File empaquetar-firefox.ps1
 
 # Cargar en Firefox
 # 1. Abre about:debugging#/runtime/this-firefox
 # 2. Clic en «Cargar complemento temporal...»
-# 3. Selecciona dist-firefox/manifest.json
+# 3. Selecciona dist-firefox/manifest.json (o dist-firefox.xpi)
 ```
+
+```bash
+# Genera dist-firefox/ y dist-firefox.xpi con el manifest transformado para Firefox (Linux/macOS)
+./empaquetar-firefox.sh
+
+# Cargar en Firefox
+# 1. Abre about:debugging#/runtime/this-firefox
+# 2. Clic en «Cargar complemento temporal...»
+# 3. Selecciona dist-firefox/manifest.json (o dist-firefox.xpi)
+```
+
+> [!NOTE]
+> Usa `about:debugging`, no `about:addons` → «Instalar complemento desde archivo…»: ese menú solo admite `.xpi` firmado. Y no comprimas la carpeta a mano: si `manifest.json` no queda en la raíz del zip, Firefox lo rechaza como «complemento dañado».
 
 > [!NOTE]
 > Firefox no soporta la File System Access API: en ese navegador las capturas se descargan como archivos `.md` (Downloads API) en lugar de guardarse directamente en la carpeta de la bóveda.
@@ -135,13 +148,13 @@ samjoko-nav-extension/
 │       ├── extractor-tablas.js
 │       ├── extractor-citas.js
 │       ├── extractor-multimedia.js
-│       ├── extractor-iframes.js
-│       └── extractor-enlaces.js
+│       └── extractor-iframes.js
 ├── ventana-emergente/         # Popup
 ├── editor-bloques/            # Side panel (editor de bloques)
 ├── opciones/                  # Página de opciones
 ├── docs/                      # Documentación del proyecto
-├── empaquetar-firefox.ps1     # Script de empaquetado Firefox (genera dist-firefox/)
+├── empaquetar-firefox.ps1     # Script de empaquetado Firefox en Windows (genera dist-firefox/)
+├── empaquetar-firefox.sh      # Script de empaquetado Firefox en Linux/macOS (genera dist-firefox/)
 ├── trabajador-fondo.js        # Service worker (Chrome) / event page (Firefox)
 ├── extractor-contenido.js     # Content script (orquestador)
 └── base-datos.js              # IndexedDB + generación frontmatter

@@ -9,7 +9,7 @@
     "scripting",
     "storage",
     "notifications",
-    "sidePanel"
+    "downloads"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
@@ -17,9 +17,6 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  "side_panel": {
-    "default_path": "editor-bloques/editor.html"
-  },
   "commands": {
     "_execute_action": {
       "suggested_key": {
@@ -45,12 +42,11 @@
       "32": "assets/icons/Samjoko-Icono_LowP_32px.png"
     }
   },
-  "background": {
-    "service_worker": "trabajador-fondo.js"
-  },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "<all_urls>"
+      ],
       "js": [
         "componentes/extraccion/nucleo-extraccion.js",
         "componentes/extraccion/extractor-inline.js",
@@ -70,5 +66,31 @@
     "32": "assets/icons/Samjoko-Icono_LowP_32px.png",
     "48": "assets/icons/Samjoko-Icono_LowP_48px.png",
     "128": "assets/icons/Samjoko-Icono_LowP_128px.png"
+  },
+  "background": {
+    "scripts": [
+      "base-datos.js",
+      "componentes/configuracion.js",
+      "trabajador-fondo.js"
+    ],
+    "persistent": false
+  },
+  "sidebar_action": {
+    "default_panel": "editor-bloques/editor.html",
+    "default_title": "__MSG_tituloAccion__",
+    "default_icon": {
+      "16": "assets/icons/Samjoko-Icono_LowP_16px.png",
+      "32": "assets/icons/Samjoko-Icono_LowP_32px.png"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "samjoko-web-clipper@hermita.dev",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
   }
 }

@@ -1,13 +1,13 @@
 ---
-version: 1.2
-estado: en-progreso
+version: 1.3
+estado: activo
 objetivo: RC-1.0
 fase_activa: 4.5
 fase: 4.5-accesibilidad, 5.2-pendiente, 5.9-pendiente, 5.10-pendiente, 5.11-pendiente, 5.12-pendiente, 5.13-pendiente, 5.14-pendiente
 ---
 
 > [!summary] Resumen
-> Hoja de ruta de Samjoko Web Clipper. Objetivo actual: **Release Candidate 1.0** — extensión funcional, accesible y lista para publicación. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8) están archivadas en `docs/LOG - Roadmap.md`.
+> Hoja de ruta de Samjoko Web Clipper. Objetivo actual: **Release Candidate 1.0** — extensión funcional, accesible y lista para publicación. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8) están archivadas en `docs/LOG - Historial de fases.md`.
 
 ---
 
@@ -15,55 +15,22 @@ fase: 4.5-accesibilidad, 5.2-pendiente, 5.9-pendiente, 5.10-pendiente, 5.11-pend
 
 Objetivo: que la extensión sea utilizable con lectores de pantalla, navegación exclusiva por teclado, y cumpla WCAG 2.1 nivel AA. **Requisito para RC 1.0.**
 
-> Referencia detallada: `docs/CHK - Accesibilidad.md`
+> [!info] Fuente única de verdad
+> El detalle verificable y **los estados** viven en [`docs/CHK - Accesibilidad.md`](CHK%20-%20Accesibilidad.md). Aquí solo se resume el alcance: **no duplicar casillas en este documento.**
 
-### Contraste y color
+Ámbitos cubiertos:
 
-- [ ] **Verificar ratios de contraste WCAG AA (4.5:1 texto normal, 3:1 texto grande)** en los 4 temas:
-  - [ ] Samjoko (oscuro) — acento naranja sobre fondo oscuro
-  - [ ] Vivero (claro natural) — acento verde sobre fondo claro
-  - [ ] Nautilus (cálido) — acento coral sobre fondo cálido
-  - [ ] Akkoro (cyberpunk) — acento púrpura sobre fondo oscuro
-- [ ] **Contraste en estados**: `:hover`, `:focus`, `:active`, `:disabled` deben mantener contraste suficiente en los 4 temas
-- [ ] **Independencia del color**: asegurar que ninguna información se transmite solo mediante color (ej. indicador de carpeta usa icono + texto + color, no solo color)
-
-### Teclado
-
-- [ ] **Navegación por teclado completa**: Tab debe recorrer todos los elementos interactivos en orden lógico:
-  - [ ] Popup: header → 3 botones → info carpeta → notas → acciones notas
-  - [ ] Opciones: selectores → input subcarpeta → botones → checkboxes frontmatter → footer
-  - [ ] Editor: reescanear → metadatos → seleccionar todos → bloques → acciones (guardar/copiar/descargar)
-- [ ] **Focus visible**: todos los elementos interactivos tienen `:focus-visible` con estilo claro (outline o ring)
-- [x] **Trampas de foco**: onboarding oculta el contenido trasero (`display: none`), sin elementos enfocables fuera del diálogo. Foco inicial en botón Siguiente.
-- [x] **Atajos de teclado documentados**: listados en el pie de página de opciones (`#textoAtajos`) y en `title` del botón captura rápida del popup.
-
-### Zoom y escalado
-
-- [ ] **Popup**: funciona a 200% sin recortes ni solapamientos
-- [ ] **Opciones**: cuadrícula responsive se adapta correctamente a 200%
-- [ ] **Editor**: reflujo correcto a 200% (side panel tiene espacio limitado)
-
-### ARIA y roles
-
-- [ ] **Estado de elementos interactivos**:
-  - [ ] Botón "Seleccionar todos" en editor: `aria-pressed` dinámico
-  - [ ] Toasts expandibles: `aria-expanded` cuando applicable
-  - [ ] Bloques del editor: `aria-checked` sincronizado con checkbox visual
-- [x] **Roles explícitos en navegación**: `<nav id="barraAcciones">` con `aria-label` dinámico.
-- [x] **Diálogos y overlays**: onboarding con `role="dialog"`, `aria-modal="true"`, `aria-label`, foco inicial gestionado.
-- [x] **Regiones vivas**: `#zonaToast` con `aria-live="polite"`, `#zonaProgreso` con `aria-live="polite"`, barra de progreso con `role="progressbar"`.
-
-### Pruebas manuales
-
-- [ ] **Flujo completo con NVDA/VoiceOver**: abrir popup → capturar → revisar en editor → guardar. Verificar que cada paso anuncia su estado correctamente.
-- [ ] **Solo teclado**: completar todas las acciones sin usar el ratón (abrir popup, capturar, abrir editor, filtrar bloques, reordenar, guardar, cambiar configuración)
-- [ ] **Cambio de idioma**: verificar que `lang` y traducciones se actualizan en popup, opciones y editor
+- **Contraste y color** — ratios WCAG AA (4.5:1 texto normal, 3:1 texto grande) en los 4 temas, contraste en `:hover`/`:focus`/`:active`/`:disabled` e independencia del color.
+- **Teclado** — recorrido completo con Tab en popup, opciones y editor; foco visible con `:focus-visible`; sin trampas de foco; atajos documentados.
+- **Zoom y escalado** — correcto al 200% en popup, opciones y editor.
+- **ARIA y roles** — estados de elementos (`aria-pressed`, `aria-expanded`, `aria-checked`), navegación con `aria-label`, diálogo de onboarding y regiones vivas.
+- **Pruebas manuales** — flujo completo con NVDA/VoiceOver, navegación solo teclado y cambio de idioma.
 
 ---
 
 ## Fase 5 — Calidad de captura para Obsidian 🔧
 
-Mejoras pendientes del pipeline de extracción para RC 1.0. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.9-parcial, 5.10-parcial, 5.14-parcial) están en `docs/LOG - Roadmap.md`.
+Mejoras pendientes del pipeline de extracción para RC 1.0. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.9-parcial, 5.10-parcial, 5.14-parcial) están en `docs/LOG - Historial de fases.md`.
 
 **Principio rector**: cada bloque nuevo debe poder añadirse sin tocar el núcleo del extractor (patrón **estrategia/plugin** interno).
 
@@ -180,7 +147,7 @@ La extensión funciona en Brave (basado en Chromium, MV3) con un solo `manifest.
 
 ## Fase 6 — Madurez
 
-- [ ] Migrar a Firefox _(adaptación base implementada: paquete `dist-firefox/` vía `empaquetar-firefox.ps1`, background como event page, `sidebar_action`, guardado por Downloads API; ref: `docs/GUIA - Instalacion Firefox.md`. Pendiente: probar en Firefox real, firma para AMO)_
+- [ ] Migrar a Firefox _(paquete listo: `empaquetar-firefox.ps1` (Windows) / `empaquetar-firefox.sh` (Linux/macOS) → `dist-firefox/` + `dist-firefox.xpi`; background como event page, `sidebar_action`, guardado por Downloads API. Validado: `web-ext lint` = **0 errores** y carga temporal verificada en Firefox 156; ref: `docs/GUIA - Instalacion Firefox.md`. Pendiente: prueba manual del flujo completo, **`sidePanel.open` no soportado en Firefox** (usar `chrome.sidebarAction.open()`) y firma para AMO)_
 - [ ] Seleccionar elementos específicos de la página (clic para elegir)
 - [ ] Vista previa del Markdown renderizado
 - [ ] Historial local de capturas

@@ -2,13 +2,17 @@
 tipo: CHK
 tema: Accesibilidad
 proyecto: Samjoko Web Clipper
-version: 1.1
-fecha: 2026-08-26
+version: 1.2
+estado: activo
+fecha: 2026-09-23
 ---
 
 # CHK - Accesibilidad
 
 Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 2.1 nivel AA.
+
+> [!info] Fuente única de verdad
+> Este documento es el detalle verificable de la **Fase 4.5** de [`PROY - Roadmap.md`](PROY%20-%20Roadmap.md). Los estados se marcan aquí; el Roadmap solo enlaza.
 
 ## Estructura semántica
 
@@ -38,6 +42,8 @@ Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 
 - [x] **Info carpeta**: `role="status"` para anunciar cambios dinámicos
 - [x] **Onboarding**: `aria-describedby` vinculado a la descripción del paso
 - [x] **Select all toggle**: `aria-pressed` dinámico
+- [ ] **Toasts expandibles**: `aria-expanded` cuando el toast admite desplegar contenido
+- [ ] **Bloques del editor**: `aria-checked` sincronizado con el checkbox visual
 
 ## Contraste y color
 

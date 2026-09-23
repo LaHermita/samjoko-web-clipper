@@ -1,0 +1,269 @@
+/* =========================
+   TEMAS - VARIABLES CSS
+========================= */
+
+:root,
+/* =========================
+   TEMA VIVERO (natural)
+========================= */
+[data-theme="vivero"] {
+  /* --- Fondos principales --- */
+  --fondo-principal: #eef2ec;        /* verde grisáceo muy suave, como hoja tierna */
+  --fondo-barra-lateral: #e6ece4;    /* verde claro apagado */
+  --fondo-editor: #f3f6f2;           /* verde marfil muy claro */
+  --fondo-panel: #e9eee8;            /* tono musgo claro */
+  --fondo-hover: #dde5dd;            /* verde grisáceo suave */
+  --fondo-activo: #d3dbd3;           /* verde musgo apagado */
+  --fondo-destacado: #dfead7;        /* verde hoja joven, muy suave */
+
+  /* --- Texto --- */
+  --texto-primario: #2f3a2f;         /* verde oscuro natural */
+  --texto-secundario: #556255;       /* verde grisáceo */
+  --texto-inactivo: #8a958a;         /* verde apagado */
+
+  /* --- Acentos y bordes --- */
+  --color-acento: #7a9b5f;           /* verde hoja madura, suave y elegante */
+  --borde-interfaz: #c7d1c7;         /* borde verde grisáceo */
+  --borde-suave: #d8e0d8;            /* borde muy suave */
+  --borde-fuerte: #b8c2b8;           /* borde más marcado */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+  /* --- Tabs y barra superior --- */
+  --tab-activa-fondo: #eef2ec;
+  --tab-activa-borde: #7a9b5f;
+  --tab-inactiva-fondo: #e3e9e2;
+  --tab-inactiva-texto: #556255;
+  --barra-superior-fondo: #dfe6de;
+  --barra-superior-icono-activo: #2f3a2f;
+  --barra-superior-icono-inactivo: #7a857a;
+
+  /* --- Sidebar / Explorador --- */
+  --sidebar-texto-secundario: #556255;
+  --sidebar-item-hover: #dde5dd;
+  --sidebar-item-activo: #d3dbd3;
+  --sidebar-separador: #c7d1c7;
+
+  /* --- Scrollbars --- */
+  --color-scrollbar: #c3cec3;
+  --color-scrollbar-hover: #b1bcb1;
+
+  /* --- Estados --- */
+  --estado-error: #b86a63;           /* rojo tierra apagado */
+  --estado-warning: #b8a44a;         /* amarillo seco, como paja */
+  --estado-info: #6f8f8a;            /* verde-azulado suave */
+  --estado-exito: #6f9c6a;           /* verde saludable, natural */
+
+  /* --- Iconos --- */
+  --color-icono: #3a463a;            /* verde oscuro suave */
+
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 0% 0%, #2f3a2f 0%, #eef2ec 45%, #eef2ec 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #2f3a2f 0%, #eef2ec 40%, #eef2ec 100%);
+
+  /* --- Grafo 3D --- */
+  --grafo-nodo-color: #7a9b5f;       /* verde hoja madura */
+  --grafo-nodo-borde: #5a7c47;       /* verde más oscuro */
+  --grafo-texto-color: #ffffff;      /* texto blanco */
+}
+
+
+/* =========================
+   TEMA NAUTILUS (claro, sin blancos)
+========================= */
+[data-theme="nautilus"] {
+  /* --- Fondos principales --- */
+  --fondo-principal: #f6f1eb;        /* marfil cálido */
+  --fondo-barra-lateral: #efe8e2;    /* beige suave */
+  --fondo-editor: #f9f5f0;           /* crema muy clara */
+  --fondo-panel: #f4eee8;            /* beige rosado */
+  --fondo-hover: #e9e1db;            /* beige cálido */
+  --fondo-activo: #e2d8d2;           /* beige más marcado */
+  --fondo-destacado: #f1d5cf;        /* coral pálido */
+
+  /* --- Texto --- */
+  --texto-primario: #3a2f2b;         /* marrón suave */
+  --texto-secundario: #6b5a54;       /* marrón grisáceo */
+  --texto-inactivo: #a08f88;         /* marrón claro apagado */
+
+  /* --- Acentos y bordes --- */
+  --color-acento: #c45b55;           /* coral rojizo */
+  --borde-interfaz: #d6c7c0;         /* borde cálido */
+  --borde-suave: #e4d7d1;            /* borde muy suave */
+  --borde-fuerte: #cbbab3;           /* borde más marcado */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+  /* --- Tabs y barra superior --- */
+  --tab-activa-fondo: #f6f1eb;       /* sin blanco */
+  --tab-activa-borde: #c45b55;
+  --tab-inactiva-fondo: #ede5df;
+  --tab-inactiva-texto: #6b5a54;
+  --barra-superior-fondo: #e7ddd7;
+  --barra-superior-icono-activo: #3a2f2b;
+  --barra-superior-icono-inactivo: #8c7a73;
+
+  /* --- Sidebar / Explorador --- */
+  --sidebar-texto-secundario: #6b5a54;
+  --sidebar-item-hover: #e9e1db;
+  --sidebar-item-activo: #e2d8d2;
+  --sidebar-separador: #d6c7c0;
+
+  /* --- Scrollbars --- */
+  --color-scrollbar: #d0c2bb;
+  --color-scrollbar-hover: #bdaea7;
+
+  /* --- Estados --- */
+  --estado-error: #c94b47;           /* coral intenso */
+  --estado-warning: #c28a3a;         /* dorado cálido */
+  --estado-info: #b35d7a;            /* rosa‑vino suave */
+  --estado-exito: #7a9c6c;           /* verde natural apagado */
+
+  /* --- Iconos --- */
+  --color-icono: #4a3f3a;
+
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 0% 0%, #3a2f2b 0%, #f6f1eb 45%, #f6f1eb 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #3a2f2b 0%, #f6f1eb 40%, #f6f1eb 100%);
+
+  /* --- Grafo 3D --- */
+  --grafo-nodo-color: #c45b55;       /* coral rojizo */
+  --grafo-nodo-borde: #a74944;       /* coral más oscuro */
+  --grafo-texto-color: #ffffff;      /* texto blanco */
+}
+
+/* =========================
+   TEMA AKKORO (cyberpunk)
+========================= */
+[data-theme="akkoro"] {
+  /* --- Fondos principales --- */
+  --fondo-principal: #1b1524;        /* morado oscuro profundo */
+  --fondo-barra-lateral: #221a2e;    /* violeta oscuro */
+  --fondo-editor: #1f1828;           /* morado grisáceo suave */
+  --fondo-panel: #241d31;            /* tono más frío, futurista */
+  --fondo-hover: #2c233b;            /* violeta apagado */
+  --fondo-activo: #352b47;           /* morado más claro para resaltar */
+  --fondo-destacado: #3f2f5a;        /* morado neón apagado */
+
+  /* --- Texto --- */
+  --texto-primario: #e6d9ff;         /* lila claro, legible */
+  --texto-secundario: #b8a6d6;       /* lavanda suave */
+  --texto-inactivo: #8c7aa3;         /* violeta grisáceo apagado */
+
+  /* --- Acentos y bordes --- */
+  --color-acento: #b45cff;           /* morado neón suave, no saturado */
+  --borde-interfaz: #3a2d4f;         /* borde violeta oscuro */
+  --borde-suave: #4a3a63;            /* borde suave */
+  --borde-fuerte: #2e2340;           /* borde profundo */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.35);
+
+  /* --- Tabs y barra superior --- */
+  --tab-activa-fondo: #1f1828;
+  --tab-activa-borde: #b45cff;
+  --tab-inactiva-fondo: #2a2238;
+  --tab-inactiva-texto: #b8a6d6;
+  --barra-superior-fondo: #2d2440;
+  --barra-superior-icono-activo: #e6d9ff;
+  --barra-superior-icono-inactivo: #9d8ab8;
+
+  /* --- Sidebar / Explorador --- */
+  --sidebar-texto-secundario: #b8a6d6;
+  --sidebar-item-hover: #2c233b;
+  --sidebar-item-activo: #352b47;
+  --sidebar-separador: #3a2d4f;
+
+  /* --- Scrollbars --- */
+  --color-scrollbar: #4a3a63;
+  --color-scrollbar-hover: #5a4a75;
+
+  /* --- Estados --- */
+  --estado-error: #d46a8c;           /* rosa rojizo apagado */
+  --estado-warning: #c7a84a;         /* amarillo dorado suave */
+  --estado-info: #7a8cff;            /* azul violeta apagado */
+  --estado-exito: #7acfa3;           /* verde menta suave, estilo neón tenue */
+
+  /* --- Iconos --- */
+  --color-icono: #d8c8ff;            /* lila claro */
+
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 15% 0%, #000000 0%, #1b1524 45%, #2e243e 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #000000 0%, #1b1524 35%, #2e243e 100%);
+
+  /* --- Grafo 3D --- */
+  --grafo-nodo-color: #b45cff;       /* morado neón suave */
+  --grafo-nodo-borde: #9945dd;       /* morado más oscuro */
+  --grafo-texto-color: #ffffff;      /* texto blanco */
+}
+
+/* =========================
+   TEMA SAMJOKO (oscuro)
+========================= */
+[data-theme="samjoko"] {
+  /* --- Fondos principales --- */
+  --fondo-principal: #0f0f11;        /* negro grafito profundo */
+  --fondo-barra-lateral: #151518;    /* negro pluma */
+  --fondo-editor: #121214;           /* negro carbón suave */
+  --fondo-panel: #18181b;            /* gris oscuro frío */
+  --fondo-hover: #1f1f23;            /* sombra suave */
+  --fondo-activo: #26262b;           /* gris pluma iluminado */
+  --fondo-destacado: #2e2e33;        /* gris oscuro para resaltar */
+
+  /* --- Texto --- */
+  --texto-primario: #e5e3df;         /* gris hueso del pico */
+  --texto-secundario: #b9b6b2;       /* hueso apagado */
+  --texto-inactivo: #8c8986;         /* gris ceniza */
+
+  /* --- Acentos y bordes --- */
+  --color-acento: #d47a2c;           /* naranja pata de cuervo, cálido y apagado */
+  --borde-interfaz: #2c2c30;         /* borde oscuro */
+  --borde-suave: #3a3a3f;            /* borde suave */
+  --borde-fuerte: #1f1f23;           /* borde profundo */
+  --sombra-caja: 0 2px 12px rgba(0, 0, 0, 0.25);
+
+  /* --- Tabs y barra superior --- */
+  --tab-activa-fondo: #121214;
+  --tab-activa-borde: #d47a2c;
+  --tab-inactiva-fondo: #1a1a1d;
+  --tab-inactiva-texto: #b9b6b2;
+  --barra-superior-fondo: #1c1c20;
+  --barra-superior-icono-activo: #e5e3df;
+  --barra-superior-icono-inactivo: #8c8986;
+
+  /* --- Sidebar / Explorador --- */
+  --sidebar-texto-secundario: #b9b6b2;
+  --sidebar-item-hover: #1f1f23;
+  --sidebar-item-activo: #26262b;
+  --sidebar-separador: #2c2c30;
+
+  /* --- Scrollbars --- */
+  --color-scrollbar: #3a3a3f;
+  --color-scrollbar-hover: #4a4a50;
+
+  /* --- Estados --- */
+  --estado-error: #c45b55;           /* rojo apagado, discreto */
+  --estado-warning: #d49b3a;         /* amarillo‑naranja cálido, tenue */
+  --estado-info: #6f7f9c;            /* azul grisáceo frío */
+  --estado-exito: #6a9c7a;           /* verde musgo apagado */
+
+  /* --- Iconos --- */
+  --color-icono: #dcd9d4;            /* gris hueso claro */
+
+  /* --- Botones --- */
+  --texto-boton: #ffffff;
+
+  /* --- Degradado fondo --- */
+  --degradado-fondo: radial-gradient(circle at 15% 0%, #000000 0%, #0f0f11 45%, #1c1c20 100%);
+  --degradado-fondo-ventana: linear-gradient(160deg, #000000 0%, #0f0f11 35%, #1c1c20 100%);
+
+  /* --- Grafo 3D --- */
+  --grafo-nodo-color: #d47a2c;       /* naranja pata de cuervo */
+  --grafo-nodo-borde: #b85a1a;       /* naranja más oscuro */
+  --grafo-texto-color: #ffffff;      /* texto blanco */
+}

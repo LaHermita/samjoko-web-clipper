@@ -1,7 +1,7 @@
 ---
-version: 0.2
+version: 0.3
 fecha: 2026-07-08
-estado: ACTIVO
+estado: activo
 descripcion: Visión estratégica de Samjoko Web Clipper como puerta de entrada web para la bóveda Obsidian. Resumen ejecutivo de decisiones de diseño y su mapeo al ROADMAP.
 tipo: Visión
 ---

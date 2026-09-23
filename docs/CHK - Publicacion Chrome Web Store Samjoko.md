@@ -2,9 +2,9 @@
 tipo: CHK
 tema: Publicación en Chrome Web Store
 proyecto: Samjoko Web Clipper
-estado: pendiente
-version: 1.0
-fecha: 2026-06-29
+estado: borrador
+version: 1.1
+fecha: 2026-09-23
 fuentes:
   - https://policies.google.com/privacy?hl=es-419
   - https://developer.chrome.com/docs/webstore/program-policies/terms
@@ -410,9 +410,9 @@ async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
 | §26 Exportación | ✅ | No maneja datos exportables. |
 
 > Creado: 2026-06-29  
-> Última actualización: 2026-06-30 (2ª auditoría) · versión del proyecto: 0.4.1  
+> Última actualización: 2026-09-23 (3ª auditoría) · versión del proyecto: 0.4.5  
 > Auditoría realizada por: opencode (IA)  
-> Plantilla: [`PLANT - Publicacion Chrome Web Store.md`](PLANT%20-%20Publicacion%20Chrome%20Web%20Store.md)  
+> Plantilla: checklist propia de este documento (no hay `PLANT` en el repositorio)  
 > Fuentes: [Política de Privacidad de Google](https://policies.google.com/privacy?hl=es-419), [Acuerdo para Desarrolladores](https://developer.chrome.com/docs/webstore/program-policies/terms), [Políticas del Programa](https://developer.chrome.com/docs/webstore/program-policies), [Políticas detalladas](https://developer.chrome.com/docs/webstore/program-policies/policies)
 
 ---
@@ -442,6 +442,6 @@ async function obtenerNombreArchivoUnico(manejadorDirectorio, nombreBase) {
 | Nombre/icono | **Pendiente** — verificar originalidad y no infracción de marcas. |
 
 > Creado: 2026-06-29  
-> Última actualización: 2026-06-29  
-> Plantilla: [`PLANT - Publicacion Chrome Web Store.md`](PLANT%20-%20Publicacion%20Chrome%20Web%20Store.md)  
+> Última actualización: 2026-09-23 (3ª auditoría) · versión del proyecto: 0.4.5  
+> Plantilla: checklist propia de este documento (no hay `PLANT` en el repositorio)  
 > Fuentes: [Política de Privacidad de Google](https://policies.google.com/privacy?hl=es-419), [Acuerdo para Desarrolladores](https://developer.chrome.com/docs/webstore/program-policies/terms), [Políticas del Programa](https://developer.chrome.com/docs/webstore/program-policies), [Políticas detalladas](https://developer.chrome.com/docs/webstore/program-policies/policies)

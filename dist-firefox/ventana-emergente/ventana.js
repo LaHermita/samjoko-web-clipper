@@ -1,0 +1,397 @@
+if (typeof window.traducir !== 'function') { window.traducir = function (c) { return c; }; }
+
+const zonaProgreso = document.getElementById('zonaProgreso');
+const barra = new BarraProgreso(zonaProgreso);
+const zonaToast = document.getElementById('zonaToast');
+
+const botonCapturaRapida = document.getElementById('botonCapturaRapida');
+const botonEditorBloques = document.getElementById('botonEditorBloques');
+const botonConfiguracion = document.getElementById('botonConfiguracion');
+
+const zonaNotas = document.getElementById('zonaNotas');
+const notasRapidas = document.getElementById('notasRapidas');
+const etiquetaNotasRapidas = document.getElementById('etiquetaNotasRapidas');
+
+const infoCarpeta = document.getElementById('infoCarpeta');
+let configuracionPopup = null;
+
+// Estado de la carpeta de destino (o del modo descarga en navegadores sin File System Access API)
+let estadoCarpetaActual = null;
+
+async function actualizarEstadoCarpeta() {
+  try {
+    estadoCarpetaActual = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
+  } catch {
+    estadoCarpetaActual = null;
+  }
+  return estadoCarpetaActual;
+}
+
+async function inicializarInternacionalizacion() {
+  configuracionPopup = await obtenerConfiguracion();
+  var configuracion = configuracionPopup;
+  document.documentElement.setAttribute('data-theme', configuracion.tema);
+  document.documentElement.lang = configuracion.idioma || 'es';
+  await cargarIdioma(configuracion.idioma);
+
+  document.title = traducir('tituloPopup');
+  document.querySelector('h1').textContent = traducir('tituloPopup');
+  document.querySelector('#barraAcciones').setAttribute('aria-label', traducir('tituloPopup'));
+
+  var textoCaptura = traducir('botonCapturaRapidaTitulo');
+  document.getElementById('etiquetaCapturaRapida').textContent = textoCaptura;
+  botonCapturaRapida.setAttribute('aria-label', textoCaptura);
+  botonCapturaRapida.setAttribute('title', textoCaptura + ' (Ctrl+Shift+S)');
+
+  var textoEditor = traducir('botonEditorBloquesTitulo');
+  document.getElementById('etiquetaEditorBloques').textContent = textoEditor;
+  botonEditorBloques.setAttribute('aria-label', textoEditor);
+  botonEditorBloques.setAttribute('title', textoEditor);
+
+  var textoConfig = traducir('botonConfiguracionTitulo');
+  document.getElementById('etiquetaConfiguracion').textContent = textoConfig;
+  botonConfiguracion.setAttribute('aria-label', textoConfig);
+  botonConfiguracion.setAttribute('title', textoConfig);
+
+  etiquetaNotasRapidas.textContent = traducir('etiquetaNotasPersonales');
+  notasRapidas.placeholder = traducir('placeholderNotasPersonales');
+  document.getElementById('etiquetaInputTags').textContent = traducir('etiquetaTags');
+  document.getElementById('inputTags').placeholder = traducir('placeholderTags');
+  document.getElementById('botonGuardarNotas').textContent = traducir('botonGuardar');
+  document.getElementById('botonCancelarNotas').textContent = traducir('botonCancelar');
+
+  actualizarEstadoCarpeta();
+  actualizarInfoCarpeta();
+  comprobarActualizacionPopup();
+}
+
+async function actualizarInfoCarpeta() {
+  try {
+    var respuesta = await chrome.runtime.sendMessage({ accion: 'verificarDirectorio' });
+  if (estadoCarpetaActual === null) {
+    await actualizarEstadoCarpeta();
+  }
+
+  if (estadoCarpetaActual && estadoCarpetaActual.usaModoDescarga) {
+    infoCarpeta.textContent = traducir('mensajeModoDescarga');
+    infoCarpeta.className = 'aviso';
+    infoCarpeta.classList.remove('oculto');
+  } else if (respuesta.tieneCarpeta) {
+    infoCarpeta.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="vertical-align:middle;margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>' + respuesta.nombre;
+    infoCarpeta.className = 'ok';
+  } else {
+      infoCarpeta.textContent = traducir('mensajeSinCarpeta');
+      infoCarpeta.className = 'error';
+    }
+  } catch {
+    infoCarpeta.textContent = traducir('mensajeSinCarpeta');
+    infoCarpeta.className = 'error';
+  }
+  infoCarpeta.classList.remove('oculto');
+}
+
+inicializarInternacionalizacion().then(function () {
+  return necesitaOnboarding();
+}).then(function (mostrar) {
+  if (mostrar) {
+    crearOnboarding();
+  }
+});
+
+function mostrarToast(texto, tipo, markdown) {
+  tipo = tipo || 'exito';
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + tipo;
+
+  if (markdown) {
+    var palabras = markdown.split(/\s+/).filter(Boolean).length;
+    var resumen = texto + ' · ' + palabras + ' palabras';
+    toast.textContent = resumen;
+    toast.className += ' toast-expandible toast-compacto';
+    toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+
+    toast.addEventListener('click', function () {
+      if (toast.classList.contains('toast-compacto')) {
+        toast.classList.remove('toast-compacto');
+        toast.classList.add('toast-expandido');
+        toast.textContent = texto + '\n\n' + markdown.substring(0, 500) + (markdown.length > 500 ? '\n...' : '');
+        toast.setAttribute('aria-label', 'Contenido de la captura. Haz clic para colapsar.');
+      } else {
+        toast.classList.remove('toast-expandido');
+        toast.classList.add('toast-compacto');
+        toast.textContent = resumen;
+        toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+      }
+    });
+  } else {
+    toast.textContent = texto;
+  }
+
+  zonaToast.appendChild(toast);
+
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      toast.classList.add('toast-visible');
+    });
+  });
+
+  var tiempo = markdown ? 8000 : 3000;
+  setTimeout(function () {
+    toast.classList.remove('toast-visible');
+    setTimeout(function () {
+      toast.remove();
+    }, 250);
+  }, tiempo);
+}
+
+async function extraerContenido(pestania) {
+  try {
+    return await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
+  } catch (errorIgnorado) {
+    barra.establecerTexto(traducir('barraProgresoConectando'));
+    await chrome.scripting.executeScript({
+      target: { tabId: pestania.id },
+      files: [
+        'componentes/extraccion/nucleo-extraccion.js',
+        'componentes/extraccion/extractor-inline.js',
+        'componentes/extraccion/extractor-texto.js',
+        'componentes/extraccion/extractor-listas.js',
+        'componentes/extraccion/extractor-codigo.js',
+        'componentes/extraccion/extractor-tablas.js',
+        'componentes/extraccion/extractor-citas.js',
+        'componentes/extraccion/extractor-multimedia.js',
+        'componentes/extraccion/extractor-iframes.js',
+        'extractor-contenido.js'
+      ]
+    });
+    return await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
+  }
+}
+
+async function capturaRapida() {
+  botonCapturaRapida.disabled = true;
+  barra.mostrar('indeterminado', traducir('barraProgresoExtrayendo'));
+
+  try {
+    var resultadoConsulta = await chrome.tabs.query({ active: true, currentWindow: true });
+    var pestania = resultadoConsulta[0];
+
+    if (!pestania || !pestania.id) {
+      barra.ocultar();
+      mostrarToast(traducir('errorPestaniaActiva'), 'error');
+      return;
+    }
+
+    var extraido = await extraerContenido(pestania);
+
+    if (!extraido || !extraido.markdown) {
+      barra.ocultar();
+      mostrarToast(traducir('errorSinContenido'), 'error');
+      return;
+    }
+
+    var tituloPagina = extraido.metadata && extraido.metadata.titulo ? extraido.metadata.titulo : pestania.title || '';
+
+    var tagsAuto = extraido.metadata.tags || extraido.metadata.etiquetas || [];
+    document.getElementById('inputTags').value = tagsAuto.join(', ');
+
+      zonaNotas.classList.remove('oculto');
+    document.getElementById('accionesNotas').classList.remove('oculto');
+    botonCapturaRapida.disabled = true;
+
+    var datosPendientes = {
+      metadata: extraido.metadata,
+      markdown: extraido.markdown,
+      tituloPagina: tituloPagina
+    };
+    zonaNotas._datosPendientes = datosPendientes;
+
+    barra.ocultar();
+  } catch (error) {
+    barra.ocultar();
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
+  } finally {
+    botonCapturaRapida.disabled = false;
+  }
+}
+
+// Chrome usa chrome.sidePanel; Firefox MV3 usa chrome.sidebarAction (sidebar_action en el manifest).
+async function abrirEditorBloques() {
+  try {
+    if (chrome.sidePanel && typeof chrome.sidePanel.open === 'function') {
+      var ventanaActual = await chrome.windows.getCurrent();
+      await chrome.sidePanel.open({ windowId: ventanaActual.id });
+      setTimeout(function () {
+        window.close();
+      }, 200);
+      return;
+    }
+
+    if (chrome.sidebarAction && typeof chrome.sidebarAction.open === 'function') {
+      await chrome.sidebarAction.open();
+      setTimeout(function () {
+        window.close();
+      }, 200);
+      return;
+    }
+
+    await chrome.tabs.create({ url: chrome.runtime.getURL('editor-bloques/editor.html') });
+    setTimeout(function () {
+      window.close();
+    }, 200);
+  } catch (error) {
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
+  }
+}
+
+async function guardarConNotas() {
+  var datos = zonaNotas._datosPendientes;
+  if (!datos) return;
+
+  var botonGuardar = document.getElementById('botonGuardarNotas');
+  botonGuardar.disabled = true;
+
+  try {
+    var verificacion = await actualizarEstadoCarpeta();
+
+    if (estadoCarpetaActual && estadoCarpetaActual.usaModoDescarga) {
+      if (!datos.metadata || !datos.metadata.url) {
+        mostrarToast(traducir('errorSinContenido'), 'error');
+        botonGuardar.disabled = false;
+        return;
+      }
+      var markdownDescarga = construirMarkdownDesdeCero(datos);
+      await iniciarDescargaDirecta(markdownDescarga, datos.tituloPagina);
+      return;
+    }
+
+    if (!verificacion.tieneCarpeta) {
+      mostrarToast(traducir('errorSinCarpeta'), 'error');
+      botonGuardar.disabled = false;
+      return;
+    }
+
+    var nombreBase = obtenerNombreDesdeTitulo(datos.tituloPagina) + '.md';
+    var notas = notasRapidas.value.trim();
+    var textoTags = document.getElementById('inputTags').value.trim();
+    var tagsUsuario = textoTags ? textoTags.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : null;
+
+    var configuracionVentanaEmergente = await obtenerConfiguracion();
+    var metadatosFrontales = generarMetadatosFrontales(datos.metadata, configuracionVentanaEmergente.usarMetadatosFrontales, notas, configuracionVentanaEmergente.camposFrontmatter, tagsUsuario);
+    var contenidoFinal = metadatosFrontales + datos.markdown;
+    if (configuracionVentanaEmergente.ajusteLinea && configuracionVentanaEmergente.ajusteLinea !== 'ninguno') {
+      contenidoFinal = ajustarTexto(contenidoFinal, configuracionVentanaEmergente.ajusteLinea);
+    }
+
+    barra.establecerTexto(traducir('barraProgresoGuardando'));
+    barra.mostrar('indeterminado', traducir('barraProgresoGuardando'));
+
+    var tokenResultado = await chrome.storage.session.get('tokenSesion');
+    var resultado = await chrome.runtime.sendMessage({
+      accion: 'guardarArchivo',
+      contenido: contenidoFinal,
+      nombreArchivo: nombreBase,
+      tokenSesion: tokenResultado.tokenSesion || ''
+    });
+
+    barra.ocultar();
+
+    if (resultado.error) {
+      mostrarToast(resultado.mensaje || traducir('errorGuardado', ''), 'error');
+      botonGuardar.disabled = false;
+    } else {
+      mostrarToast(traducir('mensajeGuardadoComo', resultado.nombreArchivo), 'exito', contenidoFinal);
+      setTimeout(function () {
+        window.close();
+      }, 1200);
+    }
+  } catch (error) {
+    barra.ocultar();
+    mostrarToast(traducir('errorGenerico', error.message), 'error');
+    botonGuardar.disabled = false;
+  }
+}
+
+function cancelarNotas() {
+  zonaNotas.classList.add('oculto');
+  document.getElementById('accionesNotas').classList.add('oculto');
+  botonCapturaRapida.disabled = false;
+  notasRapidas.value = '';
+  document.getElementById('inputTags').value = '';
+  delete zonaNotas._datosPendientes;
+}
+
+async function comprobarActualizacionPopup() {
+  try {
+    var respuesta = await chrome.runtime.sendMessage({ accion: 'comprobarActualizacion' });
+    if (respuesta && respuesta.hayActualizacion) {
+      var aviso = document.createElement('div');
+      aviso.id = 'avisoActualizacion';
+      aviso.setAttribute('role', 'alert');
+      aviso.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14" style="vertical-align:middle;margin-right:4px" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>' + traducir('avisoActualizacion', respuesta.versionRemota);
+      document.getElementById('encabezadoPopup').insertAdjacentElement('afterend', aviso);
+    }
+  } catch (errorIgnorado) {}
+}
+
+botonCapturaRapida.addEventListener('click', capturaRapida);
+
+botonEditorBloques.addEventListener('click', abrirEditorBloques);
+
+botonConfiguracion.addEventListener('click', function () {
+  chrome.runtime.openOptionsPage();
+});
+
+document.getElementById('botonGuardarNotas').addEventListener('click', guardarConNotas);
+document.getElementById('botonCancelarNotas').addEventListener('click', cancelarNotas);
+
+function construirMarkdownDesdeCero(datos) {
+  var notas = notasRapidas ? notasRapidas.value.trim() : '';
+  var textoTags = document.getElementById('inputTags') ? document.getElementById('inputTags').value.trim() : '';
+  var tagsUsuario = textoTags ? textoTags.split(',').map(function (t) { return t.trim(); }).filter(Boolean) : null;
+  var configuracionVentanaEmergente = configuracionPopup || {};
+
+  var metadatosFrontales = generarMetadatosFrontales(
+    datos.metadata,
+    configuracionVentanaEmergente.usarMetadatosFrontales,
+    notas,
+    configuracionVentanaEmergente.camposFrontmatter,
+    tagsUsuario
+  );
+
+  var partes = [];
+  if (metadatosFrontales) partes.push(metadatosFrontales);
+  partes.push(datos.markdown);
+
+  var contenidoFinal = partes.join('');
+  if (configuracionVentanaEmergente.ajusteLinea && configuracionVentanaEmergente.ajusteLinea !== 'ninguno') {
+    contenidoFinal = ajustarTexto(contenidoFinal, configuracionVentanaEmergente.ajusteLinea);
+  }
+  return contenidoFinal;
+}
+
+async function iniciarDescargaDirecta(contenido, titulo) {
+  var nombreBase = obtenerNombreDesdeTitulo(titulo) + '.md';
+  var blob = new Blob([contenido], { type: 'text/markdown;charset=utf-8' });
+  var urlObjeto = URL.createObjectURL(blob);
+  var botonGuardarNotas = document.getElementById('botonGuardarNotas');
+  try {
+    await chrome.downloads.download({
+      url: urlObjeto,
+      filename: nombreBase,
+      saveAs: false,
+      conflictAction: 'uniquify'
+    });
+    mostrarToast(traducir('mensajeGuardadoComo', nombreBase), 'exito');
+    setTimeout(function () {
+      window.close();
+    }, 1200);
+  } catch (error) {
+    mostrarToast(traducir('errorGuardado', error.message), 'error');
+  } finally {
+    if (botonGuardarNotas) botonGuardarNotas.disabled = false;
+    setTimeout(function () {
+      URL.revokeObjectURL(urlObjeto);
+    }, 60000);
+  }
+}

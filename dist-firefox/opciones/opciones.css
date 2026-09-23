@@ -1,0 +1,438 @@
+body {
+  padding: 32px 24px;
+  background: var(--degradado-fondo);
+  min-height: 100vh;
+  margin: 0;
+}
+
+#contenedor {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ---- Cuadrícula de cards ---- */
+.cuadricula-config {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.card {
+  background: var(--fondo-editor);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--sombra-caja);
+}
+
+/* Tarjeta de marca: ocupa toda la anchura */
+.tarjeta-marca {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 28px;
+}
+
+#iconoMarca img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 16px;
+  box-shadow: var(--sombra-caja);
+  background: var(--fondo-panel);
+}
+
+#infoMarca h1 {
+  font-size: 28px;
+  color: var(--color-acento);
+  margin: 0 0 6px 0;
+}
+
+#subtituloPagina {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--texto-inactivo);
+  margin: 0;
+}
+
+/* La tarjeta de formato ocupa toda la anchura para dar espacio a los checkboxes */
+.tarjeta-formato {
+  grid-column: 1 / -1;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 768px) {
+  .cuadricula-config {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 16px 12px;
+  }
+
+  .cuadricula-config {
+    grid-template-columns: 1fr;
+  }
+
+  .tarjeta-marca {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+  }
+}
+
+.cabeceraSeccion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--color-acento);
+}
+
+.cabeceraSeccion h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--texto-primario);
+  margin: 0;
+}
+
+#descripcionCarpeta {
+  font-size: 14px;
+  color: var(--texto-inactivo);
+  margin: 0 0 18px 0;
+  line-height: 1.5;
+}
+
+.campoConfig {
+  margin-top: 14px;
+}
+
+.campoConfig label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  margin-bottom: 6px;
+}
+
+.campoConfig select,
+.campoConfig input[type="text"] {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: var(--texto-primario);
+  background: var(--fondo-principal);
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campoConfig select:focus,
+.campoConfig input[type="text"]:focus {
+  border-color: var(--color-acento);
+}
+
+.feedback-guardado {
+  animation: pulso-guardado 0.5s ease;
+}
+
+@keyframes pulso-guardado {
+  0% { transform: scale(1); border-color: var(--color-acento); box-shadow: 0 0 0 0 var(--color-acento); }
+  30% { transform: scale(1.02); border-color: var(--color-acento); box-shadow: 0 0 0 4px var(--color-acento); }
+  100% { transform: scale(1); border-color: var(--color-acento); box-shadow: 0 0 0 0 transparent; }
+}
+
+.campoConfig select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.campoConfig-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.campoInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.campoEtiqueta {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-primario);
+  margin-bottom: 4px;
+}
+
+.campoDescripcion {
+  display: block;
+  font-size: 12px;
+  color: var(--texto-inactivo);
+  line-height: 1.4;
+}
+
+.interruptor {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.interruptor input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.interruptor-control {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--borde-interfaz);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.interruptor-control::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  background: var(--texto-boton);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.interruptor input:checked + .interruptor-control {
+  background: var(--color-acento);
+}
+
+.interruptor input:checked + .interruptor-control::before {
+  transform: translateX(20px);
+}
+
+#botonSeleccionar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+}
+
+#botonSeleccionar svg {
+  flex-shrink: 0;
+}
+
+#infoCarpeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--fondo-activo);
+  border-radius: 8px;
+  border: 1px solid var(--borde-suave);
+}
+
+#infoCarpeta.oculto {
+  display: none;
+}
+
+#infoCarpeta > svg {
+  flex-shrink: 0;
+  color: var(--estado-exito);
+}
+
+#detalleCarpeta {
+  flex: 1;
+  min-width: 0;
+}
+
+#etiquetaCarpeta {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--texto-inactivo);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+#nombreCarpeta {
+  display: block;
+  font-size: 14px;
+  color: var(--texto-primario);
+  word-break: break-all;
+}
+
+#botonLimpiar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--borde-interfaz);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--texto-inactivo);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+#botonLimpiar:hover {
+  color: var(--estado-error);
+  border-color: var(--estado-error);
+  background: var(--fondo-hover);
+}
+
+#zonaToast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  pointer-events: none;
+  min-width: 280px;
+  max-width: 520px;
+}
+
+.toast {
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+  transform: translateY(12px);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  border: 1px solid transparent;
+  box-shadow: var(--sombra-caja);
+}
+
+.toast.toast-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-exito {
+  background: var(--fondo-panel);
+  color: var(--estado-exito);
+  border-color: var(--estado-exito);
+}
+
+.toast-error {
+  background: var(--fondo-panel);
+  color: var(--estado-error);
+  border-color: var(--estado-error);
+}
+
+.toast-info {
+  background: var(--fondo-panel);
+  color: var(--texto-inactivo);
+  border-color: var(--borde-interfaz);
+}
+
+#piePagina {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borde-suave);
+}
+
+#textoAtajos {
+  font-size: 11px;
+  color: var(--texto-inactivo);
+  margin: 0 0 8px 0;
+}
+
+#textoCopyright {
+  font-size: 13px;
+  color: var(--texto-inactivo);
+  margin: 0 0 4px 0;
+}
+
+#textoApoyo {
+  font-size: 12px;
+  color: var(--texto-inactivo);
+  margin: 0;
+}
+
+#textoApoyo a {
+  color: var(--color-acento);
+  text-decoration: none;
+}
+
+#textoApoyo a:hover {
+  text-decoration: underline;
+}
+
+.campos-frontmatter {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--borde-suave);
+}
+
+.campos-frontmatter.oculto {
+  display: none;
+}
+
+#etiquetaCamposFrontmatter {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto-secundario);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#listaCamposFrontmatter {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 6px;
+}
+
+.campo-checkbox-frontmatter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--texto-primario);
+  transition: background 0.15s;
+}
+
+.campo-checkbox-frontmatter:hover {
+  background: var(--fondo-hover);
+}
+
+.campo-checkbox-frontmatter input[type="checkbox"] {
+  accent-color: var(--color-acento);
+}
+
+/* Aviso para navegadores sin File System Access API (Firefox, Brave con flag desactivado) */
+.aviso-modo-descarga {
+  font-size: 13px;
+  color: var(--estado-info);
+  background: var(--fondo-editor);
+  border: 1px solid var(--estado-info);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 14px 0;
+}

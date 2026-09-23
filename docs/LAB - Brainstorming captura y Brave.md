@@ -1,8 +1,8 @@
 ---
-version: 1.1
+version: 1.2
 fecha: 2026-07-07
 fecha_decision: 2026-07-08
-estado: DECIDIDO
+estado: archivado
 descripcion: Análisis y brainstorming de mejoras en detección/captura de contenido, y opciones de compatibilidad con Brave. **Todas las propuestas integradas en ROADMAP v1.1 (Fases 5.9–5.16).** Incluye línea nueva de captura de chats IA.
 tipo: Exploración
 origen: conversación de análisis del proyecto (2026-07-07)
@@ -11,6 +11,9 @@ origen: conversación de análisis del proyecto (2026-07-07)
 # LAB - Brainstorming captura y Brave
 
 **Propósito**: recopilar el análisis de mejoras de detección y captura de contenido (Parte 1) y las indicaciones de compatibilidad con Brave (Parte 2). Cada sección está pensada para copiarse como bloques independientes al ROADMAP o a la documentación del proyecto.
+
+> [!warning] Documento archivado
+> Las decisiones ya están volcadas en `docs/PROY - Roadmap.md` (fases 5.5, 5.9–5.16). Las casillas sin marcar de este documento son **históricas**: el backlog operativo vive únicamente en `PROY - Roadmap.md` y aquí no se actualiza.
 
 ---
 

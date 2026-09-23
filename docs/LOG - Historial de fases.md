@@ -1,14 +1,14 @@
 ---
 tipo: LOG
-tema: Roadmap — Historial de fases completadas
+tema: Historial de fases completadas
 proyecto: Samjoko Web Clipper
-estado: completado
-version: 1.0
+estado: archivado
+version: 1.1
 fecha_inicio: 2026-05-20
 fecha_cierre: 2026-07-08
 ---
 
-# LOG - Roadmap — Fases completadas
+# LOG - Historial de fases — Roadmap completado
 
 > Registro histórico de las fases completadas de Samjoko Web Clipper. Este documento preserve el historial de trabajo realizado mientras el PROY - Roadmap.md se mantiene enfocado en el trabajo activo y pendiente.
 

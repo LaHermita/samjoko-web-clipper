@@ -66,13 +66,13 @@ $sidebar_action = [PSCustomObject]@{
 $manifest | Add-Member -MemberType NoteProperty -Name "sidebar_action" -Value $sidebar_action -Force
 
 # 5.5. Identificador de Gecko (obligatorio en MV3 de Firefox)
+# 5.6. Declaracion de recoleccion de datos (requisito AMO desde noviembre de 2025).
+#      Va dentro de browser_specific_settings.gecko; si va en la raiz, Firefox lo da por ausente.
 $gecko = [PSCustomObject]@{
-    id = "samjoko-web-clipper@hermita.dev"
+    id                         = "samjoko-web-clipper@hermita.dev"
+    data_collection_permissions = [PSCustomObject]@{ required = @("none") }
 }
 $manifest | Add-Member -MemberType NoteProperty -Name "browser_specific_settings" -Value ([PSCustomObject]@{ gecko = $gecko }) -Force
-
-# 5.6. Declaracion de recoleccion de datos (requisito AMO desde 2025)
-$manifest | Add-Member -MemberType NoteProperty -Name "data_collection_permissions" -Value ([PSCustomObject]@{ required = @("none") }) -Force
 
 # 6. Guardar manifest transformado (UTF-8 sin BOM)
 $ruta_manifest_destino = Join-Path $ruta_dist "manifest.json"
@@ -95,10 +95,34 @@ foreach ($elemento in $elementos_copiados) {
     }
 }
 
+# 8. Fichero unico dist-firefox.xpi (manifest.json en la RAIZ del comprimido;
+#    si el manifest queda anidado, Firefox lo rechaza como "complemento dañado").
+#    Se montan las entradas a mano para garantizar separadores "/" (compatible con Firefox/Linux).
+$ruta_xpi = Join-Path $ruta_script "dist-firefox.xpi"
+if (Test-Path $ruta_xpi) { Remove-Item -LiteralPath $ruta_xpi -Force }
+try {
+    Add-Type -AssemblyName System.IO.Compression -ErrorAction Stop
+    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction Stop
+    $archivo_zip = [System.IO.Compression.ZipFile]::Open($ruta_xpi, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        Get-ChildItem -LiteralPath $ruta_dist -Recurse -File | ForEach-Object {
+            $ruta_relativa = $_.FullName.Substring($ruta_dist.Length).TrimStart("\", "/") -replace "\\", "/"
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archivo_zip, $_.FullName, $ruta_relativa) | Out-Null
+        }
+    } finally {
+        $archivo_zip.Dispose()
+    }
+    Write-Host "dist-firefox.xpi generado (fichero unico, manifest.json en la raiz)" -ForegroundColor Green
+} catch {
+    Write-Host "[AVISO] No se pudo generar dist-firefox.xpi: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "Paquete listo en dist-firefox/" -ForegroundColor Green
 Write-Host "Pasos siguientes:"
 Write-Host "  1. Revisa dist-firefox/manifest.json (gecko.id y permisos)."
-Write-Host "  2. Carga la carpeta en Firefox via about:debugging > Este Firefox > Cargar complemento temporal."
+Write-Host "  2. Carga en Firefox: about:debugging > Este Firefox > Cargar complemento temporal..."
+Write-Host "     Selecciona dist-firefox/manifest.json (o dist-firefox.xpi)."
+Write-Host "     No uses about:addons > Instalar complemento desde archivo: exige .xpi firmado."
 Write-Host "  3. Prueba: captura rapida, editor de bloques (sidebar), guardado por descarga."
 Read-Host -Prompt "Presiona INTRO para cerrar"

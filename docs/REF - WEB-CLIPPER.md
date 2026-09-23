@@ -1,7 +1,7 @@
 ---
 version: 1.1
 fecha: 2026-06-29
-estado: ACTIVO
+estado: activo
 descripcion: Schema de frontmatter YAML para documentos capturados desde web (Chrome extension). Compatible con Vivero: parser K1, merge rule NLP, grafo, timeline, MAPAS, companions. v1.1: añadidos idioma, sitio_nombre, tipo_contenido, imagen_destacada, tiempo_lectura, notas_personales.
 tipo: Referencia de integración
 ---
@@ -198,9 +198,11 @@ Obsérvese que `tags_auto` se añade sin tocar `tags`, y el resto de campos manu
 
 ## 7. Referencias
 
-- `docs/PROY - ROADMAP.md` — Sprint R (K1-K5), G3, G4, Q8
-- `docs/LAB - INSPIRACIONES-PROYECTOS.md` — §3.1 Frontmatter enriquecido, §3.2 dimensiones, §3.9 tipo
-- `docs/SPEC - COMPANIONS.md` — Naulux, Akkoro
-- `docs/IDEA - BANCO-IDEAS.md` — DataView, Timeline, MAPAS
-- `docs/REF - TAXONOMIA DEVS.md` — Convención de frontmatter en documentación
-- `docs/GUIA - INTEGRACION-CODIGO-EXTERNO.md` — Política de librerías externas (js-yaml para K1)
+- `docs/PROY - Roadmap.md` — Sprint R (K1-K5), G3, G4, Q8; fases 5.5 y 5.6
+- `docs/LOG - Historial de fases.md` — decisiones ya cerradas sobre el frontmatter
+- `docs/IDEA - Obsidian Boveda Vision.md` — visión de la extensión como puerta de entrada de la bóveda
+- `docs/META - Guideline oficial.md` — taxonomía documental y convención de frontmatter
+- `docs/GUIA - CODING GUIDELINES.md` — nomenclatura de identificadores
+
+> [!note] Alcance
+> Este documento pertenece a la bóveda Vivero. Las referencias externas (`SPEC - COMPANIONS`, `IDEA - BANCO-IDEAS`, `LAB - INSPIRACIONES-PROYECTOS`, `GUIA - INTEGRACION-CODIGO-EXTERNO`) viven en esa bóveda, no en este repositorio.
