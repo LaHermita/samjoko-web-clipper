@@ -103,6 +103,15 @@ Al finalizar cada sesión de trabajo (cuando el usuario indique que ha terminado
 
 ---
 
+## Reglas sobre el repositorio (Git)
+
+- **Los commits los lanza el usuario.** El asistente nunca ejecuta `git commit`.
+- **Cualquier operación sobre el repositorio** (`add`, `commit`, `push`, `pull`, `fetch`, `checkout`, `switch`, `branch`, `merge`, `rebase`, `reset`, `stash`, `tag`, `cherry-pick`, `revert`, borrados en masa…) **la hace el usuario**, salvo **orden explícita** del usuario para esa operación concreta en esa conversación.
+- Orden explícita = el usuario pide la operación por su nombre en el momento. No se deduce de una tarea relacionada ni de una orden previa de otra naturaleza.
+- El asistente **sí** puede preparar el cambio (editar ficheros, crear los que falten, regenerar artefactos, probar) y **proporcionar** el mensaje de commit y los comandos listos para copiar y pegar; la ejecución queda siempre del lado del usuario.
+
+---
+
 ## Alcance
 
 Estas reglas aplican a:
