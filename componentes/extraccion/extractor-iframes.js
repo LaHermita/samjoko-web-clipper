@@ -3,12 +3,33 @@
 
   var ns = SamjokoExtraccion;
 
+  // Comparación por URL, no por contentDocument: mientras la página del iframe
+  // no empieza a navegar, contentDocument es about:blank (mismo origen que la
+  // página padre) y un iframe cross-origin parecería same-origin (5.13).
   function esMismoOrigen(iframe) {
     try {
-      return !!iframe.contentDocument;
+      if (!iframe.contentDocument) return false;
+      var src = iframe.getAttribute('src') || '';
+      if (!src || src.charAt(0) === '#' || src.indexOf('about:') === 0) return true;
+      var urlSrc = new URL(src, document.baseURI);
+      var urlPropia = new URL(window.location.href);
+      return urlSrc.origin === urlPropia.origin;
     } catch (e) {
       return false;
     }
+  }
+
+  // 5.13 — Embeds cross-origin (YouTube, X/Twitter, Gist…): placeholder
+  // semántico en lugar de descartar el iframe. Los iframes de tracking o
+  // publicidad se omiten.
+  var PATRONES_IFRAME_EVITAR = /doubleclick|googlesyndication|google-analytics|googletagmanager|scorecardresearch|facebook\.com\/tr(\/|\?|$)|adservice|\/collect\/|piwik\.php/i;
+
+  function extraerEmbed(iframe) {
+    var src = (iframe.getAttribute('src') || '').trim();
+    if (!/^https?:\/\//i.test(src)) return null;
+    if (PATRONES_IFRAME_EVITAR.test(src)) return null;
+    var md = '> [!embed] ' + ns.limpiarUrl(src);
+    return { md: md, tipo: 'other', saltarVacio: true, datos: { contenido: md, src: src } };
   }
 
   function tieneContenidoUtil(documento) {
@@ -101,7 +122,7 @@
     nombre: 'iframes',
     etiquetas: ['iframe'],
     convertir: function(elemento) {
-      if (!esMismoOrigen(elemento)) return null;
+      if (!esMismoOrigen(elemento)) return extraerEmbed(elemento);
 
       var docIframe = elemento.contentDocument;
       if (!docIframe) return null;

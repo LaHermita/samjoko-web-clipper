@@ -1,3 +1,33 @@
+// Criterio único de disponibilidad de la File System Access API (B5).
+// Se comprueba la existencia de los tipos de manejador porque es la única
+// comprobación con el mismo resultado en la ventana (popup, editor, opciones)
+// y en el service worker / event page: showDirectoryPicker es API de Window y
+// no existe en workers, así que usarlo aquí haría que los contextos discreparan.
+function esFsaDisponible() {
+  return (
+    typeof FileSystemDirectoryHandle !== 'undefined' &&
+    typeof FileSystemFileHandle !== 'undefined'
+  );
+}
+
+// Lista de scripts de extracción (B4): única fuente = manifest.json.
+// El manifest tiene que declararlos estáticamente, así que el service worker,
+// el popup y el editor los leen desde ahí en lugar de duplicar la lista.
+function obtenerScriptsExtraccion() {
+  if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.getManifest) {
+    throw new Error('obtenerScriptsExtraccion() solo funciona dentro de la extensión');
+  }
+  var manifiesto = chrome.runtime.getManifest();
+  var grupos = manifiesto.content_scripts || [];
+  for (var i = 0; i < grupos.length; i++) {
+    var scripts = grupos[i].js || [];
+    if (scripts.indexOf('componentes/extraccion/nucleo-extraccion.js') !== -1) {
+      return scripts.slice();
+    }
+  }
+  throw new Error('manifest.json no declara los scripts de extracción (content_scripts)');
+}
+
 var ESQUEMA_CONFIG = {
   idioma: 'string',
   tema: 'string',

@@ -22,6 +22,15 @@
 
       var etiqueta = hijo.tagName.toLowerCase();
 
+      // Fórmulas matemáticas (Wikipedia, MathML, KaTeX): si no se detectan aquí,
+      // la recursión genérica cuela el MathML oculto (glifos + LaTeX duplicado +
+      // saltos de línea del HTML fuente).
+      var formula = ns.extraerFormula(hijo);
+      if (formula !== null) {
+        partes.push(formula);
+        continue;
+      }
+
       if (etiqueta === 'strong' || etiqueta === 'b') {
         var interior = ns.extraerInline(hijo);
         if (interior.trim()) partes.push('**' + interior + '**');
@@ -75,7 +84,8 @@
       }
 
       if (etiqueta === 'img') {
-        var src = hijo.getAttribute('src') || '';
+        if (ns.esImagenDecorativa(hijo)) continue;
+        var src = ns.limpiarUrl(ns.obtenerSrcImagen(hijo));
         var alt = hijo.getAttribute('alt') || '';
         if (src && src.indexOf('data:') !== 0 && src.indexOf('javascript:') !== 0) {
           partes.push('![' + alt + '](' + src + ')');

@@ -381,8 +381,24 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
   ns.limpiarUrl = function(url) {
     if (!url) return url;
+    // Protocolo-relativas (//host/path): heredan el esquema de la base; si la
+    // base no es http(s) (p. ej. un file:// de pruebas), https por defecto.
+    if (url.indexOf('//') === 0) {
+      var esquemaBase = /^([a-z]+):/i.exec(ns.baseExtraccion || document.baseURI || '');
+      var esquema = esquemaBase && /^https?$/i.test(esquemaBase[1]) ? esquemaBase[1] : 'https';
+      url = esquema + ':' + url;
+    }
+    var esAbsoluta = true;
     try {
-      var u = new URL(url, window.location.origin);
+      new URL(url);
+    } catch (e) {
+      esAbsoluta = false;
+    }
+    var base = ns.baseExtraccion ||
+      (typeof document !== 'undefined' && document.baseURI) ||
+      (typeof window !== 'undefined' ? window.location.href : '');
+    try {
+      var u = new URL(url, base);
       var parametrosIgnorar = /^(utm_|fbclid|gclid|mc_cid|mc_eid|ref|source|ref_src|ref_url)/i;
       var claves = Array.from(u.searchParams.keys());
       var cambio = false;
@@ -392,10 +408,59 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
           cambio = true;
         }
       }
-      return cambio ? u.toString() : url;
+      // 5.13 — Las URLs relativas siempre se devuelven absolutas; las absolutas
+      // solo cambian si se les ha limpiado parámetros de tracking.
+      if (cambio || !esAbsoluta) return u.toString();
+      return url;
     } catch (e) {
       return url;
     }
+  };
+
+  // 5.13 — Src real de una imagen contemplando carga diferida (lazy-load):
+  // `src` normal, luego atributos lazy y por último el primer candidato de
+  // `srcset` (proveniente de la propia imagen o de su <picture>).
+  ns.obtenerSrcImagen = function(imagen) {
+    if (!imagen || !imagen.getAttribute) return '';
+    var src = imagen.getAttribute('src');
+    if (src && src.trim() && src.trim().indexOf('data:') !== 0) return src.trim();
+
+    var atributosLazy = ['data-src', 'data-lazy-src', 'data-original', 'data-lazy'];
+    for (var i = 0; i < atributosLazy.length; i++) {
+      var valor = imagen.getAttribute(atributosLazy[i]);
+      if (valor && valor.trim()) return valor.trim();
+    }
+
+    var srcset = imagen.getAttribute('srcset');
+    if (!srcset) {
+      var padre = imagen.parentElement;
+      if (padre && padre.tagName === 'PICTURE') {
+        var fuente = padre.querySelector('source[srcset]');
+        if (fuente) srcset = fuente.getAttribute('srcset');
+      }
+    }
+    if (srcset && srcset.trim()) {
+      var primerCandidato = srcset.split(',')[0].trim().split(/\s+/)[0];
+      if (primerCandidato) return primerCandidato;
+    }
+
+    if (src && src.trim()) return src.trim();
+    return '';
+  };
+
+  // 5.13 — Imagen decorativa: `alt=""`, dimensiones 1×1/0 o nombre de fichero
+  // de tracking. Se comprueba después del detector de fórmulas (el fallback de
+  // Wikimedia lleva aria-hidden y alt con LaTeX, y no es decorativa).
+  ns.esImagenDecorativa = function(imagen) {
+    if (!imagen || !imagen.getAttribute) return false;
+    var alt = imagen.getAttribute('alt');
+    if (alt !== null && alt.trim() === '') return true;
+    var ancho = imagen.getAttribute('width');
+    var alto = imagen.getAttribute('height');
+    if (ancho === '1' || alto === '1' || ancho === '0' || alto === '0') return true;
+    var src = (ns.obtenerSrcImagen(imagen) || '').toLowerCase();
+    if (/[^\w](pixel|spacer|1x1|transparent|tracking|beacon)[^\w]*\.(gif|png|jpe?g|svg)(\?|$)/.test(src)) return true;
+    return false;
   };
 
   ns.extraerEnlacesDeBloque = function(elemento) {
@@ -498,6 +563,12 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
   ns.extraer = function(documento, opciones) {
     opciones = opciones || {};
     var urlExterna = opciones.urlOrigen || '';
+
+    // 5.13 — Base para resolver URLs relativas del cuerpo: la URL de origen si
+    // se pasa (pruebas/fixtures) o la base real del documento (incluye <base>).
+    // Se restaura al terminar para no contaminar extracciones anidadas (iframes).
+    var basePrevia = ns.baseExtraccion;
+    ns.baseExtraccion = urlExterna || documento.baseURI || '';
 
     // Limpia los marcadores que versiones anteriores dejaban en el DOM de la
     // página: su presencia hacía que una segunda captura perdiera listas,
@@ -618,7 +689,9 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
 
     bloques = ns.normalizarJerarquiaEncabezados(bloques);
 
-    return ns.ensamblarMarkdown(bloques, metadata, enlacesAcumulados);
+    var resultadoFinal = ns.ensamblarMarkdown(bloques, metadata, enlacesAcumulados);
+    ns.baseExtraccion = basePrevia;
+    return resultadoFinal;
   };
 
   ns.fusionarResultados = function(resultados) {

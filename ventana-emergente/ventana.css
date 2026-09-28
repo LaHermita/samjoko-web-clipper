@@ -320,6 +320,11 @@ body {
   pointer-events: auto;
 }
 
+.toast-expandible:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
 .toast-expandido {
   max-height: 180px;
   overflow-y: auto;

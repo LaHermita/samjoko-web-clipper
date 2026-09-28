@@ -21,9 +21,9 @@ let promesaInicializacion;
 let tokenSesion = '';
 
 // Firefox no soporta la File System Access API: en ese entorno se usa la Downloads API.
-const FSA_DISPONIBLE =
-  typeof FileSystemDirectoryHandle !== 'undefined' &&
-  typeof FileSystemFileHandle !== 'undefined';
+// El criterio vive en componentes/configuracion.js (cargado arriba) para que no
+// discrepe con el que usan las páginas (B5).
+const FSA_DISPONIBLE = esFsaDisponible();
 
 function obtenerPartesSubcarpeta(subcarpeta) {
   if (!subcarpeta) return [];
@@ -310,18 +310,7 @@ chrome.commands.onCommand.addListener(async (comando) => {
       try {
         await chrome.scripting.executeScript({
           target: { tabId: pestania.id },
-          files: [
-            'componentes/extraccion/nucleo-extraccion.js',
-            'componentes/extraccion/extractor-inline.js',
-            'componentes/extraccion/extractor-texto.js',
-            'componentes/extraccion/extractor-listas.js',
-            'componentes/extraccion/extractor-codigo.js',
-            'componentes/extraccion/extractor-tablas.js',
-            'componentes/extraccion/extractor-citas.js',
-            'componentes/extraccion/extractor-multimedia.js',
-            'componentes/extraccion/extractor-iframes.js',
-            'extractor-contenido.js'
-          ]
+          files: obtenerScriptsExtraccion()
         });
         extraido = await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
       } catch (errorInyeccion) {

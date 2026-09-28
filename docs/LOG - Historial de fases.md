@@ -3,9 +3,9 @@ tipo: LOG
 tema: Historial de fases completadas
 proyecto: Samjoko Web Clipper
 estado: archivado
-version: 1.1
+version: 1.2
 fecha_inicio: 2026-05-20
-fecha_cierre: 2026-07-08
+fecha_cierre: 2026-09-28
 ---
 
 # LOG - Historial de fases — Roadmap completado
@@ -234,6 +234,31 @@ Implementar el schema completo definido en `docs/REF - WEB-CLIPPER.md`. La exten
 
 - [x] **Recorrido en profundidad**: sustituir o complementar `querySelectorAll` plano en `nucleo-extraccion.js` por walker que marque nodos ya procesados
 - [x] **Exclusión de descendientes**: no procesar hijos de bloques ya convertidos (`blockquote`, `pre`, `table`, `figure`, `ul`, `ol`)
+
+### 5.11 — Detección inteligente de contenido principal (parcial) ✅
+
+Mejorar la selección de raíz más allá de `<article>`. Implementado en `componentes/extraccion/nucleo-extraccion.js:103-160`.
+
+- [x] **Función `detectarRaizContenido(documento)`** con cascada:
+  1. `<article>` (si existe)
+  2. `main`, `[role="main"]`, `[role="document"]`
+  3. Selectores de contenido (`.entry-content`, `.post-content`, `#content`, `#primary`, `[itemprop="articleBody"]`…)
+  4. **Scoring de candidatos** (`puntuarCandidato`, línea 136): densidad de texto, H1/H2/H3, ratio párrafos/enlaces, palabras clave en `id`/`class`; umbral ≥ 20
+  5. Fallback a `document.body`
+
+Pendientes (reglas por dominio y Readability.js embebido) → `PROY - Roadmap.md §5.11`.
+
+### 5.12 — Metadatos enriquecidos (sin NLP) (parcial) ✅
+
+Ampliar `extraerMetadatos()` sin dependencias externas. Implementado en `componentes/extraccion/nucleo-extraccion.js:215-390`.
+
+- [x] **`url_origen` canónica**: `<link rel="canonical">` con fallback a `document.URL` (línea 310)
+- [x] **`fecha_publicacion` desde `<time>`**: `meta` → `<time datetime="...">` (línea 293) → JSON-LD
+- [x] **JSON-LD `@graph`**: todos los `<script type="application/ld+json">` y grafos `@graph` de primer nivel (línea 248)
+- [x] **Twitter Cards parcial**: `twitter:description` y `twitter:image` ya actúan como fallback de OpenGraph (líneas 364 y 330)
+- [x] **Detección de idioma heurística**: `heuristicaIdioma()` (línea 192), ratio de palabras frecuentes es/en como fallback de `<html lang>`
+
+Pendientes (JSON-LD recursivo y `twitter:title`) → `PROY - Roadmap.md §5.12`.
 
 ### 5.14 — Código inline vs bloque (parcial) ✅
 

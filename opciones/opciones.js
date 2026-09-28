@@ -13,7 +13,8 @@ var zonaCamposFrontmatter = document.getElementById('camposFrontmatter');
 var listaCamposFrontmatter = document.getElementById('listaCamposFrontmatter');
 var avisoModoDescarga = document.getElementById('avisoModoDescarga');
 
-var ES_FSA_DISPONIBLE = typeof window.showDirectoryPicker === 'function';
+// Criterio único compartido con el service worker (B5): ver esFsaDisponible().
+var ES_FSA_DISPONIBLE = esFsaDisponible();
 
 var ETIQUETAS_CAMPOS = {
   url_origen: 'URL de origen',
@@ -230,7 +231,9 @@ async function inicializar() {
   });
 
   botonSeleccionar.addEventListener('click', async function () {
-    if (!ES_FSA_DISPONIBLE) {
+    // Guardia defensiva: si el navegador tiene los tipos pero ha retirado el
+    // selector (Brave con FSA bloqueado), se avisa en lugar de lanzar TypeError.
+    if (!ES_FSA_DISPONIBLE || typeof window.showDirectoryPicker !== 'function') {
       mostrarToast(traducir('avisoSinFSA'), 'info');
       return;
     }

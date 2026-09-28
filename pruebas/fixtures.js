@@ -1,4 +1,4 @@
-// Fixtures HTML → Markdown del harness de regresión (fases 5.9 y 5.10).
+// Fixtures HTML → Markdown del harness de regresión (fases 5.9, 5.10 y 5.13).
 //
 // Campos:
 //   nombre    — identificador corto del caso.
@@ -288,6 +288,81 @@ window.FIXTURES = [
       "",
       "---",
       "*Fuente: https://ejemplo.com/mixto*"
+      ].join("\n")
+  },
+  {
+    nombre: 'formulas-matematicas',
+    titulo: 'Formulas matematicas',
+    urlOrigen: 'https://ejemplo.com/formulas',
+    cuerpo: `
+<article>
+  <h1>Formulas matematicas</h1>
+  <p>La funcion gaussiana se define como <span class="mwe-math-element mwe-math-element-inline" data-mw='{"name":"math","attrs":{},"body":{"extsrc":"e^{-x^2}"}}'><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math xmlns="http://www.w3.org/1998/Math/MathML" alttext="{\\displaystyle e^{-x^{2}}}">
+  <semantics>
+    <mrow><mi>e</mi></mrow>
+    <annotation encoding="application/x-tex">{\\displaystyle e^{-x^{2}}}</annotation>
+  </semantics>
+</math></span><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/abc" class="mwe-math-fallback-image-inline" alt="{\\displaystyle e^{-x^{2}}}"/></span> y verifica <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi></mrow><annotation encoding="application/x-tex">a^{2}+b^{2}=c^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true">a2+b2=c2</span></span>.</p>
+  <p>Propiedad util: <span class="mwe-math-element mwe-math-element-inline"><span class="mwe-math-mathml-inline" style="display: none;"><math alttext="{\\displaystyle f(x+y)=f(x)\\,f(y)}"><semantics><annotation encoding="application/x-tex">{\\displaystyle f(x+y)=f(x)\\,f(y)}</annotation></semantics></math></span><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/def" class="mwe-math-fallback-image-inline" alt="{\\displaystyle f(x+y)=f(x)\\,f(y)}"/></span> para toda x.</p>
+  <p><span class="mwe-math-element mwe-math-element-inline"><span class="mwe-math-mathml-inline" style="display: none;"><math><semantics><annotation encoding="application/x-tex">{\\displaystyle \\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}}</annotation></semantics></math></span><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/ghi" class="mwe-math-fallback-image-inline" alt="{\\displaystyle \\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}}"/></span></p>
+  <div><img class="mwe-math-fallback-image-display" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/jkl" alt="{\\displaystyle a+b=c}"></div>
+</article>`,
+    esperado: [
+      "# Formulas matematicas",
+      "",
+      "# Formulas matematicas",
+      "",
+      "La funcion gaussiana se define como $e^{-x^2}$ y verifica $a^{2}+b^{2}=c^{2}$.",
+      "",
+      "Propiedad util: $f(x+y)=f(x)\\,f(y)$ para toda x.",
+      "",
+      "$$\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}$$",
+      "",
+      "$$a+b=c$$",
+      "",
+      "---",
+      "*Fuente: https://ejemplo.com/formulas*"
+      ].join("\n")
+  },
+  {
+    nombre: 'imagenes-lazy-y-embeds',
+    titulo: 'Imagenes, lazy y embeds',
+    urlOrigen: 'https://ejemplo.com/articulo/imagenes',
+    cuerpo: `
+<article>
+  <h1>Imagenes, lazy y embeds</h1>
+  <p>Relativa: <img src="/subida/foto.png" alt="Foto"> y lazy: <img src="data:image/gif;base64,R0lGOD" data-src="https://cdn.ejemplo.com/real.jpg" alt="Diferida">.</p>
+  <p>Antes <img src="https://tracker.ejemplo.com/collect/pixel.gif" width="1" height="1" alt=""> desaparece la decorativa.</p>
+  <p>Sin alt <img src="https://ejemplo.com/banner.gif" alt=""> y con srcset <img srcset="https://ejemplo.com/grande.png 2x, https://ejemplo.com/normal.png 1x" alt="Srcset">.</p>
+  <figure>
+    <img data-lazy-src="https://ejemplo.com/figura.png" alt="Figura">
+    <figcaption>Pie con <a href="../doc/enlace">enlace</a></figcaption>
+  </figure>
+  <iframe src="https://www.youtube.com/embed/abc123" title="Video"></iframe>
+</article>`,
+    esperado: [
+      "# Imagenes, lazy y embeds",
+      "",
+      "# Imagenes, lazy y embeds",
+      "",
+      "Relativa: ![Foto](https://ejemplo.com/subida/foto.png) y lazy: ![Diferida](https://cdn.ejemplo.com/real.jpg).",
+      "",
+      "Antes desaparece la decorativa.",
+      "",
+      "Sin alt y con srcset ![Srcset](https://ejemplo.com/grande.png).",
+      "",
+      "![Figura](https://ejemplo.com/figura.png)",
+      "",
+      "*Pie con [enlace](https://ejemplo.com/doc/enlace)*",
+      "",
+      "> [!embed] https://www.youtube.com/embed/abc123",
+      "",
+      "## Enlaces",
+      "",
+      "- [enlace](https://ejemplo.com/doc/enlace)",
+      "",
+      "---",
+      "*Fuente: https://ejemplo.com/articulo/imagenes*"
       ].join("\n")
   }
 ];

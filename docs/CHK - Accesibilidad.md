@@ -2,7 +2,7 @@
 tipo: CHK
 tema: Accesibilidad
 proyecto: Samjoko Web Clipper
-version: 1.3
+version: 1.4
 estado: congelado
 fecha: 2026-09-28
 ---
@@ -45,7 +45,7 @@ Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 
 - [x] **Info carpeta**: `role="status"` para anunciar cambios dinámicos
 - [x] **Onboarding**: `aria-describedby` vinculado a la descripción del paso
 - [x] **Select all toggle**: `aria-pressed` dinámico
-- [ ] **Toasts expandibles**: `aria-expanded` cuando el toast admite desplegar contenido
+- [x] **Toasts expandibles**: `aria-expanded` cuando el toast admite desplegar contenido (2026-09-28: `role="button"`, `tabindex`, activación con Enter/Espacio y `aria-expanded` dinámico en `ventana-emergente/ventana.js`; foco visible en `ventana.css`)
 - [ ] **Bloques del editor**: `aria-checked` sincronizado con el checkbox visual
 
 ## Contraste y color

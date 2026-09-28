@@ -1,15 +1,15 @@
 ---
-version: 1.7
+version: 2.1
 estado: activo
 objetivo: ESTABLE-EQUIPOINTERNO
 alcance: carga en modo desarrollador (Chrome y Firefox)
 publicacion_tienda: diferida-hasta-nuevo-aviso
 fase_activa: estabilidad
-fase: estabilidad, bloqueantes-manual, 5.13-pendiente, 5.2-pendiente, 5.9-parcial, 5.10-parcial, 5.11-parcial, 5.12-parcial, 5.14-pendiente, 4.5-congelada
+fase: estabilidad, bloqueantes-manual, 5.2-pendiente, 5.9-parcial, 5.10-parcial, 5.11-parcial, 5.12-parcial, 5.14-pendiente, 5.17-parcial, 4.5-congelada
 ---
 
 > [!summary] Resumen
-> Hoja de ruta de Samjoko Web Clipper. **Objetivo actual: versión interna estable para el equipo de desarrolladores** — la extensión se carga en **modo desarrollador en Chrome y Firefox**; **hasta nuevo aviso no se publica en la Chrome Web Store** (su CHK queda `congelado`). Prioridad: que la extensión sea **operativa, eficaz y estable** (ver §Prioridad actual). Los bloqueantes de código de la auditoría de septiembre 2026 (**B1–B3** y **B8–B10**) están **corregidos y verificados con pruebas automatizadas**; queda la prueba manual en los dos navegadores. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8 y los parciales 5.9, 5.10, 5.14) están archivadas en `docs/LOG - Historial de fases.md`; los avances de 5.11 y 5.12 constan aquí con su referencia de código y quedan pendientes de archivar.
+> Hoja de ruta de Samjoko Web Clipper. **Objetivo actual: versión interna estable para el equipo de desarrolladores** — la extensión se carga en **modo desarrollador en Chrome y Firefox**; **hasta nuevo aviso no se publica en la Chrome Web Store** (su CHK queda `congelado`). Prioridad: que la extensión sea **operativa, eficaz y estable** (ver §Prioridad actual). Los bloqueantes de código de la auditoría de septiembre 2026 (**B1–B3** y **B8–B10**) están **corregidos y verificados con pruebas automatizadas**; queda la prueba manual en los dos navegadores. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8 y los parciales 5.9, 5.10, 5.11, 5.12 y 5.14) están archivadas en `docs/LOG - Historial de fases.md`. La deuda técnica **B4–B7** está cerrada, la fase **5.13** (imágenes, URLs y embeds) está completa y existe la **5.17** (fórmulas matemáticas, parcial).
 
 ---
 
@@ -20,14 +20,14 @@ fase: estabilidad, bloqueantes-manual, 5.13-pendiente, 5.2-pendiente, 5.9-parcia
 Orden de prioridad:
 
 1. **Estabilidad de la captura** — ni contenido perdido ni duplicado. Asegurado por los bloqueantes B1–B8 y sostenido por la suite de regresión de **5.9 / 5.10** (`pruebas/`).
-2. **Robustez del pipeline** — **5.13** (URLs relativas, lazy-load, imágenes decorativas), **5.2** (detectar «leer más»), **5.14** (tablas de presentación).
+2. **Robustez del pipeline** — **5.13** ✅ (URLs relativas, lazy-load, imágenes decorativas y embeds), **5.2** (detectar «leer más»), **5.14** (tablas de presentación).
 3. **Los dos navegadores objetivo operan igual** — prueba manual del flujo completo en Chrome (modo desarrollador) y Firefox (carga temporal desde `dist-firefox/`).
-4. **Deuda técnica que afecta a la estabilidad** — **B4** (lista de extractores duplicada en 4 sitios), **B5** (detección de FSA inconsistente), **B7** (`.gitignore`).
+4. **Deuda técnica que afecta a la estabilidad** — cerrada en esta sesión: **B4** (lista de extractores duplicada), **B5** (detección de FSA unificada), **B6** (toast accesible con teclado) y **B7** (`.gitignore`).
 5. **Puesta a punto del equipo** — instrucciones cortas de carga, de actualización tras cada `git pull` y canal para reportar fallos (captura + URL + navegador).
 
 **Primer entregable bajo este objetivo:**
 
-- [ ] **Onboarding del equipo**: consolidar en `README.md` la sección de carga en modo desarrollador (ya escrita) y añadir plantilla de reporte de fallo (navegador + URL + pasos + captura) con enlace a `pruebas/`.
+- [x] **Onboarding del equipo**: consolidar en `README.md` la sección de carga en modo desarrollador (ya escrita) y añadir plantilla de reporte de fallo (navegador + URL + pasos + captura) con enlace a `pruebas/`. **Hecho**: sección «Reportar un fallo / Report a bug» añadida al README.
 
 > [!note] Congelado hasta nuevo aviso
 > **Fase 4.5 (accesibilidad)**, **publicación en Chrome Web Store** (`CHK - Publicacion...`), **Brave (5.16)** y **firma AMO**. Se retoman si cambia el alcance.
@@ -44,17 +44,17 @@ Defectos detectados en la auditoría de código (septiembre 2026). **B1, B2, B3,
 - [x] **B8 — Las tablas nunca se extraían**: `componentes/extraccion/extractor-tablas.js` hacía `return !elemento.closest('table')` en `esAplicable()`, pero `closest()` **incluye el propio elemento** → siempre devolvía `false` y toda tabla se descartaba (regresión de **5.3**, que está cerrada como ✅). **Corregido**: `elemento.closest('table') === elemento` (solo la tabla exterior; las anidadas siguen excluidas). Verificado: tabla con `rowspan` correcta y sin duplicados.
 - [x] **B9 — Elementos inline duplicados como bloques**: `<code>` e `<img>` dentro de un `<p>` o de un encabezado se volvían a extraer como bloque propio (solo `blockquote`, `pre`, `table`, `figure`, `ul` y `ol` contaban como contenedores) → el párrafo salía dos veces con su código o imagen. **Corregido**: cualquier bloque ya convertido excluye a sus descendientes (`ns.tieneAncestroProcesado()` sobre `nodosProcesados`). Detectado por el harness de **5.10** («código en párrafos»).
 - [x] **B10 — Lista dentro de cita pegada sin saltos**: un `<ul>` dentro de un `<blockquote>` se aplanaba a `Primer puntoSegundo punto`. **Corregido** en `componentes/extraccion/extractor-citas.js`: cada ítem en su línea con su marca (`> - ítem`, `> 1. ítem`). Detectado por el harness de **5.10** («listas dentro de citas»).
-- [ ] **Prueba manual en Chrome y Firefox** antes de distribuir al equipo:
+- [ ] **Prueba manual en Chrome y Firefox** antes de distribuir al equipo _(Chrome superó el primer pase; repetir el pase tras **B4**/**5.17** — en especial capturar una página de Wikipedia con fórmulas y verificar la recarga de la extensión)_:
   - **Chrome**: recargar en `chrome://extensions` → popup (captura rápida + descarga), editor (capturar → ⟳ re-escanear → capturar otra vez), opciones (ajuste de línea 80 → guardar).
   - **Firefox**: `./empaquetar-firefox.sh` → `about:debugging#/runtime/this-firefox` → cargar `dist-firefox/manifest.json` como complemento temporal → mismo flujo (el guardado va por Downloads API).
   - Las pruebas automatizadas son `pruebas/prueba-reescaneo.html` y `pruebas/prueba-ajuste-linea.html`: se abren en Chrome y pintan el resultado en la propia página.
 
 **Deuda técnica (no bloqueantes):**
 
-- [ ] **B4 — Lista de scripts del content script duplicada en 4 sitios**: `manifest.json:52-66`, `trabajador-fondo.js:313-324`, `ventana-emergente/ventana.js:154-165`, `editor-bloques/editor.js:465-476`. Centralizar en una única constante compartida antes de añadir extractores nuevos (**5.15**): si se olvida una lista, la captura falla con `ReferenceError`.
-- [ ] **B5 — Detección de FSA inconsistente**: el SW usa `typeof FileSystemDirectoryHandle !== 'undefined'` (`trabajador-fondo.js:24`) y las opciones usan `typeof window.showDirectoryPicker === 'function'` (`opciones/opciones.js:16`); en Brave pueden discrepar y mostrar avisos contradictorios. Unificar criterio.
-- [ ] **B6 — Toast expandible solo accesible con ratón**: `ventana-emergente/ventana.js:101-128` crea un `<div>` clicable sin `role`, `tabindex`, activación por teclado ni `aria-expanded`. Cierra el ítem «Toasts expandibles» de [`CHK - Accesibilidad.md`](CHK%20-%20Accesibilidad.md).
-- [ ] **B7 — Falta `.gitignore`**: `dist-firefox/` y `dist-firefox.xpi` son artefactos de build que el script regenera con `rm -rf`; ignorarlos para evitar ruido de diffs y ediciones accidentales sobre la copia.
+- [x] **B4 — Lista de scripts del content script duplicada en 4 sitios**: `manifest.json:52-66`, `trabajador-fondo.js`, `ventana-emergente/ventana.js` y `editor-bloques/editor.js` repetían la misma lista de 10 scripts. **Corregido**: única fuente = `manifest.json`; la función `obtenerScriptsExtraccion()` (`componentes/configuracion.js`) la lee de `chrome.runtime.getManifest().content_scripts` y SW, popup y editor la usan en `chrome.scripting.executeScript({ files: obtenerScriptsExtraccion() })`. Añadir un extractor nuevo = añadirlo al manifest (y a los harness de `pruebas/`).
+- [x] **B5 — Detección de FSA inconsistente**: el SW usaba `typeof FileSystemDirectoryHandle !== 'undefined'` (`trabajador-fondo.js:24`) y las opciones `typeof window.showDirectoryPicker === 'function'` (`opciones/opciones.js:16`); en Brave podían discrepar y mostrar avisos contradictorios. **Corregido**: criterio único `esFsaDisponible()` en `componentes/configuracion.js` (cargado por el SW, popup, editor y opciones) basado en los tipos de manejador — la única comprobación con el mismo resultado en ventana y en worker (`showDirectoryPicker` es API de Window y no existe en workers). El botón de seleccionar carpeta queda protegido con guardia defensiva por si un navegador retirara el selector.
+- [x] **B6 — Toast expandible solo accesible con ratón**: `ventana-emergente/ventana.js:101` creaba un `<div>` clicable sin `role`, `tabindex`, activación por teclado ni `aria-expanded`. **Corregido**: `role="button"` + `tabindex="0"` + activación con Enter/Espacio (función compartida `alternarToast`) + `aria-expanded` dinámico y foco visible (`:focus-visible` en `ventana.css`). Cierra el ítem «Toasts expandibles» de [`CHK - Accesibilidad.md`](CHK%20-%20Accesibilidad.md).
+- [x] **B7 — Falta `.gitignore`**: `dist-firefox/` y `dist-firefox.xpi` son artefactos de build que el script regenera con `rm -rf`. **Corregido**: `.gitignore` creado en la raíz (ignora `dist-firefox/`, `dist-firefox.xpi` y ruido de sistema/editores). Si estaban trackeados, des-trackearlos con `git rm -r --cached` (operación del usuario).
 
 ---
 
@@ -77,7 +77,7 @@ Objetivo: que la extensión sea utilizable con lectores de pantalla, navegación
 
 ## Fase 5 — Calidad de captura para Obsidian 🔧
 
-Mejoras pendientes del pipeline de extracción para la versión interna estable. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.9-parcial, 5.10-parcial, 5.14-parcial) están en `docs/LOG - Historial de fases.md`. Los avances de **5.11** y **5.12** ya están en el código (referencias abajo) pero **aún no se han archivado en el LOG**.
+Mejoras pendientes del pipeline de extracción para la versión interna estable. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.9-parcial, 5.10-parcial, 5.11-parcial, 5.12-parcial, 5.14-parcial) están en `docs/LOG - Historial de fases.md`.
 
 **Principio rector**: cada bloque nuevo debe poder añadirse sin tocar el núcleo del extractor (patrón **estrategia/plugin** interno).
 
@@ -88,7 +88,7 @@ Mejoras pendientes del pipeline de extracción para la versión interna estable.
 
 ### 5.9 — Formato inline (pruebas) ✅ automatizadas
 
-- [x] **Suite de fixtures HTML → Markdown** (`pruebas/`): 9 fixtures con su Markdown esperado, ejecutor doble (comparación + re-escaneo) y lanzador en terminal, sin dependencias. Ejecutar con `./pruebas/ejecutar-pruebas.sh` (Chrome headless) o abriendo `pruebas/ejecutor-fixtures.html` en el navegador. Cubre `**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces](url)`, `~subíndice~`, `^superíndice^`, formato anidado, código inline vs bloque, limpieza de `utm_*` y filtro de densidad de enlaces.
+- [x] **Suite de fixtures HTML → Markdown** (`pruebas/`): 11 fixtures con su Markdown esperado, ejecutor doble (comparación + re-escaneo) y lanzador en terminal, sin dependencias. Ejecutar con `./pruebas/ejecutar-pruebas.sh` (Chrome headless) o abriendo `pruebas/ejecutor-fixtures.html` en el navegador. Cubre `**negrita**`, `*cursiva*`, `` `código` ``, `[enlaces](url)`, `~subíndice~`, `^superíndice^`, formato anidado, código inline vs bloque, limpieza de `utm_*` y filtro de densidad de enlaces.
 - [ ] **Pruebas manuales en sitios reales**: Wikipedia, Medium y documentación técnica con enlaces y código inline (abrir la página → capturar → revisar en el editor).
 
 ### 5.10 — Anti-duplicación (pruebas) ✅ automatizadas
@@ -99,7 +99,7 @@ Mejoras pendientes del pipeline de extracción para la versión interna estable.
 
 ### 5.11 — Detección inteligente de contenido principal 🔧 (parcial)
 
-Mejorar la selección de raíz más allá de `<article>`. **Implementado en `componentes/extraccion/nucleo-extraccion.js:103-160`** (pendiente de archivar en el LOG).
+Mejorar la selección de raíz más allá de `<article>`. **Implementado en `componentes/extraccion/nucleo-extraccion.js:103-160`** (archivado en el LOG).
 
 - [x] **Función `detectarRaizContenido(documento)`** en `nucleo-extraccion.js` con cascada:
   1. `<article>` (si existe)
@@ -112,7 +112,7 @@ Mejorar la selección de raíz más allá de `<article>`. **Implementado en `com
 
 ### 5.12 — Metadatos enriquecidos (sin NLP) 🔧 (parcial)
 
-Ampliar `extraerMetadatos()` sin dependencias externas. **Implementado en `componentes/extraccion/nucleo-extraccion.js:215-390`** (pendiente de archivar en el LOG).
+Ampliar `extraerMetadatos()` sin dependencias externas. **Implementado en `componentes/extraccion/nucleo-extraccion.js:215-390`** (archivado en el LOG).
 
 - [x] **`url_origen` canónica**: `<link rel="canonical">` con fallback a `document.URL` (línea 310)
 - [x] **`fecha_publicacion` desde `<time>`**: `meta` → `<time datetime="...">` (línea 293) → JSON-LD
@@ -122,18 +122,30 @@ Ampliar `extraerMetadatos()` sin dependencias externas. **Implementado en `compo
 - [ ] **`twitter:title`**: usarlo como fallback del título cuando `document.title` y JSON-LD no aporten
 - [x] **Detección de idioma heurística**: `heuristicaIdioma()` (línea 192), ratio de palabras frecuentes es/en como fallback de `<html lang>`
 
-### 5.13 — Multimedia e imágenes
+### 5.13 — Multimedia e imágenes ✅
 
-Resolver URLs relativas, lazy-load y filtrar ruido visual.
+Resolver URLs relativas, lazy-load, filtrar ruido visual y preservar embeds.
 
-- [ ] **Resolver URLs relativas** en cuerpo Markdown (no solo metadatos): relativizar contra `document.baseURI`
-- [ ] **Soporte lazy-load**: leer `data-src`, `data-lazy-src`, primer valor de `srcset`
-- [ ] **Filtrar imágenes decorativas**: `alt=""`, dimensiones 1×1, patrones de tracking
-- [ ] **Placeholder para embeds cross-origin**: YouTube, Twitter/X, Gist con bloque semántico `> [!embed] URL`
+- [x] **Resolver URLs relativas** en cuerpo Markdown (no solo metadatos): `ns.limpiarUrl()` resuelve contra la base de la extracción (`ns.baseExtraccion` = URL de origen si se pasa —pruebas— o `document.baseURI`, con `<base>` incluido y restaurada tras extracciones anidadas de iframes) y devuelve absolutas las relativas, incluidas las protocolo-relativas `//host/…` (heredan el esquema de la base; https si la base no es http(s)). Aplica a enlaces, imágenes y embeds.
+- [x] **Soporte lazy-load**: `ns.obtenerSrcImagen()` — `src` normal (los `data:` placeholder se posponen), `data-src`, `data-lazy-src`, `data-original`, `data-lazy` y primer candidato de `srcset` (de la imagen o de su `<picture>`).
+- [x] **Filtrar imágenes decorativas**: `ns.esImagenDecorativa()` — `alt=""`, dimensiones 1×1/0 y nombres de fichero de tracking (pixel, spacer, 1x1, transparent, tracking, beacon). En figuras se degrada al pie de figura. Se comprueba **después** del detector de fórmulas (el fallback de Wikimedia lleva `aria-hidden` y no es decorativo).
+- [x] **Placeholder para embeds cross-origin**: `> [!embed] URL` en `extractor-iframes.js` para iframes http(s) de otro origen (publicidad/tracking excluido por patrones). Detección de origen **por URL**, no por `contentDocument`: mientras el iframe navega, `contentDocument` es `about:blank` y parecía same-origin (verificado con sonda en Chrome headless).
+- [x] **Fixture `imagenes-lazy-y-embeds`** (11.º) y verificación con página real (Wikipedia): 0 URLs relativas, 0 restos de MathML y 0 marcadores.
 
 ### 5.14 — Código inline vs bloque (pendiente)
 
 - [ ] **Tablas layout**: detectar tablas de presentación (`role="presentation"`) y omitir o degradar
+
+### 5.17 — Fórmulas matemáticas 🔧 (parcial)
+
+Capturar fórmulas como LaTeX para Obsidian (`$…$` en línea, `$$…$$` display) en vez de glifos MathML sueltos, LaTeX duplicado o imágenes de render. Detectado al capturar artículos de Wikipedia: el `<math>` oculto se colaba con sus saltos de línea y la fórmula salía rota «línea a línea».
+
+- [x] **`componentes/extraccion/detector-formulas.js`**: `ns.extraerFormula(elemento)` reconoce `.mwe-math-element` (Wikipedia), `<math>` (MathML), `.katex` y la imagen fallback de Wikimedia. Fuentes LaTeX por prioridad: `data-mw.extsrc` → `<annotation application/x-tex>` → `math[alttext]` → `img[alt]`. El delimitador (`$`/`$$`) se decide según si la fórmula ocupa sola su bloque (`p`, `dd`, `figcaption`…); en listas, tablas y encabezados se queda en línea.
+- [x] **Integración**: rama nueva en `extractor-inline.js` (párrafos, listas, citas, encabezados) y en `extractor-multimedia.js` (figuras e imágenes sueltas). Los pies de figura ahora se generan con `extraerInline()` (antes `textContent` perdía las fórmulas del caption).
+- [x] **Fixture `formulas-matematicas`** en `pruebas/` (10.º fixture): inline con `data-mw`, inline con `annotation`, KaTeX, display en `p` e imagen fallback suelta; con doble captura y 0 marcadores.
+- [x] **Verificación con página real**: «Integral de Gauss» (Wikipedia) → 38 fórmulas en línea + 40 bloques `$$`, 0 restos de MathML/annotation y 0 saltos de línea espurios.
+- [ ] **Fórmulas dentro de tablas**: `extractor-tablas.js` usa `textContent` plano para las celdas (glifos + LaTeX del annotation).
+- [ ] **MathJax v3 (`mjx-container`)**: sin fuente LaTeX accesible en el DOM; de momento sale el texto de glifos por la recursión genérica.
 
 ---
 

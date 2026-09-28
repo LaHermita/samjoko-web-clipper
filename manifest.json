@@ -54,6 +54,7 @@
       "matches": ["<all_urls>"],
       "js": [
         "componentes/extraccion/nucleo-extraccion.js",
+        "componentes/extraccion/detector-formulas.js",
         "componentes/extraccion/extractor-inline.js",
         "componentes/extraccion/extractor-texto.js",
         "componentes/extraccion/extractor-listas.js",

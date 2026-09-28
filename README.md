@@ -154,6 +154,7 @@ samjoko-nav-extension/
 │   ├── onboarding.js/css      # Tutorial de primera instalación
 │   └── extraccion/            # Pipeline de extracción por tipos
 │       ├── nucleo-extraccion.js
+│       ├── detector-formulas.js
 │       ├── extractor-inline.js
 │       ├── extractor-texto.js
 │       ├── extractor-listas.js
@@ -188,11 +189,39 @@ Cubre tres suites y sale con código `1` si algo falla:
 
 | Suite | Comprueba |
 | ------- | --------- |
-| `ejecutor-fixtures.html` | 9 fixtures contra su Markdown esperado (formato inline y anti-duplicación) |
+| `ejecutor-fixtures.html` | 11 fixtures contra su Markdown esperado (formato inline, anti-duplicación, fórmulas e imágenes) |
 | `prueba-reescaneo.html` | doble captura idéntica y 0 marcadores en el DOM |
 | `prueba-ajuste-linea.html` | el ajuste de línea devuelve `string`, nunca una `Promise` |
 
 El Markdown esperado vive en `pruebas/fixtures.js`. Tras un cambio **deliberado** del extractor, regenera el oro con `pruebas/ejecutor-fixtures.html?modo=generar` y **revísalo a mano** antes de pegarlo en `fixtures.js`.
+
+---
+
+## Reportar un fallo / Report a bug
+
+Si algo falla, abre un issue (o envíalo al canal del equipo) con esta plantilla:
+
+```markdown
+### Reporte de fallo
+
+- **Navegador y versión**: Chrome 1xx / Firefox 1xx
+- **Modo de carga**: desarrollador (Chrome) / complemento temporal (Firefox)
+- **URL de la página capturada**: https://...
+- **Pasos para reproducir**:
+  1. ...
+  2. ...
+- **Resultado esperado**: ...
+- **Resultado obtenido**: ...
+- **Consola (F12)**: pegar error o «sin errores»
+- **Captura de pantalla**: adjuntar
+```
+
+Antes de reportar, comprueba si ya existe una prueba automática que lo cubre:
+
+- Abre `pruebas/ejecutor-fixtures.html`, `pruebas/prueba-reescaneo.html` o `pruebas/prueba-ajuste-linea.html` en Chrome.
+- O ejecuta todo desde terminal: `./pruebas/ejecutar-pruebas.sh`.
+
+Si el fallo sale en una página concreta y las pruebas pasan, incluye siempre la **URL** y una **captura del Markdown generado** (editor → ⟳ re-escanear) para poder comparar.
 
 ---
 

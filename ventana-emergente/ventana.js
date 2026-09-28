@@ -108,19 +108,34 @@ function mostrarToast(texto, tipo, markdown) {
     var resumen = texto + ' · ' + palabras + ' palabras';
     toast.textContent = resumen;
     toast.className += ' toast-expandible toast-compacto';
-    toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+    // B6: el toast se puede operar con teclado (role=button, Tab, Enter/Espacio)
+    // y anuncia su estado con aria-expanded.
+    toast.setAttribute('role', 'button');
+    toast.setAttribute('tabindex', '0');
+    toast.setAttribute('aria-expanded', 'false');
+    toast.setAttribute('aria-label', resumen + '. Actívalo para expandir.');
 
-    toast.addEventListener('click', function () {
+    var alternarToast = function () {
       if (toast.classList.contains('toast-compacto')) {
         toast.classList.remove('toast-compacto');
         toast.classList.add('toast-expandido');
         toast.textContent = texto + '\n\n' + markdown.substring(0, 500) + (markdown.length > 500 ? '\n...' : '');
-        toast.setAttribute('aria-label', 'Contenido de la captura. Haz clic para colapsar.');
+        toast.setAttribute('aria-expanded', 'true');
+        toast.setAttribute('aria-label', 'Contenido de la captura. Actívalo para colapsar.');
       } else {
         toast.classList.remove('toast-expandido');
         toast.classList.add('toast-compacto');
         toast.textContent = resumen;
-        toast.setAttribute('aria-label', resumen + '. Haz clic para expandir.');
+        toast.setAttribute('aria-expanded', 'false');
+        toast.setAttribute('aria-label', resumen + '. Actívalo para expandir.');
+      }
+    };
+
+    toast.addEventListener('click', alternarToast);
+    toast.addEventListener('keydown', function (evento) {
+      if (evento.key === 'Enter' || evento.key === ' ' || evento.key === 'Spacebar') {
+        evento.preventDefault();
+        alternarToast();
       }
     });
   } else {
@@ -151,18 +166,7 @@ async function extraerContenido(pestania) {
     barra.establecerTexto(traducir('barraProgresoConectando'));
     await chrome.scripting.executeScript({
       target: { tabId: pestania.id },
-      files: [
-        'componentes/extraccion/nucleo-extraccion.js',
-        'componentes/extraccion/extractor-inline.js',
-        'componentes/extraccion/extractor-texto.js',
-        'componentes/extraccion/extractor-listas.js',
-        'componentes/extraccion/extractor-codigo.js',
-        'componentes/extraccion/extractor-tablas.js',
-        'componentes/extraccion/extractor-citas.js',
-        'componentes/extraccion/extractor-multimedia.js',
-        'componentes/extraccion/extractor-iframes.js',
-        'extractor-contenido.js'
-      ]
+      files: obtenerScriptsExtraccion()
     });
     return await chrome.tabs.sendMessage(pestania.id, { accion: 'extraerMarkdown' });
   }
