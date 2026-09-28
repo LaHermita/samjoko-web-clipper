@@ -28,6 +28,14 @@
               if (textoP) {
                 partes.push(prefijo + textoP);
               }
+            } else if (hijo.tagName === 'UL' || hijo.tagName === 'OL') {
+              // Lista dentro de la cita: un ítem por línea con su marca.
+              var itemsLista = Array.from(hijo.children).filter(function(li) { return li.tagName === 'LI'; });
+              var lineasLista = itemsLista.map(function(li, idx) {
+                var marca = hijo.tagName === 'OL' ? (idx + 1) + '. ' : '- ';
+                return prefijo + marca + ns.extraerInline(li);
+              });
+              if (lineasLista.length) partes.push(lineasLista.join('\n'));
             } else {
               var textoEl = ns.extraerInline(hijo);
               if (textoEl) {

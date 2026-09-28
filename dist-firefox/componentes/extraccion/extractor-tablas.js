@@ -6,7 +6,9 @@
     etiquetas: ['table'],
     esAplicable: function(elemento) {
       if (elemento.tagName !== 'TABLE') return false;
-      return !elemento.closest('table');
+      // Solo la tabla exterior: closest() incluye el propio elemento,
+      // por lo que comparar contra él mismo evita descartar toda tabla.
+      return elemento.closest('table') === elemento;
     },
     convertir: function(elemento) {
       var ns = SamjokoExtraccion;

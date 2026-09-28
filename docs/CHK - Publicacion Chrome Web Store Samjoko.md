@@ -2,9 +2,9 @@
 tipo: CHK
 tema: Publicación en Chrome Web Store
 proyecto: Samjoko Web Clipper
-estado: borrador
-version: 1.1
-fecha: 2026-09-23
+estado: congelado
+version: 1.2
+fecha: 2026-09-28
 fuentes:
   - https://policies.google.com/privacy?hl=es-419
   - https://developer.chrome.com/docs/webstore/program-policies/terms
@@ -15,6 +15,9 @@ fuentes:
 # CHK - Publicación Chrome Web Store (Samjoko Web Clipper)
 
 > Lista de verificación específica para la publicación de **Samjoko Web Clipper** en la Chrome Web Store. Basada en la Política de Privacidad de Google, el Acuerdo de Desarrollador de Chrome Web Store y las Políticas del Programa para Desarrolladores.
+
+> [!warning] Estado (2026-09-28): congelado
+> Decisión de alcance: **hasta nuevo aviso NO se publica en la Chrome Web Store**. La extensión se distribuye al equipo de desarrolladores cargándola en **modo desarrollador** (Chrome y Firefox). Este CHK queda aparcado; se retoma íntegro (con sus pendientes críticos) si se decide publicar.
 
 ---
 

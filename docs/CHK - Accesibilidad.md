@@ -2,14 +2,17 @@
 tipo: CHK
 tema: Accesibilidad
 proyecto: Samjoko Web Clipper
-version: 1.2
-estado: activo
-fecha: 2026-09-23
+version: 1.3
+estado: congelado
+fecha: 2026-09-28
 ---
 
 # CHK - Accesibilidad
 
 Checklist verificable de accesibilidad para Samjoko Web Clipper. Basada en WCAG 2.1 nivel AA.
+
+> [!warning] Estado (2026-09-28): congelado
+> La extensión pasa a distribución interna en **modo desarrollador** (Chrome y Firefox) y la accesibilidad deja de ser requisito de publicación. Este CHK queda **congelado hasta nuevo aviso**; el detalle sigue siendo la fuente única de verdad de la Fase 4.5 del Roadmap.
 
 > [!info] Fuente única de verdad
 > Este documento es el detalle verificable de la **Fase 4.5** de [`PROY - Roadmap.md`](PROY%20-%20Roadmap.md). Los estados se marcan aquí; el Roadmap solo enlaza.

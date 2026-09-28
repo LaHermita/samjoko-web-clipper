@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Harness de fixtures — Samjoko</title>
+</head>
+<body>
+  <h1>Harness de fixtures HTML → Markdown</h1>
+  <p id="resumen">Ejecutando…</p>
+
+  <p>
+    Modo por defecto: comparar con el Markdown esperado.<br>
+    <code>ejecutor-fixtures.html?modo=generar</code> imprime el Markdown obtenido
+    para pegarlo en <code>fixtures.js</code> (y revisarlo a mano).
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fixture</th>
+        <th>Estado</th>
+        <th>Coincide con esperado</th>
+        <th>2ª captura = 1ª</th>
+        <th>Marcadores DOM</th>
+      </tr>
+    </thead>
+    <tbody id="tablaResultados"></tbody>
+  </table>
+
+  <details open>
+    <summary>Salida JSON (para lectura automática)</summary>
+    <pre id="resultado">pendiente</pre>
+  </details>
+
+  <details>
+    <summary>Fallos</summary>
+    <div id="detalleFallos"></div>
+  </details>
+
+  <script src="../componentes/extraccion/nucleo-extraccion.js"></script>
+  <script src="../componentes/extraccion/extractor-inline.js"></script>
+  <script src="../componentes/extraccion/extractor-texto.js"></script>
+  <script src="../componentes/extraccion/extractor-listas.js"></script>
+  <script src="../componentes/extraccion/extractor-codigo.js"></script>
+  <script src="../componentes/extraccion/extractor-tablas.js"></script>
+  <script src="../componentes/extraccion/extractor-citas.js"></script>
+  <script src="../componentes/extraccion/extractor-multimedia.js"></script>
+  <script src="../componentes/extraccion/extractor-iframes.js"></script>
+  <script src="fixtures.js"></script>
+  <script src="ejecutor-fixtures.js"></script>
+</body>
+</html>

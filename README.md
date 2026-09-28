@@ -72,11 +72,24 @@ El tema por defecto es **Samjoko**. Para cambiar de tema, modifica el atributo `
 
 ## Instalación / Installation
 
-### Para usuarios / For users
+### Para el equipo / For the team — modo desarrollador
 
-1. Descarga la extensión desde la [Chrome Web Store](#) _(próximamente)_.
-2. Haz clic en el icono de Samjoko en la barra de herramientas.
-3. Navega a cualquier página y captúrala.
+> [!IMPORTANT]
+> **Hasta nuevo aviso la extensión NO está publicada en la Chrome Web Store.** Se distribuye cargándola directamente en el navegador en modo desarrollador.
+
+**Chrome**
+
+1. Abre `chrome://extensions` y activa «Modo desarrollador».
+2. «Cargar descomprimida» → selecciona la carpeta del repositorio.
+3. Tras cada `git pull`, pulsa el icono de recargar ↻ de la tarjeta de la extensión.
+4. Haz clic en el icono de Samjoko y captura cualquier página.
+
+**Firefox**
+
+1. Genera el paquete: `./empaquetar-firefox.sh` (Linux/macOS) o `empaquetar-firefox.ps1` (Windows).
+2. Abre `about:debugging#/runtime/this-firefox`.
+3. «Cargar complemento temporal…» → selecciona `dist-firefox/manifest.json`.
+4. Tras cada cambio vuelve a generar el paquete y recarga (Firefox no recarga la extensión automáticamente).
 
 ### Para desarrollo / For development
 
@@ -153,12 +166,33 @@ samjoko-nav-extension/
 ├── editor-bloques/            # Side panel (editor de bloques)
 ├── opciones/                  # Página de opciones
 ├── docs/                      # Documentación del proyecto
+├── pruebas/                   # Harness de regresión HTML → Markdown (fixtures)
 ├── empaquetar-firefox.ps1     # Script de empaquetado Firefox en Windows (genera dist-firefox/)
 ├── empaquetar-firefox.sh      # Script de empaquetado Firefox en Linux/macOS (genera dist-firefox/)
 ├── trabajador-fondo.js        # Service worker (Chrome) / event page (Firefox)
 ├── extractor-contenido.js     # Content script (orquestador)
 └── base-datos.js              # IndexedDB + generación frontmatter
 ```
+
+---
+
+## Pruebas / Tests
+
+Harness de regresión HTML → Markdown, sin dependencias externas (solo Chrome/Chromium en el PATH):
+
+```bash
+./pruebas/ejecutar-pruebas.sh
+```
+
+Cubre tres suites y sale con código `1` si algo falla:
+
+| Suite | Comprueba |
+| ------- | --------- |
+| `ejecutor-fixtures.html` | 9 fixtures contra su Markdown esperado (formato inline y anti-duplicación) |
+| `prueba-reescaneo.html` | doble captura idéntica y 0 marcadores en el DOM |
+| `prueba-ajuste-linea.html` | el ajuste de línea devuelve `string`, nunca una `Promise` |
+
+El Markdown esperado vive en `pruebas/fixtures.js`. Tras un cambio **deliberado** del extractor, regenera el oro con `pruebas/ejecutor-fixtures.html?modo=generar` y **revísalo a mano** antes de pegarlo en `fixtures.js`.
 
 ---
 

@@ -159,7 +159,7 @@ function generarMetadatosFrontales(metadata, usarMetadatosFrontales, notasPerson
   return lineas.join('\n');
 }
 
-async function ajustarTexto(texto, ancho) {
+function ajustarTexto(texto, ancho) {
   if (!ancho || ancho === 'ninguno') return texto;
   var maxCol = parseInt(ancho, 10);
   if (!maxCol || maxCol < 40) return texto;

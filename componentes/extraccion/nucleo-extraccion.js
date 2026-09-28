@@ -455,6 +455,18 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     };
   };
 
+  // Evita duplicados: no vuelve a procesar lo que ya está dentro de un bloque
+  // convertido en esta misma corrida (su contenido ya está incluido). El control
+  // vive en memoria: no se toca el DOM de la página (regresión B2).
+  ns.tieneAncestroProcesado = function(elemento, procesados) {
+    var ancestro = elemento.parentElement;
+    while (ancestro) {
+      if (procesados.has(ancestro)) return true;
+      ancestro = ancestro.parentElement;
+    }
+    return false;
+  };
+
   ns.normalizarJerarquiaEncabezados = function(bloques) {
     var nivelMinimo = 6;
     var tieneEncabezados = false;
@@ -487,6 +499,14 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     opciones = opciones || {};
     var urlExterna = opciones.urlOrigen || '';
 
+    // Limpia los marcadores que versiones anteriores dejaban en el DOM de la
+    // página: su presencia hacía que una segunda captura perdiera listas,
+    // tablas, código, citas e imágenes.
+    var marcadoresPrevios = documento.querySelectorAll('[data-bloque-procesado]');
+    for (var mp = 0; mp < marcadoresPrevios.length; mp++) {
+      marcadoresPrevios[mp].removeAttribute('data-bloque-procesado');
+    }
+
     var raiz = ns.detectarRaizContenido(documento);
 
     var todasEtiquetas = [];
@@ -515,14 +535,12 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
     var enlacesAcumulados = [];
     var nodosProcesados = new Set();
 
-    var bloquesContenedor = ['blockquote', 'pre', 'table', 'figure', 'ul', 'ol'];
-
     for (var i = 0; i < elementosFiltrados.length; i++) {
       var elemento = elementosFiltrados[i];
 
       if (nodosProcesados.has(elemento)) continue;
 
-      if (elemento.closest && elemento.closest('[data-bloque-procesado]')) continue;
+      if (ns.tieneAncestroProcesado(elemento, nodosProcesados)) continue;
 
       var etiqueta = elemento.tagName.toLowerCase();
       var grupoActual = ns.obtenerGrupo(etiqueta);
@@ -596,9 +614,6 @@ var SamjokoExtraccion = SamjokoExtraccion || {};
       bloques.push(bloque);
 
       nodosProcesados.add(elemento);
-      if (bloquesContenedor.indexOf(etiqueta) !== -1) {
-        elemento.setAttribute('data-bloque-procesado', 'true');
-      }
     }
 
     bloques = ns.normalizarJerarquiaEncabezados(bloques);

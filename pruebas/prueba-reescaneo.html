@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Prueba de re-escaneo — Samjoko</title>
+</head>
+<body>
+  <article>
+    <h2>Titular de prueba</h2>
+    <p>Primer párrafo con <strong>negrita</strong> y un <a href="https://ejemplo.com/enlace?utm_source=x">enlace</a>.</p>
+    <ul>
+      <li>Elemento uno</li>
+      <li>Elemento dos</li>
+    </ul>
+    <table>
+      <thead><tr><th>Columna A</th><th>Columna B</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2">Celda fusionada</td><td>1</td></tr>
+        <tr><td>2</td></tr>
+      </tbody>
+    </table>
+    <blockquote><p>Cita interna con párrafo.</p></blockquote>
+    <figure>
+      <img src="https://ejemplo.com/imagen.png" alt="Imagen de prueba">
+      <figcaption>Pie de figura</figcaption>
+    </figure>
+    <pre><code>console.log('hola');</code></pre>
+    <p>Último párrafo del artículo.</p>
+  </article>
+
+  <pre id="resultado">pendiente</pre>
+
+  <script src="../componentes/extraccion/nucleo-extraccion.js"></script>
+  <script src="../componentes/extraccion/extractor-inline.js"></script>
+  <script src="../componentes/extraccion/extractor-texto.js"></script>
+  <script src="../componentes/extraccion/extractor-listas.js"></script>
+  <script src="../componentes/extraccion/extractor-codigo.js"></script>
+  <script src="../componentes/extraccion/extractor-tablas.js"></script>
+  <script src="../componentes/extraccion/extractor-citas.js"></script>
+  <script src="../componentes/extraccion/extractor-multimedia.js"></script>
+  <script src="../componentes/extraccion/extractor-iframes.js"></script>
+  <script src="prueba-reescaneo.js"></script>
+</body>
+</html>
