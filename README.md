@@ -50,6 +50,9 @@
 | Descarga como archivo `.md`                                          | Download as `.md` file                                      |
 | Guarda directamente en una carpeta local (File System Access API)    | Save directly to a local folder (File System Access API)    |
 | Formato inline preservado (negrita, cursiva, código, enlaces)       | Inline formatting preserved (bold, italic, code, links)     |
+| Fórmulas como LaTeX ($…$, $$…$$): Wikipedia, MathML y KaTeX         | Math as LaTeX ($…$, $$…$$): Wikipedia, MathML and KaTeX     |
+| Imágenes con lazy-load, URLs relativas absolutizadas y decorativas filtradas | Lazy-load images, relative URLs made absolute, decorative filtered |
+| Embeds cross-origin conservados como bloque `> [!embed] URL`         | Cross-origin embeds kept as `> [!embed] URL` block          |
 | Anti-duplicación en recorrido DOM                                    | DOM traversal anti-duplication                              |
 | Accesibilidad: ARIA, teclado, lector de pantalla, contraste          | Accessibility: ARIA, keyboard, screen reader, contrast      |
 | Sin dependencias externas                                            | No external dependencies                                    |

@@ -133,7 +133,7 @@ Extractor dedicado para chats con IA (ChatGPT, Gemini, Claude, Copilot):
 
 ---
 
-## Roadmap关联 (referencia rápida)
+## Roadmap (referencia rápida)
 
 | Fase | Estado | Contenido |
 |------|--------|-----------|
@@ -142,14 +142,15 @@ Extractor dedicado para chats con IA (ChatGPT, Gemini, Claude, Copilot):
 | 5.5 | Pendiente | Enriquecimiento semántico NLP (Vivero, no extensión) |
 | 5.6 | Pendiente | Wikilinks internos |
 | 5.7 | Pendiente | Plantillas de nota |
-| 5.9 | Pendiente | Formato inline en Markdown |
-| 5.10 | Pendiente | Anti-duplicación DOM |
-| 5.11 | Pendiente | Detección inteligente de contenido principal |
-| 5.12 | Pendiente | Metadatos enriquecidos |
-| 5.13 | Pendiente | Multimedia e imágenes |
+| 5.9 | ✅ Parcial (automatizada) | Formato inline en Markdown |
+| 5.10 | ✅ Parcial (automatizada) | Anti-duplicación DOM |
+| 5.11 | ✅ Parcial | Detección inteligente de contenido principal |
+| 5.12 | ✅ Parcial | Metadatos enriquecidos |
+| 5.13 | ✅ Completada | Multimedia e imágenes (URLs, lazy-load, decorativas, embeds) |
 | 5.14 | Pendiente | Código inline vs bloque |
 | 5.15 | Pendiente | Captura de conversaciones IA (prioridad alta) |
 | 5.16 | Pendiente | Compatibilidad Brave |
+| 5.17 | ✅ Parcial | Fórmulas matemáticas (LaTeX) |
 | 6 | Futuro | Firefox, selección manual, vista previa, historial |
 
 ---

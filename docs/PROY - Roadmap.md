@@ -1,5 +1,5 @@
 ---
-version: 2.1
+version: 2.2
 estado: activo
 objetivo: ESTABLE-EQUIPOINTERNO
 alcance: carga en modo desarrollador (Chrome y Firefox)
@@ -9,7 +9,7 @@ fase: estabilidad, bloqueantes-manual, 5.2-pendiente, 5.9-parcial, 5.10-parcial,
 ---
 
 > [!summary] Resumen
-> Hoja de ruta de Samjoko Web Clipper. **Objetivo actual: versión interna estable para el equipo de desarrolladores** — la extensión se carga en **modo desarrollador en Chrome y Firefox**; **hasta nuevo aviso no se publica en la Chrome Web Store** (su CHK queda `congelado`). Prioridad: que la extensión sea **operativa, eficaz y estable** (ver §Prioridad actual). Los bloqueantes de código de la auditoría de septiembre 2026 (**B1–B3** y **B8–B10**) están **corregidos y verificados con pruebas automatizadas**; queda la prueba manual en los dos navegadores. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8 y los parciales 5.9, 5.10, 5.11, 5.12 y 5.14) están archivadas en `docs/LOG - Historial de fases.md`. La deuda técnica **B4–B7** está cerrada, la fase **5.13** (imágenes, URLs y embeds) está completa y existe la **5.17** (fórmulas matemáticas, parcial).
+> Hoja de ruta de Samjoko Web Clipper. **Objetivo actual: versión interna estable para el equipo de desarrolladores** — la extensión se carga en **modo desarrollador en Chrome y Firefox**; **hasta nuevo aviso no se publica en la Chrome Web Store** (su CHK queda `congelado`). Prioridad: que la extensión sea **operativa, eficaz y estable** (ver §Prioridad actual). Los bloqueantes de código de la auditoría de septiembre 2026 (**B1–B3** y **B8–B10**) están **corregidos y verificados con pruebas automatizadas**; queda la prueba manual en los dos navegadores. Las fases completadas (0–4, 5.1, 5.3, 5.4, 5.8, 5.13 y los parciales 5.9, 5.10, 5.11, 5.12 y 5.14) están archivadas en `docs/LOG - Historial de fases.md`. La deuda técnica **B4–B7** está cerrada, la fase **5.13** (imágenes, URLs y embeds) está completa y existe la **5.17** (fórmulas matemáticas, parcial).
 
 ---
 
@@ -77,7 +77,7 @@ Objetivo: que la extensión sea utilizable con lectores de pantalla, navegación
 
 ## Fase 5 — Calidad de captura para Obsidian 🔧
 
-Mejoras pendientes del pipeline de extracción para la versión interna estable. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.9-parcial, 5.10-parcial, 5.11-parcial, 5.12-parcial, 5.14-parcial) están en `docs/LOG - Historial de fases.md`.
+Mejoras pendientes del pipeline de extracción para la versión interna estable. Las sub-fases completadas (5.1, 5.3, 5.4, 5.8, 5.13, 5.9-parcial, 5.10-parcial, 5.11-parcial, 5.12-parcial, 5.14-parcial) están en `docs/LOG - Historial de fases.md`.
 
 **Principio rector**: cada bloque nuevo debe poder añadirse sin tocar el núcleo del extractor (patrón **estrategia/plugin** interno).
 
@@ -124,7 +124,7 @@ Ampliar `extraerMetadatos()` sin dependencias externas. **Implementado en `compo
 
 ### 5.13 — Multimedia e imágenes ✅
 
-Resolver URLs relativas, lazy-load, filtrar ruido visual y preservar embeds.
+Resolver URLs relativas, lazy-load, filtrar ruido visual y preservar embeds (archivada en el LOG).
 
 - [x] **Resolver URLs relativas** en cuerpo Markdown (no solo metadatos): `ns.limpiarUrl()` resuelve contra la base de la extracción (`ns.baseExtraccion` = URL de origen si se pasa —pruebas— o `document.baseURI`, con `<base>` incluido y restaurada tras extracciones anidadas de iframes) y devuelve absolutas las relativas, incluidas las protocolo-relativas `//host/…` (heredan el esquema de la base; https si la base no es http(s)). Aplica a enlaces, imágenes y embeds.
 - [x] **Soporte lazy-load**: `ns.obtenerSrcImagen()` — `src` normal (los `data:` placeholder se posponen), `data-src`, `data-lazy-src`, `data-original`, `data-lazy` y primer candidato de `srcset` (de la imagen o de su `<picture>`).

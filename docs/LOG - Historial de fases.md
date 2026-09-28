@@ -3,7 +3,7 @@ tipo: LOG
 tema: Historial de fases completadas
 proyecto: Samjoko Web Clipper
 estado: archivado
-version: 1.2
+version: 1.3
 fecha_inicio: 2026-05-20
 fecha_cierre: 2026-09-28
 ---
@@ -259,6 +259,16 @@ Ampliar `extraerMetadatos()` sin dependencias externas. Implementado en `compone
 - [x] **Detección de idioma heurística**: `heuristicaIdioma()` (línea 192), ratio de palabras frecuentes es/en como fallback de `<html lang>`
 
 Pendientes (JSON-LD recursivo y `twitter:title`) → `PROY - Roadmap.md §5.12`.
+
+### 5.13 — Multimedia e imágenes ✅
+
+URLs relativas, lazy-load, imágenes decorativas y embeds cross-origin (cerrada el 2026-09-28; detalle de ítems en `PROY - Roadmap.md §5.13`).
+
+- [x] **URLs relativas absolutas**: `ns.limpiarUrl()` resuelve contra la base de la extracción (`ns.baseExtraccion` = URL de origen en pruebas o `document.baseURI` con `<base>`, restaurada tras extracciones anidadas); protocolo-relativas `//host/…` heredan el esquema de la base (https por defecto)
+- [x] **Lazy-load**: `ns.obtenerSrcImagen()` — `src` normal, `data-src`, `data-lazy-src`, `data-original`, `data-lazy` y primer candidato de `srcset` (propio o del `<picture>`)
+- [x] **Imágenes decorativas filtradas**: `ns.esImagenDecorativa()` — `alt=""`, 1×1/0 y nombres de tracking; en figuras se degrada al pie (comprobación posterior al detector de fórmulas)
+- [x] **Embeds cross-origin**: bloque `> [!embed] URL` en `extractor-iframes.js` con exclusión de publicidad/tracking; detección de origen por URL (el `contentDocument` es `about:blank` mientras el iframe navega y disimulaba ser same-origin)
+- [x] **Fixture `imagenes-lazy-y-embeds`** (11.º) y verificación con página real (Wikipedia): 0 URLs relativas, 0 restos de MathML, 0 marcadores
 
 ### 5.14 — Código inline vs bloque (parcial) ✅
 
